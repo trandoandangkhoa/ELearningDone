@@ -1,0 +1,76 @@
+﻿@using WebLearning.Application.Ultities
+@model PagedViewModel<WebLearning.Contract.Dtos.CourseRole.CourseRoleDto>
+@{
+    ViewData["Title"] = "Câu hỏi kiểm tra";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="wrapper">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Quyền truy cập khóa học</h3>
+
+
+        </div>
+
+        <!-- /.card-header -->
+        <div class="card-body">
+            <div>
+                <a href="/tao-moi-quyen-khoa-hoc.html" class="btn btn-success btn-icon-split">
+                    <span class="text">Tạo mới</span>
+                </a>
+            </div>
+            <br />
+
+            <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Khóa học</th>
+                        <th>Quyền</th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+
+                            @if (item != null)
+                            {
+                                <td>@item.Code</td>
+                                <td>@item.CourseDto.Name</td>
+                                <td>@item.RoleName</td>
+                                <td>
+                                    @{
+                                        string urlDelete = $"/xoa-quyen-khoa-hoc/{item.CourseId}/{item.RoleId}";
+
+                                    }
+                                    <a href="@urlDelete" class="btn btn-danger btn-icon-split">
+                                        <span class="text">Xóa</span>
+                                    </a>
+                                </td>
+                            }
+
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Khóa học</th>
+                        <th>Các quyền</th>
+                    </tr>
+                </tfoot>
+            </table>
+            <br />
+            @await Component.InvokeAsync("Pager" , Model)
+
+        </div>
+        <!-- /.card-body -->
+
+    </div>
+    <!-- /.card -->
+
+</div>
+
+

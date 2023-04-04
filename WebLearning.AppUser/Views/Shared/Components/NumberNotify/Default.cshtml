@@ -1,0 +1,13 @@
+﻿@model NotificationItemViewModel
+
+@if(Model != null && Model.NotificationResponseDtos.Count() > 0)
+{
+    
+        <i class="fa fa-bell-o"></i>
+        <span class="badge bg-green">@Model.NotificationResponseDtos.Where(x => x.Notify == true).Count()</span>
+}
+else
+{
+        <i class="fa fa-bell-o"></i>
+        <span class="badge bg-green">0</span>
+}

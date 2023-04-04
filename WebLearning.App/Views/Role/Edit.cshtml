@@ -1,0 +1,65 @@
+﻿@using WebLearning.Contract.Dtos.Role;
+@using WebLearning.Contract.Dtos;
+@model UpdateRoleDto;
+@{
+    ViewData["Title"] = "Chỉnh sửa quyền";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Quyền - Chỉnh sửa</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Account">Quay lại</a></li>
+                    <li class="breadcrumb-item active">Quyền - Chỉnh sửa</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content">
+    <form asp-controller="Role" asp-action="Edit" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin quyền</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="inputName">Tên quyền</label>
+                            <input type="text" id="inputName" class="form-control" value="@Model.RoleName" asp-for="RoleName">
+                            <span asp-validation-for="RoleName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName">Mô tả</label>
+                            <input type="text" id="inputName" class="form-control" value="@Model.Description" asp-for="Description">
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <a href="/quyen.html" class="btn btn-secondary">Cancel</a>
+                <input type="submit" value="Chỉnh sửa" class="btn btn-warning float-right">
+            </div>
+        </div>
+    </form>
+
+</section>

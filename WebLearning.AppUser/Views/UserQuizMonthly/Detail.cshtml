@@ -1,0 +1,772 @@
+﻿@model QuizMonthlyDto
+@{
+    ViewData["Title"] = "QuizDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Microsoft.Extensions.Configuration
+@using System.Globalization;
+@using WebLearning.Contract.Dtos.AnswerMonthly
+@inject IConfiguration Configuration
+@using Microsoft.AspNetCore.Http
+@using WebLearning.Contract.Dtos.Quiz;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var user = User.Identity.Name;
+}
+
+<div class="">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>@Model.Name <br /></h3>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+
+</div>
+<div class="col-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Tóm tắt thông tin</h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <h3 class="green"><i class="fa fa-paint-brush"></i> @Model.Name</h3>
+
+            <p>
+                @Html.Raw(Model.Description)
+            </p>
+            <br />
+            <div>
+                <div class="x_content">
+                    <div>
+                        <strong class="title">Thời gian hoàn thành: <span>@Model.TimeToDo</span></strong>
+                    </div>
+                    <div>
+                        <strong class="title">
+                            Ngày tạo: <span>@Model.DateCreated</span>
+                        </strong>
+                    </div>
+                    <br />
+
+                    @{
+                        var score = 0;
+                        var userScore = User.Identity.Name;
+                    }
+                    @if (Model.ReportScoreMonthlyDtos.FirstOrDefault(x => x.QuizMonthlyId.Equals(Model.ID)) != null)
+                    {
+
+                        @foreach (var i in Model.ReportScoreMonthlyDtos.Where(x => x.QuizMonthlyId.Equals(Model.ID) && x.UserName.Equals(userScore)))
+                        {
+                            score = i.TotalScore;
+                        }
+                        <h2> Điểm của bạn: <strong style="color:red">@score</strong></h2>
+                        @if (Model.ReportScoreMonthlyDtos.Where(x => x.Passed == true && x.QuizMonthlyId.Equals(Model.ID)) != null)
+                        {
+                            @if (score >= Model.ScorePass)
+                            {
+                                <label class="label label-success label-sm" style="font-size:14px">Hoàn thành</label>
+                                <br />
+
+                                <br />
+                                <div>
+                                    <a href="/hoan-thanh-bai-dinh-ki/@Model.ID/@User.Identity.Name" style="color:darkred;text-decoration:underline">Xem Giấy chứng nhận</a><br />
+
+                                </div>
+                            }
+                            else
+                            {
+                                <label class="label label-danger label-sm" style="font-size:14px">Chưa hoàn thành</label>
+
+                            }
+                        }
+
+
+
+                    }
+                    else @if (Model.ReportScoreMonthlyDtos.FirstOrDefault(x => x.QuizMonthlyId.Equals(Model.ID)) == null)
+                    {
+                        <label class="label label-warning label-sm" style="font-size:14px">Chưa làm</label>
+
+                    }
+                    <br />
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            @{
+                var quesCount = 0;
+            }
+            @foreach (var numbQues in Model.QuestionMonthlyDtos)
+            {
+                quesCount++;
+                @if (Model.AnswerMonthlyDtos.FirstOrDefault(x => x.QuestionMonthlyId.Equals(numbQues.Id) && x.AccountName.Equals(User.Identity.Name)) != null)
+                {
+                    <a href="/bai-kiem-tra-dinh-ki/{@Model.Alias}/{@Model.ID}#@numbQues.Id" class="btn btn-info">@quesCount</a>
+
+                }
+                else
+                {
+                    <a href="/bai-kiem-tra-dinh-ki/{@Model.Alias}/{@Model.ID}#@numbQues.Id" class="btn btn-warning">@quesCount</a>
+
+                }
+
+            }
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="col-md-2 col-sm-2 col-xs-12" style="position:sticky;z-index:1;top:0">
+                <div class="btn btn-default btn-xs" style="position:sticky;z-index:999;top:1%">
+                    <p id="demo"></p>
+                    @{
+                        var second = 0;
+                    }
+                    <span id="status">Thời gian</span><br />
+                    @if (@Model.TimeToDo >= 10)
+                    {
+                        <input type="text" id="time" value="@Model.TimeToDo:@second@second" hidden>
+                    }
+                    else
+                    {
+                        <input type="text" id="time" value="@second@Model.TimeToDo:@second@second" hidden>
+
+                    }
+                    @if (Model.HistorySubmitMonthlyDtos.FirstOrDefault(x => x.Submit == true && x.QuizMonthlyId.Equals(Model.ID)) != null)
+                    {
+                        <h1 id="timeLabel">
+                            <span id="min">00</span>:<span id="sec">00</span>
+                        </h1>
+                    }
+                    else
+                    {
+                        <h1 id="timeLabel">
+                            <span id="min">@Model.TimeToDo</span>:<span id="sec">00</span>
+                        </h1>
+                    }
+
+
+
+                    <span id="checkStatus"></span>
+                    <input type="text" value="@Model.ID" id="quizMonthlyId" hidden />
+                </div>
+
+
+            </div>
+            <div class="col-md-10 col-sm-12 col-xs-12">
+                <div>
+                        <h1 style="font-weight:bold">Chào mừng đến với bài kiểm tra định kì</h1>
+                        <div style="font-size:16px">
+                                <strong><i class="fa fa-check"></i> Vui lòng đọc hướng dẫn trước khi làm bài:</strong>
+                            <ul>
+                                <li>
+                                    Luôn bấm nút  <input type="submit" class="btn btn-success btn-sm" value="Lưu đáp án">
+                                    sau mỗi lần chọn/thay đổi đáp án
+                                </li>
+                                <li>
+                                    Sau khi bấm <input type="submit" class="btn btn-success btn-sm"  value="Bắt đầu"/>
+                                    thì thời gian sẽ bắt đầu tính giờ
+                                </li>
+                                <li>Khi hết thời gian, hệ thống sẽ tự kết thúc bài làm và tính điểm</li>
+                                <li>Nếu như anh/chị không bấm nút "Lưu đáp án":
+                                    <ul>
+                                        <li>Hết thời gian hệ thống sẽ chấm điểm là: <strong style="color:red">0</strong></li>
+                                        <li>Quá trình chọn đáp án trước đó sẽ mất nếu gặp trục trặc gì</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <h2 style="font-weight:bold"> Bấm bắt đầu để làm bài</h2>
+
+                        </div>
+                        <h2>Nội dung bài kiểm tra</h2>
+                        @if (Model.ReportScoreMonthlyDtos.FirstOrDefault(x => x.UserName.Equals(User.Identity.Name) && x.QuizMonthlyId.Equals(Model.ID)) != null)
+                        {
+                            <ul class="messages" id="allQuestion">
+                                <li>
+                                    @if (Model.QuestionMonthlyDtos.Count() == 0)
+                                    {
+                                        <h2>Chưa có câu hỏi</h2>
+                                    }
+                                    else
+                                    {
+                                        var count = 0;
+
+
+                                        @foreach (var questionId in Model.QuestionMonthlyDtos)
+                                        {
+                                            @if (questionId.Active == true)
+                                            {
+                                                count++;
+                                                <input type="text" value="@questionId.Id" style="display:none" />
+
+                                            <div class="row" id="@questionId.Id">
+                                                    <div class="col-md-12">
+                                                        <div class="x_panel" >
+                                                            <div class="x_title">
+                                                                <h2>Câu hỏi số @count</h2>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="x_content">
+
+                                                                <div class="message_wrapper">
+                                                                    <p class="url">
+                                                                        <span class="fs1" aria-hidden="true" data-icon=""></span>
+                                                                        <h4>Câu hỏi : <strong>@Html.Raw(questionId.Name)</strong></h4>
+
+                                                                        <h4>Lựa chọn đáp án: </h4>
+                                                                    </p>
+                                                                    <form id="target" asp-action="SendResult" asp-controller="UserQuizMonthly">
+                                                                        <blockquote class="message" id="container-question">
+                                                                            <div class="row">
+                                                                                <input name="questionId" class="rbId" value="@questionId.Id" style="display:none" id="questionId" data-qid="@questionId.Id" type="text" />
+                                                                                <input name="quizLessionId" class="rbId" value="@Model.ID" style="display:none" type="text" />
+
+                                                                            </div>
+
+
+                                                                            @if (questionId.Active = true && Model.AnswerMonthlyDtos != null)
+                                                                            {
+                                                                                @if (Model.HistorySubmitMonthlyDtos.FirstOrDefault(x => x.Submit == true ) != null)
+                                                                                {
+
+                                                                                    @if (Model.AnswerMonthlyDtos.Any(x => x.QuestionMonthlyId.Equals(questionId.Id) && x.QuizMonthlyId.Equals(questionId.QuizMonthlyId) && x.AccountName.Equals(user)))
+                                                                                    {
+
+                                                                                        @foreach (var opt in questionId.OptionMonthlyDtos.OrderBy(x => Guid.NewGuid()))
+                                                                                        {
+                                                                                            <div style="display:flex">
+                                                                                                <div>
+                                                                                                    <input type="checkbox" name="OwnAnswer" class="rb" value="@opt.Name"
+                                                                            @if (Model.AnswerMonthlyDtos.Any(x =>x.OwnAnswer.Equals(opt.Name) && x.QuestionMonthlyId.Equals(questionId.Id)))
+                                                                            {
+                                                                            @:checked
+                                                                            } disabled />
+
+                                                                                                </div>
+                                                                                                <div style="margin-left:5px">
+                                                                                                    @Html.Raw(opt.Name)
+
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <br />
+
+                                                                                        }
+
+
+                                                                                        <input type="submit" name="btnSave" id="btnSave" class="btn btn-success btn-sm" value="Lưu đáp án" disabled />
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @foreach (var opt in questionId.OptionMonthlyDtos.OrderBy(x => Guid.NewGuid()))
+                                                                                        {
+                                                                                            <div style="display:flex">
+                                                                                                <div>
+                                                                                                    <input type="checkbox" name="OwnAnswer" class="rb" value="@opt.Name"
+                                                                            @if (Model.AnswerMonthlyDtos.Any(x =>x.OwnAnswer.Equals(opt.Name) && x.QuestionMonthlyId.Equals(questionId.Id)))
+                                                                            {
+                                                                            @:checked
+                                                                            } disabled />
+                                                                                                </div>
+                                                                                                <div style="margin-left:5px">
+                                                                                                    @Html.Raw(opt.Name)
+                                                                                                </div>
+                                                                                            </div>
+
+
+                                                                                            <br />
+
+                                                                                        }
+
+
+                                                                                        <input type="submit" name="btnSave" id="btnSave" class="btn btn-success btn-sm" value="Lưu đáp án" disabled />
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                                    
+                                                                        </blockquote>
+
+
+                                                                    </form>
+                                                                    <br />
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+
+                                        }
+                                    }
+                                </li>
+                            </ul>
+                        }
+                        else
+                        {
+                            <ul class="messages" id="allQuestion" style="display:none">
+                                <li>
+                                    @if (Model.QuestionMonthlyDtos.Count() == 0)
+                                    {
+                                        <h2>Chưa có câu hỏi</h2>
+                                    }
+                                    else
+                                    {
+                                        var count = 0;
+
+
+                                        @foreach (var questionId in Model.QuestionMonthlyDtos)
+                                        {
+                                            @if (questionId.Active == true)
+                                            {
+                                                count++;
+
+                                                <input type="text" value="@questionId.Id" style="display:none"/>
+                                            <div class="row" id="@questionId.Id">
+                                                    <div class="col-md-12">
+                                                        <div class="x_panel" >
+                                                            <div class="x_title">
+                                                                <h2>Câu hỏi số @count</h2>
+                                                                <ul class="nav navbar-right panel_toolbox">
+                                                                    <li>
+                                                                        <a ><i class="fa fa-flag"></i></a>
+                                                                    </li>
+                                                                </ul>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="x_content">
+
+                                                                <div class="message_wrapper" id="@questionId.Id">
+                                                                    <p class="url">
+                                                                        <span class="fs1" aria-hidden="true" data-icon=""></span>
+                                                                        <h4>Câu hỏi : <strong>@Html.Raw(questionId.Name)</strong></h4>
+
+                                                                        <h4>Lựa chọn đáp án: </h4>
+                                                                    </p>
+                                                                    <form id="target" asp-action="SendResult" asp-controller="UserQuizMonthly">
+                                                                        <blockquote class="message" id="container-question">
+                                                                            <div class="row">
+                                                                                <input name="questionId" class="rbId" value="@questionId.Id" style="display:none" id="questionId" data-qid="@questionId.Id" type="text" />
+                                                                                <input name="quizMonthlyId" class="rbId" value="@Model.ID" style="display:none" type="text" />
+
+                                                                            </div>
+
+                                                                            @if (questionId.Active = true && Model.AnswerMonthlyDtos != null)
+                                                                            {
+                                                                                @if (Model.AnswerMonthlyDtos.FirstOrDefault(x => x.AccountName.Equals(user) && x.QuizMonthlyId.Equals(questionId.QuizMonthlyId) && x.QuestionMonthlyId.Equals(questionId.Id)) == null)
+                                                                                {
+
+                                                                                    @foreach (var opt in questionId.OptionMonthlyDtos.OrderBy(x => Guid.NewGuid()))
+                                                                                    {
+                                                                                        <div style="display:flex">
+                                                                                            <div>
+                                                                                                    <input type="checkbox" name="OwnAnswer" class="rb" value="@opt.Name" />
+                                                                                            </div>
+                                                                                            <div style="margin-left:5px">
+                                                                                                    @Html.Raw(opt.Name)
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <br />
+
+                                                                                    }
+                                                                                    <input type="submit" name="btnSave" id="btnSave" class="btn btn-success btn-sm" value="Lưu đáp án" />
+
+
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @if (Model.HistorySubmitMonthlyDtos.FirstOrDefault(x => x.Submit == true) != null)
+                                                                                    {
+
+                                                                                        @if (Model.AnswerMonthlyDtos.Any(x => x.QuestionMonthlyId.Equals(questionId.Id) && x.QuizMonthlyId.Equals(questionId.QuizMonthlyId) && x.AccountName.Equals(user)))
+                                                                                        {
+
+                                                                                            @foreach (var opt in questionId.OptionMonthlyDtos.OrderBy(x => Guid.NewGuid()))
+                                                                                            {
+                                                                                                <div style="display:flex">
+                                                                                                    <div>
+                                                                                                        <input type="checkbox" name="OwnAnswer" class="rb" value="@opt.Name"
+                                                                            @if (Model.AnswerMonthlyDtos.Any(x =>x.OwnAnswer.Equals(opt.Name) && x.QuestionMonthlyId.Equals(questionId.Id)))
+                                                                            {
+                                                                            @:checked
+                                                                            } />
+                                                                                                    </div>
+                                                                                                    <div style="margin-left:5px">
+                                                                                                        @Html.Raw(opt.Name)
+                                                                                                    </div>
+                                                                                                </div>
+
+
+                                                                                                <br />
+
+                                                                                            }
+                                                                                            <input type="submit" name="btnSave" id="btnSave" class="btn btn-success btn-sm" value="Lưu đáp án"  />
+
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @if (Model.AnswerMonthlyDtos.Any(x => x.QuestionMonthlyId.Equals(questionId.Id) && x.QuizMonthlyId.Equals(questionId.QuizMonthlyId) && x.AccountName.Equals(user)))
+
+                                                                                        {
+
+                                                                                            @foreach (var opt in questionId.OptionMonthlyDtos.OrderBy(x => Guid.NewGuid()))
+                                                                                            {
+                                                                                                <div style="display:flex">
+                                                                                                    <div>
+                                                                                                        <input type="checkbox" name="OwnAnswer" class="rb" value="@opt.Name"
+                                                                            @if (Model.AnswerMonthlyDtos.Any(x =>x.OwnAnswer.Equals(opt.Name) && x.QuestionMonthlyId.Equals(questionId.Id)))
+                                                                            {
+                                                                            @:checked
+                                                                            } />
+                                                                                                    </div>
+                                                                                                    <div style="margin-left:5px">
+                                                                                                        @Html.Raw(opt.Name)
+                                                                                                    </div>
+                                                                                                </div>
+
+
+                                                                                                <br />
+
+                                                                                            }
+                                                                                            <input type="submit" name="btnSave" id="btnSave" class="btn btn-success btn-sm" value="Lưu đáp án" />
+
+                                                                                        }
+                                                                                    }
+
+
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                                @foreach (var opt in questionId.OptionMonthlyDtos.OrderBy(x => Guid.NewGuid()))
+                                                                                {
+                                                                                    <div style="display:flex">
+                                                                                        <div>
+                                                                                            <input type="checkbox" name="OwnAnswer" class="rb" value="@opt.Name" />
+
+                                                                                        </div>
+                                                                                        <div style="margin-left:5px">
+                                                                                            @Html.Raw(opt.Name)
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <br />
+
+                                                                                }
+                                                                                <input type="submit" name="btnSave" id="btnSave" class="btn btn-success btn-sm" value="Lưu đáp án" />
+
+
+                                                                            }
+                                                                        </blockquote>
+
+
+                                                                    </form>
+                                                                    <br />
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+
+                                        }
+                                    }
+                                </li>
+                            </ul>
+                        }
+                        <!-- end of user messages -->
+                </div>
+                <div class="btn btn-xs">
+                    @if (Model.ReportScoreMonthlyDtos.FirstOrDefault(x => x.QuizMonthlyId.Equals(Model.ID) && x.UserName.Equals(User.Identity.Name)) != null)
+                    {
+                        <button id="timeBtn" onclick="setTime()" class="btn btn-app" style="margin:5px" disabled><i class="fa fa-edit"></i>Bắt đầu</button>
+
+                    }
+                    else
+                    {
+                        <button id="timeBtn" onclick="setTime()" class="btn btn-app" style="margin:5px"><i class="fa fa-edit"></i>Bắt đầu</button>
+
+                    }
+                </div>
+                <div class="btn btn-xs">
+                    @if (Model.ReportScoreMonthlyDtos.FirstOrDefault(x => x.QuizMonthlyId.Equals(Model.ID) && x.UserName.Equals(User.Identity.Name)) != null)
+                    {
+                        <form asp-action="CheckResult" asp-controller="UserQuizMonthly">
+                            <input type="text" value="@Model.ID" name="quizMonthlyId" hidden id="quizMonthlyId" />
+                            <button type="submit" onclick="displayResult();" class="btn btn-app" style="margin:5px" id="but1" disabled><i class="fa fa-save"></i>Nộp bài</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="CheckResult" asp-controller="UserQuizMonthly" id="formQuiz">
+                            <input type="text" value="@Model.ID" name="quizMonthlyId" hidden id="quizMonthlyId" />
+                            <button type="submit" onclick="displayResult();" class="btn btn-app" style="margin:5px" id="but1" ><i class="fa fa-save"></i>Nộp bài</button>
+                        </form>
+                    }
+                </div>
+                <div class="btn  btn-xs">
+                    <form asp-action="Index" asp-controller="UserQuizMonthly">
+                        <input type="text" value="@Model.RoleId" name="id" hidden />
+                        <button type="submit" class="btn btn-app" style="margin:5px"><i class="fa fa-arrow-left"></i>Quay về</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+    <script>
+        var quizId = $("#quizMonthlyId").val();
+
+        var key = "timeMonthly" + quizId;
+
+        function removeExistingItem(key) {
+
+                if (localStorage.getItem(key) === null)
+
+                    return false;
+
+                localStorage.removeItem(key);
+
+                return true;
+        }
+
+        $(document).ready(function () {
+            const span = document.getElementsByClassName("rbId");
+
+            const text1 = span.textContent;
+
+            $("#but1").click(function () {
+
+                $(".rb").show();
+
+                $(".rb").attr("disabled", true);
+
+                $("#btnSave").attr("disabled", true);
+
+                removeExistingItem(key)
+
+            });
+        });
+
+        function displayResult() {
+
+
+
+            var result = document.getElementsByTagName("input");
+
+            //var containerQuestion = document.getElementById('container-question');
+            //var inputs = containerQuestion.querySelectorAll('.input')
+            //for (let i = 0;i<inputs.length;i++) {
+            //    inputs[i].disabled = true
+            //}
+            //document.querySelectorAll('input').forEach(element => element.disabled = true);
+            for (i = 0; i < result.length; i++) {
+
+                if (result[i].type == "radio") {
+
+                    if (result[i].checked == false) {
+
+                        $(".rb").attr("disabled", false)
+
+                    }
+
+
+                }
+                if (result[i].type == "submit") {
+
+                    result[i].disabled = true;
+
+                }
+            }
+            removeExistingItem(key);
+            localStorage.setItem("ClickMonthly",1);
+
+
+        }
+    </script>
+    
+    <script>
+        function $(id) {
+            //this function return the ID of the element parsed
+            return document.getElementById(id)
+        }
+
+        function setTime() {
+            //this function ensures that the user enter the correct format
+            var time = document.getElementById("time").value;
+
+            var fields = time.split(':');
+
+            var min = fields[0];
+
+            var sec = fields[1];
+
+            var setDisplayQuestion = document.getElementById("allQuestion").style.display = "block";
+
+
+
+            if (sec < 61) {
+
+                document.getElementById("status").innerHTML = "Đếm ngược";
+
+                count(min, sec, sec);
+
+            }
+
+
+        }
+
+
+
+        function count(min, sec, secLeft) {
+            //this function is the count control is will check if the count down is finish
+            if (min > 0 || secLeft > 0) {
+
+                if (secLeft == 0) {
+
+                    min -= 1;
+
+                    sec = 60;
+
+                }
+                document.getElementById("min").innerHTML = min;
+
+                countDown(min, sec);
+
+                @*$("#timeBtn").attr("disabled", true);*@
+                document.getElementById("timeBtn").disabled = true;
+
+            }
+            else {
+                localStorage.removeItem("timeMonthly"+ document.getElementById("quizMonthlyId").value);
+
+                var result = document.getElementsByTagName("input");
+
+                for (i = 0; i < result.length; i++) {
+
+                    if (result[i].type == "submit") {
+
+                        result[i].disabled = true;
+
+                    }
+                }
+
+                $(".rb").attr("disabled", true);
+
+                $("#but1").attr("disabled", true);
+
+                document.getElementById("timeBtn").disabled = true;
+
+                document.getElementById("time").disabled = false;
+
+                var data = $("#formQuiz").serialize();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/UserQuizMonthly/CheckResult',
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8', // when we use .serialize() this generates the data in query string format. this needs the default contentType (default content type is: contentType: 'application/x-www-form-urlencoded; charset=UTF-8') so it is optional, you can remove it
+                    data: data,
+                    success: function (data) {
+                        location.reload();
+
+                    },
+                    error: function () {
+                        alert('Cập nhật dữ liệu không thành công');
+                    }
+                })
+            }
+        }
+        function countDown(min, sec) {
+            //this function runs the seconds count
+            var time = sec;
+
+            document.getElementById("sec").innerHTML = time;
+
+            var interval = setInterval(function () {
+
+                document.getElementById("sec").innerHTML = --time;
+
+                rememberMe(min, time);
+
+                if (time == 0) {
+
+                    clearInterval(interval);
+
+                    count(min, sec, "00");
+
+                }
+            }, 1000);
+        }
+
+        function rememberMe(min, sec) {
+            //this function stores the time as a local storage incase the page refresh
+            if (typeof (Storage) !== "undefined") {
+
+                var inputString = $("#quizMonthlyId").val();
+
+                localStorage.setItem("timeMonthly"+inputString, min + ':' + sec);
+
+            } else {
+
+                document.getElementById("status").innerHTML = "Ooh my, your browser doesn't support web storage";
+            }
+        }
+        function isTimeSet() {
+            if(localStorage.getItem("ClickMonthly") != null){
+
+                localStorage.removeItem("timeMonthly" + document.getElementById("quizMonthlyId").value);
+
+                localStorage.removeItem("ClickMonthly");
+
+            }else
+            {
+                if (localStorage.getItem("timeMonthly" + document.getElementById("quizMonthlyId").value) != null) {
+
+                var time = localStorage.getItem("timeMonthly" + document.getElementById("quizMonthlyId").value);
+
+                var fields = time.split(':');
+
+                min = fields[0];
+
+                sec = fields[1];
+
+                document.getElementById("status").innerHTML = "Thời gian còn lại";
+
+                var setDisplayQuestion = document.getElementById("allQuestion").style.display = "block";
+
+                document.getElementById("timeBtn").disabled = true;
+
+                document.getElementById("time").disabled = true;
+
+                count(min, sec, sec);
+
+            }
+            }
+
+        }
+
+        //on page load this call the isTimeSet function to check if there is a set time
+        window.onload = isTimeSet();
+
+    </script>
+
+}

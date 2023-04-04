@@ -1,0 +1,245 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>E Learning VXH </title>
+    <link rel="shortcut icon" type="image/x-icon" href="~/icon.ico" />
+
+    <!-- Bootstrap -->
+    <link href="~/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="~/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="~/vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="~/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+
+    <!-- bootstrap-progressbar -->
+    <link href="~/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+    <!-- JQVMap -->
+    <link href="~/vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet" />
+    <!-- bootstrap-daterangepicker -->
+    <link href="~/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+    <!-- Custom Theme Style -->
+
+    <link href="~/build/css/custom.min.css" rel="stylesheet">
+@*    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+*@
+    <style>
+        /* width */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 5px grey;
+            border-radius: 10px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #26B99A;
+            border-radius: 10px;
+        }
+        .nav.side-menu>li.active, .nav.side-menu>li.current-page{
+            border-right: 5px solid #5a0004;
+        } 
+        .nav.side-menu>li.active>a {
+        text-shadow: rgb(0 0 0 / 25%) 0 -1px 0;
+                background: #5a0004;
+        box-shadow: rgb(0 0 0 / 25%) 0 1px 0, inset rgb(255 255 255 / 16%) 0 1px 0;
+        }
+        .nav-md ul.nav.child_menu li:before {
+            background: #5a0004;
+           
+        }
+
+        .nav-sm ul.nav.child_menu li {
+            padding: 0 10px;
+            background: #5a0004;
+        }
+
+        .nav-md ul.nav.child_menu li:before {
+            background: #5a0004;
+
+        }
+
+        .nav-sm .nav.child_menu li.active, .nav-sm .nav.side-menu li.active-sm {
+            border-right: 5px solid #5a0004;
+        }
+
+    </style>
+    @await RenderSectionAsync("Styles", required: false)
+
+</head>
+
+<body class="nav-sm" >
+    <ejs-scripts></ejs-scripts>
+
+    <div class="container body">
+        <div class="main_container" style="background-color:#790001">
+            <div class="col-md-3 left_col" style="background-color:#790001">
+
+                <div class="left_col scroll-view" style="background-color:#790001">
+                    <div class="navbar nav_title" style="border: 0;margin:auto;background-color:#790001">
+                        <a href="/" class="site_title">
+                            <i style="border:none;margin:auto">
+                                <img src="~/build/images/LogoVXH.png" width="70%" height="70%" />
+
+                            </i>
+
+                        </a>
+
+                    </div>
+
+
+                    <div class="clearfix"></div>
+
+                    <!-- menu profile quick info -->
+                    <div class="profile clearfix" style="background-color:#790001">
+                        <div class="profile_pic">
+
+                            @using Microsoft.Extensions.Configuration
+
+                            @inject IConfiguration Configuration
+                            @if (User.Claims.Where(x => x.Type == "Avatar").Select(x => x.Value).FirstOrDefault() == null || User.Identity.Name == null)
+                            {
+                                <img class="img-circle profile_img" src="~/build/images/user.png" alt="Avatar">
+
+                            }
+                            else
+                            {
+                                <img class="img-circle profile_img" src="@User.Claims.Where(x => x.Type == "Avatar").Select(x => x.Value).FirstOrDefault()" loading="lazy" alt="Avatar" title="Change the avatar">
+
+
+                            }
+                        </div>
+                        <div class="profile_info">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <span>Welcome</span>
+                                <h2>@User.Claims.Where(x => x.Type == "FullName").Select(x => x.Value).FirstOrDefault()</h2>
+                            }
+                            else
+                            {
+                                <span>Welcome</span>
+                                <h2>Người dùng</h2>
+                            }
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <!-- sidebar menu -->
+                    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                        <div class="menu_section">
+                            <h3>Menu</h3>
+                            <ul class="nav side-menu">
+                                <li>
+                                    <a asp-action="Index" asp-controller="Home"><i class="fa fa-home"></i> Trang chủ</a>
+                                </li>
+                                <li> 
+                                    <a><i class="fa fa-edit"></i> Khóa học <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li><a href="/khoa-hoc.html" >Danh sách khóa học</a></li>
+
+                                    </ul>
+                                </li>
+                                <li >
+                                    <a><i class="fa fa-question"></i> Kiểm tra<span class="fa fa-chevron-down"></span></a>
+
+                                    <ul class="nav child_menu" >
+                                        <li >
+                                            <a href="/kiem-tra-dinh-ki.html">Kiểm tra định kì</a>
+
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="/tai-khoan-cua-toi.html"><i class="fa fa-bar-chart-o"></i> Tiến độ học tập</a>
+                                </li>
+                                <li>
+                                    <a href="/dat-lich.html"><i class="fa fa-calendar"></i> Đặt lịch</a>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                    </div>
+                    <!-- /sidebar menu -->
+                </div>
+            </div>
+
+            <!-- top navigation -->
+            <div class="top_nav">
+
+                @await Html.PartialAsync("_HeaderPartialView.cshtml")
+            </div>
+            <!-- /top navigation -->
+            <!-- page content -->
+            <div class="right_col" role="main">
+                @RenderBody()
+            </div>
+            <!-- /page content -->
+            <!-- footer content -->
+            <footer>
+                <div class="pull-right">
+                </div>
+                <div class="clearfix"></div>
+            </footer>
+            <!-- /footer content -->
+        </div>
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="~/vendors/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="~/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+@*    <script src="~/vendors/fastclick/lib/fastclick.js"></script>
+*@    <!-- NProgress -->
+    <script src="~/vendors/nprogress/nprogress.js"></script>
+    <!-- Chart.js -->
+    <script src="~/vendors/Chart.js/dist/Chart.min.js"></script>
+    <!-- gauge.js -->
+    <script src="~/vendors/gauge.js/dist/gauge.min.js"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="~/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <!-- iCheck -->
+    <script src="~/vendors/iCheck/icheck.min.js"></script>
+    <!-- Skycons -->
+    <script src="~/vendors/skycons/skycons.js"></script>
+    <!-- Flot -->
+    <script src="~/vendors/Flot/jquery.flot.js"></script>
+    <script src="~/vendors/Flot/jquery.flot.pie.js"></script>
+    <script src="~/vendors/Flot/jquery.flot.time.js"></script>
+    <script src="~/vendors/Flot/jquery.flot.stack.js"></script>
+    <script src="~/vendors/Flot/jquery.flot.resize.js"></script>
+    <!-- Flot plugins -->
+    <script src="~/vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+    <script src="~/vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
+    <script src="~/vendors/flot.curvedlines/curvedLines.js"></script>
+    <!-- DateJS -->
+    <script src="~/vendors/DateJS/build/date.js"></script>
+    <!-- JQVMap -->
+    <script src="~/vendors/jqvmap/dist/jquery.vmap.js"></script>
+    <script src="~/vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
+    <script src="~/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="~/vendors/moment/min/moment.min.js"></script>
+    <script src="~/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+    <!-- Custom Theme Scripts -->
+    <script src="~/build/js/custom.min.js"></script>
+    @*    <script src="~/js/site.js" asp-append-version="true"></script>
+    *@    @await Component.InvokeAsync("Notyf")
+</body>
+</html>

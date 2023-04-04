@@ -1,0 +1,119 @@
+﻿@using WebLearning.Application.Ultities
+
+@model PagedViewModel<WebLearning.Contract.Dtos.Account.AccountDto>
+<div class="wrapper">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Tài khoản</h3>
+
+
+        </div>
+
+        <!-- /.card-header -->
+        <div class="card-body">
+            <div>
+                <a href="/tao-moi-tai-khoan.html" class="btn btn-success btn-icon-split">
+                    <span class="text">Tạo mới</span>
+                </a>
+            </div>
+            <form asp-action="Index" method="get">
+                <input type="text" placeholder="Từ khóa..." name="keyword" />
+                <input type="submit" class="btn btn-info" value="Tìm" />
+                <button type="submit" class="btn btn-default" onclick="window.location.href='/tai-khoan.html'">Reset</button>
+
+            </form>
+            <br />
+
+            <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Code </th>
+                        <th>Họ và tên</th>
+                        <th>Ngày tạo</th>
+                        <th>Lần đăng nhập cuối</th>
+                        <th>Quyền truy cập</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+
+                            @if (item != null)
+                            {
+                                <th>@item.Code</th>
+                                <td>@item.accountDetailDto.FullName</td>
+                                <td>@item.DateCreated</td>
+                                <td>@item.LastLogin</td>
+                                <td>@item.roleDto.RoleName</td>
+                                <td>
+                                    @if (item.Active == 1)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-success badge-dot m-r-10"></div>
+                                            <div>Kích hoạt</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-success badge-dot m-r-10"></div>
+                                            <div>Khóa</div>
+                                        </div>
+                                    }
+
+                                </td>
+
+                                <td>
+                                    @{
+                                        string urlDetail = $"/chi-tiet-tai-khoan/{item.Id}";
+                                        string urlEdit = $"/cap-nhat-tai-khoan/{item.Id}";
+                                        string urlDelete = $"/xoa-tai-khoan/{item.Id}";
+
+                                    }
+                                    <a href="@urlEdit" class="btn btn-warning btn-icon-split">
+                                        <span class="text">Cập nhật</span>
+                                    </a>
+
+                                    <a href="@urlDetail" class="btn btn-info btn-icon-split">
+                                        <span class="text">Chi tiết</span>
+                                    </a>
+                                    <a href="@urlDelete" class="btn btn-danger btn-icon-split">
+                                        <span class="text">Xóa</span>
+                                    </a>
+                                </td>
+                            }
+
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Họ và tên</th>
+                        <th>Ngày tạo</th>
+                        <th>Lần đăng nhập cuối</th>
+                        <th>Quyền truy cập</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </tfoot>
+            </table>
+            <br />
+            @await Component.InvokeAsync("Pager" , Model)
+
+        </div>
+        <!-- /.card-body -->
+
+    </div>
+    <!-- /.card -->
+
+</div>
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+}
+
+
+
+

@@ -1,0 +1,110 @@
+﻿@using WebLearning.Application.Ultities
+@model PagedViewModel<WebLearning.Contract.Dtos.Course.CourseDto>
+
+<div class="wrapper">
+<div class="card">
+    <div class="card-header">
+    <h3 class="card-title">Khóa học</h3>
+
+
+    </div>
+
+    <!-- /.card-header -->
+    <div class="card-body">
+        <div>
+            <a href="/tao-moi-khoa-hoc.html" class="btn btn-success btn-icon-split">
+                <span class="text">Tạo mới</span>
+            </a>
+        </div>
+        <form asp-action="Index" method="get">
+            <input type="text" placeholder="Từ khóa..." name="keyword" />
+            <input type="submit" class="btn btn-info" value="Tìm" />
+            <button type="submit" class="btn btn-default" onclick="window.location.href='/khoa-hoc.html'">Reset</button>
+
+        </form>
+
+        <br/>
+
+        <table id="example1" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Code</th>
+        <th>Chương</th>
+        <th>Ngày tạo</th>
+        <th>Trạng thái</th>
+        <th>Alias</th>
+        <th>Chức năng</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                            
+                @if (item != null)
+                {
+                    <td>@item.Code</td>
+                    <td>@item.Name</td>
+                    <td>@item.DateCreated</td>
+
+                    @if (item.Active == true)
+                    {
+                        <td>
+                            Kích hoạt
+                        </td>
+                    }
+                    else
+                    {
+                        <td>Khóa</td>
+                    }
+                    <td>@item.Alias</td>
+
+                    <td>
+                        @{
+                                        string urlDetail = $"/chi-tiet-khoa-hoc/{item.Alias}/{item.Id}";
+                                        string urlEdit = $"/cap-nhat-khoa-hoc/{item.Alias}/{item.Id}";
+                                        string urlDelete = $"/xoa-khoa-hoc/{item.Alias}/{item.Id}";
+
+                        }
+                        <a href="@urlEdit" class="btn btn-warning btn-icon-split">
+                            <span class="text">Cập nhật</span>
+                        </a>
+
+                        <a href="@urlDetail" class="btn btn-info btn-icon-split">
+                            <span class="text">Chi tiết</span>
+                        </a>
+                        <a href="@urlDelete" class="btn btn-danger btn-icon-split">
+                            <span class="text">Xóa</span>
+                        </a>
+                    </td>
+                }
+
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>Chương</th>
+            <th>Ngày tạo</th>
+            <th>Trạng thái</th>
+            <th>Alias</th>
+            <th>Chức năng</th>
+        </tr>
+        </tfoot>
+    </table>
+        <br/>
+            @await Component.InvokeAsync("Pager" , Model)
+
+    </div>
+    <!-- /.card-body -->
+
+</div>
+<!-- /.card -->
+
+</div>
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+}
+

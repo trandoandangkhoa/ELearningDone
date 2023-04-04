@@ -1,0 +1,168 @@
+﻿@model WebLearning.Contract.Dtos.Quiz.UpdateQuizMonthlyDto;
+
+@{
+    ViewData["Title"] = "Cập nhật bài kiểm tra";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link href="~/plugins/summernote/summernote-bs4.css" rel="stylesheet" />
+    <link href="~/plugins/summernote/summernote.css" rel="stylesheet" />
+}
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Bài kiểm tra - Tạo mới</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="QuizMonthly">Quay lại</a></li>
+                    <li class="breadcrumb-item active">Bài kiểm tra - Tạo mới</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+    <form asp-controller="QuizMonthly" asp-action="Edit" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin bài kiểm tra</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="inputName">Tên Bài kiểm tra</label>
+                            <input type="text" id="inputName" class="form-control" asp-for="Name" value="@Model.Name">
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputStatus">Trạng thái</label>
+                            <select id="inputStatus" class="form-control custom-select" asp-for="Active">
+                                <option selected disabled>Chọn danh mục</option>
+                                <option value="false">Khóa</option>
+                                <option value="true">Kích hoạt</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName">Thời gian làm bài (phút)</label>
+                            <input type="text" id="inputName" class="form-control" asp-for="TimeToDo" value="@Model.TimeToDo">
+                            <span asp-validation-for="TimeToDo" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName">Điểm tối thiểu</label>
+                            <input type="text" id="inputName" class="form-control" asp-for="ScorePass" value="@Model.ScorePass">
+                            <span asp-validation-for="ScorePass" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <div class="col-md-6">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">Mục tiêu </h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="inputEstimatedBudget">Mô tả</label>
+                            <textarea class="summernote" asp-for="Description" value="@Model.Description"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+
+                        </div>
+                    <div class="form-group">
+                        <label for="inputStatus">Thông báo</label>
+                        <select id="inputStatus" class="form-control custom-select" asp-for="Notify">
+                            <option selected disabled>Chọn danh mục</option>
+                            <option value="true">Có</option>
+                            <option value="false">Không</option>
+                        </select>
+                    </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <a href="/bai-kiem-tra-dinh-ki.html" class="btn btn-secondary">Cancel</a>
+                <input type="submit" value="Chỉnh sửa" class="btn btn-warning float-right">
+            </div>
+        </div>
+    </form>
+
+</section>
+
+
+
+@section Scripts{
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+    <link href="~/plugins/summernote/summernote-bs4.css" rel="stylesheet" />
+
+    <script>
+        jQuery(document).ready(function () {
+            $('.summernote').summernote({
+                placeholder: 'Enter content....',
+                tabsize: 2,
+                height: 200,
+                minHeight: 100,
+                maxHeight: 300,
+                focus: true,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']],
+                ],
+                popover: {
+                    image: [
+                        ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+                        ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                        ['remove', ['removeMedia']]
+                    ],
+                    link: [
+                        ['link', ['linkDialogShow', 'unlink']]
+                    ],
+                    table: [
+                        ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+                        ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+                    ],
+                    air: [
+                        ['color', ['color']],
+                        ['font', ['bold', 'underline', 'clear']],
+                        ['para', ['ul', 'paragraph']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture']]
+                    ]
+                },
+                codemirror: {
+                    theme: 'monokai'
+                }
+            });
+        });
+    </script>
+}

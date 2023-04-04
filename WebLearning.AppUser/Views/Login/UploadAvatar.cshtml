@@ -1,0 +1,21 @@
+﻿@using WebLearning.Contract.Dtos.Avatar;
+@model CreateAvatarDto
+@{
+    ViewData["Title"] = "UploadAvatar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form asp-action="uploadAvatar" asp-controller="Login" method="post" enctype="multipart/form-data">
+    <h2>UploadAvatar</h2>
+    <div class="form-group">
+    <label for="exampleInputFile">Ảnh đại diện</label>
+    <div class="input-group">
+        <input type="file" id="exampleInputFile" name="fThumb" asp-for="Image">
+    </div>
+    <span asp-validation-for="Image" class="text-danger">@TempData["fileError"]</span>
+    <input class="btn btn-success" type="submit" value="Thêm ảnh" />
+
+    </div>
+</form>
+
+

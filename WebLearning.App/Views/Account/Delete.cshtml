@@ -1,0 +1,128 @@
+﻿@using WebLearning.Contract.Dtos.Account
+@model AccountDto
+@{
+    ViewData["Title"] = "Xóa tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Tài khoản - Xóa</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Account">Quay lại</a></li>
+                    <li class="breadcrumb-item active">Tài khoản - Xóa</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content">
+    <form asp-controller="Account" asp-action="Delete" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin đăng nhập</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="inputName">Code</label>
+                            <input type="text" id="inputName" class="form-control" asp-for="Code" value="@Model.Code" readonly>
+                            <span asp-validation-for="Code" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName">Email</label>
+                            <input type="text" id="inputName" class="form-control" value="@Model.Email" readonly>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName">Password</label>
+                            <input type="text" id="inputName" class="form-control" value="@Model.Password" readonly>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputStatus">Trạng thái</label>
+                            @if(Model.Active == 0){
+                                <input class="form-control" value="Khóa" readonly />
+
+                            }else if(Model.Active == 1){
+                                <input class="form-control" value="Kích hoạt" readonly />
+
+                            }
+                        </div>
+                        <div class="form-group">
+                            <label for="inputClientCompany">Quyền truy cập</label>
+                            <input type="text" id="inputName" class="form-control" value="@Model.roleDto.RoleName" readonly>
+
+
+                        </div>
+
+                        @*                        <div class="form-group">
+                        <label for="exampleInputFile">Ảnh đại diện</label>
+                        <div class="input-group">
+                        <input type="file" id="exampleInputFile" name="fthumb" value="Image">
+                        </div>
+                        <span asp-validation-for="Image" class="text-danger">@TempData["fileError"]</span>
+
+                        </div>*@
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <div class="col-md-6">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin liên lạc</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="inputName">FullName</label>
+                            <input type="text" id="inputName" class="form-control" value="@Model.accountDetailDto.FullName" readonly>
+                            <span asp-validation-for="@Model.accountDetailDto.FullName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName">Địa chỉ</label>
+                            <input type="text" id="inputName" class="form-control" value="@Model.accountDetailDto.Address" readonly>
+                            <span asp-validation-for="@Model.accountDetailDto.Address" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName">Điện thoại</label>
+                            <input type="text" id="inputName" class="form-control" value="@Model.accountDetailDto.Phone" readonly>
+                            <span asp-validation-for="@Model.accountDetailDto.Phone" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <a href="/tai-khoan.html" class="btn btn-secondary">Cancel</a>
+                <input type="submit" value="Xóa" class="btn btn-danger float-right">
+            </div>
+        </div>
+    </form>
+
+</section>
+
+

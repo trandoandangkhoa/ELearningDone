@@ -1,0 +1,175 @@
+﻿@model WebLearning.Contract.Dtos.Question.QuestionCourseDto;
+
+@{
+    ViewData["Title"] = "Chi tiết câu hỏi kiểm tra";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link href="~/plugins/summernote/summernote-bs4.css" rel="stylesheet" />
+    <link href="~/plugins/summernote/summernote.css" rel="stylesheet" />
+}
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Câu hỏi kiểm tra - Chi tiết</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/chi-tiet-bai-kiem-tra-cuoi-khoa/{@Model.QuizCourseId}/">Quay lại</a></li>
+                    <li class="breadcrumb-item active">Câu hỏi kiểm tra - Chi tiết</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+    <form asp-controller="QuestionCourse" asp-action="Detail" method="get" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-table table-reponsive p-0">
+                        <table class="table table-hover table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Mã câu hỏi</td>
+                                    <td>@Model.Id</td>
+                                </tr>
+                                <tr>
+                                    <td>Code</td>
+                                    <td>@Model.Code</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Nội dung câu hỏi
+                                    </td>
+                                    <td>
+                                        @Html.Raw(Model.Name)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Bài kiểm tra
+                                    </td>
+                                    <td>
+                                        <i>
+                                            @Model.QuizCourseDto.Name
+                                        </i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Điểm</td>
+                                    <td>
+                                        <i>@Model.Point</i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Trạng thái</td>
+                                    <td>
+                                        @if (Model.Active == true)
+                                        {
+                                            <i>
+
+                                            </i>
+                                        }
+                                        else
+                                        {
+                                            <i>
+                                            </i>
+                                        }
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Lựa chọn</td>
+
+                                    <td>
+                                        <table id="OptionField" class="table table-bordered ">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:60%">Lựa chọn</th>
+                                                    <th style="width:10%;">Đáp án đúng</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var option in Model.OptionCourseDtos)
+                                                {
+                                                    <tr>
+                                                        <td>
+
+                                                            <p>@Html.Raw(option.Name)</p>
+                                                        </td>
+                                                        <td style="text-align:center">
+                                                            @foreach (var correct in Model.CorrectAnswerCourseDtos.Where(x => x.OptionCourseId.Equals(option.Id)))
+                                                            {
+                                                                <input type="checkbox" checked disabled />
+                                                            }
+                                                        </td>
+
+                                                    </tr>
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+</section>
+
+
+@section Scripts{
+    <script>
+        function Add() {
+            $('#OptionField > tbody').append(
+                '<tr><td><textarea name="OptionCourses" class="summernote" required="required"></textarea><span class="field-validation-valid text-danger" data-valmsg-for="OptionCourses" data-valmsg-replace="true"></span></td>' +
+                '<td><select class="form-control custom-select" name="CorrectAnswers"><option value="false">Sai</option><option value="true">Đúng</option></select><span class="field-validation-valid text-danger" data-valmsg-for="CorrectAnswers" data-valmsg-replace="true"></span></td>' +
+                '<td><input type="button" onclick="Delete(this)" value="Xóa" class="btn btn-danger" /></td ></tr > '
+            );
+            jQuery(document).ready(function () {
+                $('.summernote').summernote({
+                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                    styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5'],
+                    height: 150,
+                    minHeight: null,
+                    maxHeight: null,
+                    focus: true
+                });
+            });
+        };
+        function Delete(d) {
+            $(d).closest("tr").remove();
+        };
+    </script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+    <link href="~/plugins/summernote/summernote-bs4.css" rel="stylesheet" />
+
+    <script>
+        jQuery(document).ready(function () {
+            $('.summernote').summernote({
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5'],
+                height: 200,
+                minHeight: null,
+                maxHeight: null,
+                focus: true
+            });
+        });
+    </script>
+}

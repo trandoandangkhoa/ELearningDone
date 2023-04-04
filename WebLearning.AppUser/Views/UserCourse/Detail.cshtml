@@ -1,0 +1,290 @@
+﻿@model CourseRoleDto
+@{
+    ViewData["Title"] = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using Microsoft.Extensions.Configuration
+@using WebLearning.Contract.Dtos.CourseRole;
+@using WebLearning.Contract.Dtos.Lession
+@section Styles{
+    <style>
+        .video-wrapper {
+            position: relative;
+            padding-top: 75%;
+            height: 0;
+            /*            height: 0;
+                    overflow: hidden;*/
+        }
+
+        .container-video {
+            max-width: 1080px;
+            margin:auto;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+}
+@inject IConfiguration Configuration
+@if(Model.CourseDto != null)
+{
+    <div class="page-title">
+        <div class="title_left">
+            <h4>
+                <a href="/khoa-hoc.html"><i class="fa fa-home"></i> Trang chủ </a>- @Model.CourseDto.Name
+            </h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div class="col-md-7 col-sm-7 col-xs-12">
+                <div>
+                    <!-- end of user messages -->
+                    <ul class="messages">
+                        <li>
+                            @if (Model.CourseDto.LessionDtos.Count() == 0)
+                            {
+                                <h2>Hiện tại chưa có bài giảng nào</h2>
+                            }
+                            else
+                            {
+                                @foreach (var item in Model.CourseDto.LessionDtos.OrderBy(x => x.DateCreated).Where(x => x.Active == true))
+                                {
+
+                                    var month = item.DateCreated.Month;
+                                    var day = item.DateCreated.Day;
+                                    <div class="row" id="@item.Id">
+                                        <div class="x_panel" style="height:auto">
+                                            <div class="x_title">
+                                                <h3 style="font-size:20px; cursor:pointer" class="collapse-link">@item.Name </h3>
+                                            </div>
+                                            <div class="x_content" style="display:none;">
+
+                                                <div class="message_date">
+                                                    <h3 class="date text-error">@day</h3>
+                                                    <p class="month">@month</p>
+                                                </div>
+                                                <div class="message_wrapper">
+                                                    <p class="url">
+                                                        <span class="fs1" aria-hidden="true" data-icon=""></span>
+                                                        <strong>Tóm tắt bài giảng</strong>
+                                                    </p>               
+                                                    <blockquote id="summernote"><p>@Html.Raw(item.ShortDesc)</p></blockquote>
+                                                    <br />
+
+                                                </div>
+                                                <div class="panel">
+                                                    <div class="x_title" style="margin-top:20px">
+                                                        <h2><i class="fa fa-video-camera"></i> Bài giảng</h2>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    @if(item.LessionVideoDtos.Count() == 0 || item.LessionVideoDtos == null)
+                                                    {
+                                                        <h4>Hiện tại chưa có bài giảng</h4>
+                                                    }
+                                                    else
+                                                    {
+                                                        @foreach (var video in item.LessionVideoDtos)
+                                                        {
+
+                                                            <div class="x_title" style="margin-top:5px" id="@item.Id">
+                                                                <h4 style="font-weight:bold;">@video.Caption</h4>
+                                                            </div>
+
+                                                            <div class="container-video">
+                                                                @if (video.LinkVideo == null && video.FileSize != 0)
+                                                                {
+                                                                    <div class="video-wrapper">
+                                                                        <iframe src="@Configuration["BaseAddress"]/imageLession/@video.ImagePath" height="315" width="560" allowfullscreen="allowfullscreen" frameborder="0" />
+
+                                                                    </div>
+                                                                }
+                                                                <div class="video-wrapper">
+                                                                    <iframe src="@video.LinkVideo" width="640" height="390" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; web-share" allowfullscreen="allowfullscreen"></iframe>
+
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+
+                                                    <div class="x_title" style="margin-top:20px">
+                                                        <h2><i class="fa fa-question-circle"></i> Bài kiểm tra</h2>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    @if (item.QuizlessionDtos.Count() == 0)
+                                                    {
+                                                        <h4>Hiện tại chưa có bài kiểm tra</h4>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="message_wrapper">
+                                                            <p class="url">
+                                                                <span class="fs1" aria-hidden="true" data-icon=""></span>
+                                                                @foreach (var test in item.QuizlessionDtos.OrderBy(x => x.SortItem))
+                                                                {
+
+                                                                    <blockquote id="summernote">
+                                                                        <h4>
+                                                                            <a href="/chi-tiet-khoa-hoc/{@item.Alias}/{@item.CourseId}/{@item.Id}/bai-kiem-tra-theo-bai/{@test.Alias}/{@test.ID}">@test.Name</a>
+                                                                        </h4>
+                                                                    </blockquote>
+
+                                                                }
+                                                            </p>
+
+
+                                                        </div>
+
+                                                    }
+
+                                                    <div class="x_title" style="margin-top:20px">
+                                                        <h2><i class="fa fa-folder-open"></i> Tài liệu tham khảo</h2>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    @if(item.LessionFileDocumentDtos.Count() == 0 || item.LessionFileDocumentDtos == null)
+                                                    {
+                                                        <h4>Hiện tại chưa có tài liệu tham khảo</h4>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="message_wrapper">
+                                                            <p class="url">
+                                                                <span class="fs1" aria-hidden="true" data-icon=""></span>
+                                                                @foreach (var file in item.LessionFileDocumentDtos)
+                                                                {
+
+                                                                    <blockquote id="summernote">
+                                                                        <h4>
+                                                                            @if ((file.ImagePath.ToString().Contains(".docx") || file.ImagePath.ToString().Contains(".docx")) == true)
+                                                                            {
+                                                                                <a href="@Configuration["BaseAddress"]/document/@file.ImagePath"><i class="fa fa-file-word-o"></i> @file.Caption</a>
+                                                                            }
+                                                                            @if (file.ImagePath.ToString().Contains(".pdf") == true)
+                                                                            {
+                                                                                <a href="@Configuration["BaseAddress"]/document/@file.ImagePath"><i class="fa fa-file-pdf-o"></i> @file.Caption</a>
+                                                                            }
+                                                                            @if ((file.ImagePath.ToString().Contains(".xlsx") || file.ImagePath.ToString().Contains(".xls")) == true)
+                                                                            {
+                                                                                <a href="@Configuration["BaseAddress"]/document/@file.ImagePath"><i class="fa fa-file-excel-o"></i> @file.Caption</a>
+                                                                            }
+
+                                                                        </h4>
+                                                                    </blockquote>
+                                                                    
+
+                                                                }
+                                                            </p>
+
+
+                                                        </div>
+                                                    }
+
+
+
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                }
+
+                            }
+
+                        </li>
+                    </ul>
+                    <!-- end of user messages -->
+                </div>
+                <div>
+                    <!-- end of user messages -->
+                    <ul class="messages">
+                        <li>
+                            @if (Model.CourseDto.QuizCourseDto == null)
+                            {
+                                <h4>Hiện tại chưa có bài kiểm tra cuối khóa</h4>
+                            }
+                            else
+                            {
+                                @if (Model.CourseDto.QuizCourseDto.Active == true)
+                                {
+                                    var month = Model.CourseDto.QuizCourseDto.DateCreated.Month;
+                                    var day = Model.CourseDto.QuizCourseDto.DateCreated.Day;
+                                    <div class="row" id="@Model.CourseDto.QuizCourseDto.ID">
+                                        <div class="x_panel" style="height:auto">
+                                            <div class="x_title">
+                                            <h2 style="font-size:20px;cursor:pointer">
+                                                <i class="fa fa-question-circle"></i>
+                                                <a href="/chi-tiet-khoa-hoc/{@Model.CourseDto.Alias}/{@Model.CourseDto.Id}/bai-kiem-tra-cuoi-khoa/{@Model.CourseDto.QuizCourseDto.Alias}/{@Model.CourseDto.QuizCourseDto.ID}">Bài kiểm tra cuối khóa</a>
+
+                                                </h2>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+
+                            }
+                        </li>
+                    </ul>
+                    <!-- end of user messages -->
+                </div>
+            </div>
+
+            <!-- start project-detail sidebar -->
+            <div class="col-md-5 col-sm-5 col-xs-12">
+
+                <section class="x_panel">
+                    <div class="panel-body">
+                        <h3 class="green"><i class="fa fa-paint-brush"></i> @Model.CourseDto.Name</h3>
+
+
+                        <p class="title">Ngày tạo: @Model.CourseDto.DateCreated</p>
+                        <p class="title">Số bài học: @Model.CourseDto.LessionDtos.Where(x => x.Active == true).Count() bài</p>
+
+                        <h2 style="font-weight: bold">Mục lục:</h2>
+                        @foreach (var item in Model.CourseDto.LessionDtos.Where(x => x.Active == true).OrderBy(x => x.DateCreated))
+                        {
+
+                            <ul class="list-unstyled project_files">
+
+                                <li>
+                                    <a href="/chi-tiet-khoa-hoc/{@Model.CourseDto.Alias}/{@Model.CourseDto.Id}#@item.Id"><i class="fa fa-video-camera"></i>@item.Name</a>
+                                </li>
+                            </ul>
+                        }
+                        @if (Model.CourseDto.QuizCourseDto != null && Model.CourseDto.QuizCourseDto.Active == true)
+                        {
+                            <ul class="list-unstyled project_files">
+                                <li>
+                                    <a href="/chi-tiet-khoa-hoc/{@Model.CourseDto.Alias}/{@Model.CourseDto.Id}#@Model.CourseDto.QuizCourseDto.ID"><i class="fa fa-question-circle"></i>@Model.CourseDto.QuizCourseDto.Name</a>
+
+                                </li>
+                            </ul>
+                        }
+
+                        <h2 style="font-weight:bold">Giới Thiệu</h2>
+                        <p>@Html.Raw(Model.CourseDto.Description)</p>
+                        <br />
+
+
+                        <br />
+                    </div>
+
+                </section>
+
+            </div>
+                <!-- end project-detail sidebar -->
+
+        </div>
+    </div>
+}

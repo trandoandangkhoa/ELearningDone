@@ -1,0 +1,393 @@
+﻿@model NotificationItemViewModel
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+
+@if(Model.NotificationResponseDtos != null)
+{
+
+    foreach (var notification in Model.NotificationResponseDtos.Take(5))
+    {
+        var time = DateTime.Now - notification.DateCreated;
+        @if (Model.OwnCourseDtos != null && Model.OwnCourseDtos.Count > 0)
+        {
+            foreach (var course in Model.OwnCourseDtos.Where(x => x.Id.Equals(notification.TargetNotificationId)))
+            {
+                if (course != null)
+                {
+                    <li>
+
+                        <a href="/danh-dau/@notification.TargetNotificationId/@notification.AccountName">
+                            <span style="float:right">
+                                Đánh dấu đã xem
+                            </span>
+                        </a>
+                        <a href="chi-tiet-khoa-hoc/@notification.Alias/@notification.TargetNotificationId">
+                            @if (notification.TargetImagePath != null)
+                            {
+                                <span class="image">
+                                    <img src="@Configuration["BaseAddress"]/imageCourse/@notification.TargetImagePath" style="width:60px; height:60px">
+                                </span>
+
+                            }
+
+                            <span class="message" style="margin:auto">
+
+                                <span>
+                                    @notification.TargetName
+                                </span><br />
+                                <span>
+                                    @notification.DescNotify
+                                </span><br/>
+                                <i class="fa fa-clock-o"></i>
+                                @if (time.Days > 0)
+                                {
+                                    <span>
+                                        @time.Days ngày trước
+                                    </span>
+                                }
+                                else if (time.Hours > 0)
+                                {
+                                    <span>
+                                        @time.Hours giờ trước
+                                    </span>
+                                }
+                                else if (time.Minutes > 0)
+                                {
+                                    <span>
+                                        @time.Minutes phút trước
+                                    </span>
+                                }
+                                else if (time.Seconds > 0)
+                                {
+                                    <span>
+                                        @time.Seconds giây trước
+                                    </span>
+                                }
+
+                            </span>
+                        </a>
+                    </li>
+
+                }
+
+            }
+            foreach (var lession in Model.OwnCourseDtos.Where(x => x.LessionDtos.Any(x => x.Id.Equals(notification.TargetNotificationId))))
+            {
+                if (lession != null)
+                {
+                    <li>
+                        <a href="/danh-dau/@notification.TargetNotificationId/@notification.AccountName">
+                            <span style="float:right">
+                                Đánh dấu đã xem
+                            </span>
+                        </a>
+                        <a href="/chi-tiet-khoa-hoc/@notification.FatherAlias/@notification.FatherTargetId">
+                            @if (notification.TargetImagePath != null)
+                            {
+                                <span class="image">
+                                    <img src="@Configuration["BaseAddress"]/imageCourse/@notification.TargetImagePath" style="width:60px; height:60px">
+                                </span>
+
+                            }
+
+                            <span class="message" style="margin:auto">
+
+                                <span>
+                                    @notification.TargetName
+                                </span><br />
+                                <span>
+                                    @notification.DescNotify
+                                </span><br />
+                                <i class="fa fa-clock-o"></i>
+                                @if (time.Days > 0)
+                                {
+                                    <span>
+                                        @time.Days ngày trước
+                                    </span>
+                                }
+                                else if (time.Hours > 0)
+                                {
+                                    <span>
+                                        @time.Hours giờ trước
+                                    </span>
+                                }
+                                else if (time.Minutes > 0)
+                                {
+                                    <span>
+                                        @time.Minutes phút trước
+                                    </span>
+                                }
+                                else if (time.Seconds > 0)
+                                {
+                                    <span>
+                                        @time.Seconds giây trước
+                                    </span>
+                                }
+
+                            </span>
+                        </a>
+                    </li>
+                }
+
+            }
+            foreach (var videoLession in Model.OwnCourseDtos.Where(x => x.LessionDtos.Any(x => x.LessionVideoDtos.Any(x => x.Id.Equals(notification.TargetNotificationId)))))
+            {
+                if (videoLession != null)
+                {
+                    <li>
+                        <a href="/danh-dau/@notification.TargetNotificationId/@notification.AccountName">
+                            <span style="float:right">
+                                Đánh dấu đã xem
+                            </span>
+                        </a>
+                        <a href="/chi-tiet-khoa-hoc/@notification.FatherAlias/@notification.FatherTargetId">
+                            @if (notification.TargetImagePath != null)
+                            {
+                                <span class="image">
+                                    <img src="@Configuration["BaseAddress"]/imageCourse/@notification.TargetImagePath" style="width:60px; height:60px">
+                                </span>
+
+                            }
+
+                            <span class="message" style="margin:auto">
+
+                                <span>
+                                    @notification.TargetName
+                                </span><br />
+                                <span>
+                                    @notification.DescNotify
+                                </span><br />
+                                <i class="fa fa-clock-o"></i>
+
+                                <span>
+
+                                    @if (time.Days > 0)
+                                    {
+                                        <span>
+                                            @time.Days ngày trước
+                                        </span>
+                                    }
+                                    else if (time.Hours > 0)
+                                    {
+                                        <span>
+                                            @time.Hours giờ trước
+                                        </span>
+                                    }
+                                    else if (time.Minutes > 0)
+                                    {
+                                        <span>
+                                            @time.Minutes phút trước
+                                        </span>
+                                    }
+                                    else if (time.Seconds > 0)
+                                    {
+                                        <span>
+                                            @time.Seconds giây trước
+                                        </span>
+                                    }
+                                </span>
+
+                            </span>
+                        </a>
+
+                    </li>
+                }
+            }
+
+            foreach (var quizLession in Model.OwnCourseDtos.Where(x => x.LessionDtos.Any(x => x.QuizlessionDtos.Any(x => x.ID.Equals(notification.TargetNotificationId)))))
+            {
+                if (quizLession != null)
+                {
+                    <li>
+                        <a href="/danh-dau/@notification.TargetNotificationId/@notification.AccountName">
+                            <span style="float:right">
+                                Đánh dấu đã xem
+                            </span>
+                        </a>
+                        <a href="/chi-tiet-khoa-hoc/@notification.FatherAlias/@notification.FatherTargetId">
+                            @if (notification.TargetImagePath != null)
+                            {
+                                <span class="image">
+                                    <img src="@Configuration["BaseAddress"]/imageCourse/@notification.TargetImagePath" style="width:60px; height:60px">
+                                </span>
+
+                            }
+
+                            <span class="message" style="margin:auto">
+
+                                <span>
+                                    @notification.TargetName
+                                </span><br />
+                                <span>
+                                    @notification.DescNotify
+                                </span><br />
+                                                                <i class="fa fa-clock-o"></i>
+
+                                @if (time.Days > 0)
+                                {
+                                    <span>
+                                        @time.Days ngày trước
+                                    </span>
+                                }
+                                else if (time.Hours > 0)
+                                {
+                                    <span>
+                                        @time.Hours giờ trước
+                                    </span>
+                                }
+                                else if (time.Minutes > 0)
+                                {
+                                    <span>
+                                        @time.Minutes phút trước
+                                    </span>
+                                }
+                                else if (time.Seconds > 0)
+                                {
+                                    <span>
+                                        @time.Seconds giây trước
+                                    </span>
+                                }
+
+                            </span>
+
+                        </a>
+
+                    </li>
+                }
+            }
+            foreach(var item in Model.OwnCourseDtos.Select(x => x.QuizCourseDto))
+            {
+                if(item != null)
+                {
+                    if (item.ID.Equals(notification.TargetNotificationId))
+                    {
+                        <li>
+                            <a href="/danh-dau/@notification.TargetNotificationId/@notification.AccountName">
+                                <span style="float:right">
+                                    Đánh dấu đã xem
+                                </span>
+                            </a>
+                            <a href="/chi-tiet-khoa-hoc/@notification.FatherAlias/@notification.FatherTargetId/bai-kiem-tra-cuoi-khoa/@notification.Alias/@notification.TargetNotificationId">
+                                @if (notification.TargetImagePath != null)
+                                {
+                                    <span class="image">
+                                        <img src="@Configuration["BaseAddress"]/imageCourse/@notification.TargetImagePath" style="width:60px; height:60px">
+                                    </span>
+
+                                }
+
+                                <span class="message" style="margin:auto">
+
+                                    <span>
+                                        @notification.TargetName
+                                    </span><br />
+                                    <span>
+                                        @notification.DescNotify
+                                    </span><br />
+                                                                    <i class="fa fa-clock-o"></i>
+
+                                    @if (time.Days > 0)
+                                    {
+                                        <span>
+                                            @time.Days ngày trước
+                                        </span>
+                                    }
+                                    else if (time.Hours > 0)
+                                    {
+                                        <span>
+                                            @time.Hours giờ trước
+                                        </span>
+                                    }
+                                    else if (time.Minutes > 0)
+                                    {
+                                        <span>
+                                            @time.Minutes phút trước
+                                        </span>
+                                    }
+                                    else if (time.Seconds > 0)
+                                    {
+                                        <span>
+                                            @time.Seconds giây trước
+                                        </span>
+                                    }
+                                </span>
+
+                            </a>
+
+                        </li>
+                    }
+
+                }
+            }
+
+
+        }
+
+
+        @foreach (var quizMonthly in Model.QuizMonthlyDtos.Where(x => x.ID.Equals(notification.TargetNotificationId)))
+        {
+            <li>
+                <a href="/danh-dau/@notification.TargetNotificationId/@notification.AccountName">
+                    <span style="float:right">
+                        Đánh dấu đã xem
+                    </span>
+                </a>
+                <a href="/bai-kiem-tra-dinh-ki/@notification.Alias/@notification.TargetNotificationId">
+                    @if (notification.TargetImagePath != null)
+                    {
+                        <span class="image">
+                            <img src="@Configuration["BaseAddress"]/imageCourse/@notification.TargetImagePath" style="width:60px; height:60px">
+                        </span>
+
+                    }
+
+                    <span class="message" style="margin:auto">
+
+                        <span>
+                            @notification.TargetName
+                        </span><br />
+                        <span>
+                            @notification.DescNotify
+                        </span><br />
+                        <i class="fa fa-clock-o"></i>
+
+                        <span style="margin-top:5px">
+
+                            @if (time.Days > 0)
+                            {
+                                <span>
+                                    @time.Days ngày trước
+                                </span>
+                            }
+                            else if (time.Hours > 0)
+                            {
+                                <span>
+                                    @time.Hours giờ trước
+                                </span>
+                            }
+                            else if (time.Minutes > 0)
+                            {
+                                <span>
+                                    @time.Minutes phút trước
+                                </span>
+                            }
+                            else if (time.Seconds > 0)
+                            {
+                                <span>
+                                    @time.Seconds giây trước
+                                </span>
+                            }
+                        </span>
+
+                    </span>
+
+                </a>
+
+            </li>
+        }
+
+    }
+
+
+}

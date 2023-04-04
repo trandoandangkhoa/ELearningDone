@@ -1,0 +1,238 @@
+﻿@model WebLearning.Contract.Dtos.Course.CourseDto;
+
+@{
+    ViewData["Title"] = "Chi tiết về khóa học";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link href="~/plugins/summernote/summernote-bs4.css" rel="stylesheet" />
+    <link href="~/plugins/summernote/summernote.css" rel="stylesheet" />
+}
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+<section class="content">
+    <form asp-controller="Course" asp-action="Detail" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <a asp-action="Index" asp-controller="Course">
+                    <h3 class="card-title">
+                        <i class="fas fa-step-backward"></i>
+                        Quay lại
+                    </h3>
+                </a>
+
+            </div>
+            <div class="card-body">
+                <h4> Chi tiết khóa học</h4>
+                <div class="row">
+                    <div class="col-5 col-sm-3">
+                        <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
+                            <a class="nav-link active" id="vert-tabs-home-tab" data-toggle="pill" href="#vert-tabs-home" role="tab" aria-controls="vert-tabs-home" aria-selected="true">Thông tin khóa học</a>
+                            <a class="nav-link" id="vert-tabs-profile-tab" data-toggle="pill" href="#vert-tabs-profile" role="tab" aria-controls="vert-tabs-profile" aria-selected="false">Ảnh đại diện</a>
+                            <a class="nav-link" id="vert-tabs-messages-tab" data-toggle="pill" href="#vert-tabs-messages" role="tab" aria-controls="vert-tabs-messages" aria-selected="false">Mô tả</a>
+                        </div>
+                    </div>
+                    <div class="col-7 col-sm-9">
+                        <div class="tab-content" id="vert-tabs-tabContent">
+                            <div class="tab-pane text-left fade show active" id="vert-tabs-home" role="tabpanel" aria-labelledby="vert-tabs-home-tab">
+                                <div class="form-group">
+                                    <label for="inputName">Code</label>
+                                    <input type="text" id="inputName" class="form-control" asp-for="Code" value="@Model.Code" readonly>
+                                    <span asp-validation-for="Code" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputName">Tên khóa học</label>
+                                    <input type="text" id="inputName" class="form-control" asp-for="Name" value="@Model.Name" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputStatus">Trạng thái</label>
+
+                                    @if (Model.Active == true)
+                                    {
+                                        <td>
+                                            <input type="text" class="form-control" value="Kích hoạt" readonly>
+
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <input type="text" class="form-control" value="Khóa" readonly>
+
+                                        </td>
+                                    }
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputClientCompany">Alias</label>
+                                    <input type="text" id="inputClientCompany" class="form-control" asp-for="Alias" value="@Model.Alias" readonly>
+                                </div>
+                                <div class="form-group">
+
+                                    @if (Model.Notify == true)
+                                    {
+                                        <td>
+                                            <span>Thông báo</span>
+                                            <input type="text" class="form-control" value="Có" readonly>
+
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <span>Thông báo</span>
+                                            <input type="text" class="form-control" value="Không" readonly>
+
+                                        </td>
+                                    }
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="vert-tabs-profile" role="tabpanel" aria-labelledby="vert-tabs-profile">
+                                <div class="form-group">
+                                    @foreach (var item in Model.CourseImageVideoDto)
+                                    {
+                                        <img src="@Configuration["BaseAddress"]/imageCourse/@item.ImagePath" alt="@Model.Name" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="vert-tabs-messages" role="tabpanel" aria-labelledby="vert-tabs-messages-tab">
+                                <textarea id="summernote" asp-for="@Model.Description" readonly>@Html.Raw(Model.Description)</textarea>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-secondary">
+                <div class="card-header">
+                    <h3 class="card-title">Các chương</h3>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <a href="/chi-tiet-khoa-hoc/@Model.Alias/{@Model.Id}/tao-moi-chuong.html" class="btn btn-success btn-icon-split">
+                            <span class="text">Tạo mới</span>
+                        </a>
+                    </div>
+                    <form asp-action="Detail" method="post">
+                        <input type="text" placeholder="Từ khóa..." name="keyword" />
+                        <input type="text" value="@Model.Id" hidden name="id" />
+                        <input type="submit" class="btn btn-info" value="Tìm" />
+                        <button type="submit" class="btn btn-default" onclick="window.location.href=$'chi-tiet-bai-kiem-tra-cuoi-khoa/{@Model.Id}'">Reset</button>
+
+                    </form>
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Tên chương</th>
+                                <th>Trạng thái</th>
+                                <th>Alias</th>
+                                <th>Chức năng</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model.LessionDtos)
+                            {
+                                <tr>
+
+                                    @if (item != null)
+                                    {
+                                        <td>@item.Code</td>
+                                        <td>@item.Name</td>
+                                        @if (item.Active == true)
+                                        {
+                                            <td>
+                                                Kích hoạt
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>Khóa</td>
+                                        }
+                                        <td>@item.Alias</td>
+
+                                        <td>
+                                            @{
+                                                string urlDetail = $"/chi-tiet-khoa-hoc/{Model.Alias}/{Model.Id}/chi-tiet-chuong/{item.Alias}/{item.Id}";
+                                                string urlEdit = $"/chi-tiet-khoa-hoc/{Model.Alias}/{Model.Id}/cap-nhat-chuong/{item.Alias}/{item.Id}";
+                                                string urlDelete = $"/chi-tiet-khoa-hoc/{Model.Alias}/{Model.Id}/xoa-chuong/{item.Alias}/{item.Id}";
+
+                                            }
+                                            <a href="@urlEdit" class="btn btn-warning btn-icon-split">
+                                                <span class="text">Cập nhật</span>
+                                            </a>
+
+                                            <a href="@urlDetail" class="btn btn-info btn-icon-split">
+                                                <span class="text">Chi tiết</span>
+                                            </a>
+                                            <a href="@urlDelete" class="btn btn-danger btn-icon-split">
+                                                <span class="text">Xóa</span>
+                                            </a>
+                                        </td>
+                                    }
+
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Code</th>
+                                <th>Tên chương</th>
+                                <th>Trạng thái</th>
+                                <th>Alias</th>
+                                <th>Chức năng</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+
+
+
+                    <br />
+                </div>
+
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+
+
+    </div>
+</section>
+
+
+
+@section Scripts{
+    <script src="~/plugins/codemirror/codemirror.js"></script>
+    <script src="~/plugins/codemirror/mode/css/css.js"></script>
+    <script src="~/plugins/codemirror/mode/xml/xml.js"></script>
+
+    <script src="~/plugins/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+
+    <script>
+        jQuery(document).ready(function () {
+            $('#summernote').summernote({
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5'],
+                height: 500,
+                minHeight: null,
+                maxHeight: null,
+                focus: true
+            });
+        });
+    </script>
+
+}

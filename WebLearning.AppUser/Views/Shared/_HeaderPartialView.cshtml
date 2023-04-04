@@ -1,0 +1,68 @@
+﻿
+<div class="nav_menu">
+    <nav>
+        <div class="nav toggle">
+            <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="">
+                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    @if (User.Claims.Where(x => x.Type == "Avatar").Select(x => x.Value).FirstOrDefault() == null || User.Identity.Name == null)
+                    {
+                        <img src="~/build/images/user.png" alt="Avatar" />@User.Claims.Where(x => x.Type == "FullName").Select(x => x.Value).FirstOrDefault()
+                        <span class=" fa fa-angle-down"></span>
+
+                    }
+                    else
+                    {
+                        <img src="@User.Claims.Where(x => x.Type == "Avatar").Select(x => x.Value).FirstOrDefault()" alt="Avatar" loading="lazy" />@User.Claims.Where(x => x.Type == "FullName").Select(x => x.Value).FirstOrDefault()
+                         <span class=" fa fa-angle-down"></span>
+
+
+                    }
+
+                </a>
+                <ul class="dropdown-menu dropdown-usermenu pull-right">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li><a href="/tai-khoan-cua-toi.html"> Tài khoản của tôi</a></li>
+                        <li>
+                            <a>
+                                <form asp-action="LogOutAccount" asp-controller="Login" method="post">
+                                    <span class="glyphicon glyphicon-off" aria-hidden="true" typeof="submit"></span>
+                                    <span> <input type="submit" value="Đăng Xuất" style="border:none;background:none;margin:auto; " /></span>
+                                </form>
+
+                            </a>
+                        </li>
+
+                    }
+                    else
+                    {
+                        <li><a asp-action="Login" asp-controller="Login">Log in</a></li>
+
+                    }
+                </ul>
+            </li>
+            <li role="presentation" class="dropdown" >
+                <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                    @await Component.InvokeAsync("NumberNotify")
+
+                </a>
+                <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu" style="max-height:300px; overflow-y:scroll;">
+                 @await Component.InvokeAsync("HeaderNotify")
+                <li >
+                    <div class="text-center">
+                        <a href="/thong-bao.html">
+                            <strong>Xem tất cả</strong>
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    </div>
+                </li>
+                </ul>
+
+            </li>
+
+        </ul>
+    </nav>
+</div>

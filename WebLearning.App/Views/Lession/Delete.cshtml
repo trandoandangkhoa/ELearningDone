@@ -1,0 +1,267 @@
+﻿@using WebLearning.Contract.Dtos.Lession;
+@model LessionDto;
+@{
+    ViewData["Title"] = "Xóa chương";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link href="~/plugins/summernote/summernote-bs4.css" rel="stylesheet" />
+    <link href="~/plugins/summernote/summernote.css" rel="stylesheet" />
+}
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+<form asp-controller="Lession" asp-action="Delete" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <a asp-action="Index" asp-controller="Lession">
+                <h3 class="card-title">
+                    <i class="fas fa-step-backward"></i>
+                    Quay lại
+                </h3>
+            </a>
+
+        </div>
+        <div class="card-body">
+            <h4> Chi tiết Chương</h4>
+            <div class="row">
+                <div class="col-5 col-sm-3">
+                    <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
+                        <a class="nav-link active" id="vert-tabs-home-tab" data-toggle="pill" href="#vert-tabs-home" role="tab" aria-controls="vert-tabs-home" aria-selected="true">Thông tin chương</a>
+                        <a class="nav-link" id="vert-tabs-desc-tab" data-toggle="pill" href="#vert-tabs-desc" role="tab" aria-controls="vert-tabs-desc" aria-selected="false">Nội dung</a>
+                        <a class="nav-link" id="vert-tabs-profile-tab" data-toggle="pill" href="#vert-tabs-profile" role="tab" aria-controls="vert-tabs-profile" aria-selected="false">Bài học liên quan</a>
+
+                        <a class="nav-link" id="vert-tabs-file-tab" data-toggle="pill" href="#vert-tabs-file" role="tab" aria-controls="vert-tabs-file" aria-selected="false">File đính kèm</a>
+                        <a class="nav-link" href="/chi-tiet-khoa-hoc/@Model.CourseDto.Alias/@Model.CourseId/chi-tiet-chuong/@Model.Alias/@Model.Id/tao-moi-bai-giang.html" role="tab" aria-selected="false">Thêm bài học</a>
+                        <a class="nav-link" href="/chi-tiet-khoa-hoc/@Model.CourseDto.Alias/@Model.CourseId/chi-tiet-chuong/@Model.Alias/@Model.Id/them-tai-lieu-tham-khao.html" role="tab" aria-selected="false">Thêm tài liệu tham khảo</a>
+                    </div>
+                </div>
+                <div class="col-7 col-sm-9">
+                    <div class="tab-content" id="vert-tabs-tabContent">
+                        <div class="tab-pane text-left fade show active" id="vert-tabs-home" role="tabpanel" aria-labelledby="vert-tabs-home-tab">
+                                                    <div class="form-group">
+                            <label for="inputName">Code</label>
+                            <input type="text" id="inputName" class="form-control" asp-for="Code" value="@Model.Code" readonly>
+                            <span asp-validation-for="Code" class="text-danger"></span>
+                        </div>
+                            <div class="form-group">
+                                <label for="inputName">Tên Chương</label>
+                                <input type="text" id="inputName" class="form-control" asp-for="Name" value="@Model.Name" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputStatus">Trạng thái</label>
+
+                                @if (Model.Active == true)
+                                {
+                                    <td>
+                                        <input type="text" class="form-control" value="Kích hoạt" readonly>
+
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <input type="text" class="form-control" value="Khóa" readonly>
+
+                                    </td>
+                                }
+                            </div>
+                            <div class="form-group">
+                                <label for="inputClientCompany">Chương</label>
+                                <input type="text" id="inputClientCompany" class="form-control" asp-for="CourseId" value="@Model.CourseDto.Name" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputClientCompany">Alias</label>
+                                <input type="text" id="inputClientCompany" class="form-control" asp-for="Alias" value="@Model.Alias" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputClientCompany">Tác giả</label>
+                                <input type="text" id="inputClientCompany" class="form-control" asp-for="Alias" value="@Model.Author" readonly>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="vert-tabs-desc" role="tabpanel" aria-labelledby="vert-tabs-desc-tab">
+                            <div class="form-group">
+                                <label for="inputClientCompany">Mô tả</label>
+                                <textarea id="summernote" asp-for="@Model.ShortDesc" readonly>@Html.Raw(Model.ShortDesc)</textarea>
+                            </div>
+                            <div class="form-group">
+
+
+                        </div>
+                        <div class="tab-pane fade" id="vert-tabs-profile" role="tabpanel" aria-labelledby="vert-tabs-profile">
+                            <div class="form-group">
+                                <table id="example1" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:24%">Video</th>
+                                            <th style="width:20%">Path</th>
+                                            <th style="width:10%">Thứ tự</th>
+                                            <th style="width:20%">Ngày tạo</th>
+                                            <th style="width:16%">Size</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @if(Model.LessionVideoDtos != null)
+                                        {
+                                            @foreach (var item in Model.LessionVideoDtos)
+                                            {
+                                                if (item != null)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <iframe src="@Configuration["BaseAddress"]/imageLession/@item.ImagePath"
+                                                        frameborder="0"
+                                                        allowfullscreen></iframe>
+                                                        </td>
+                                                        <td>@item.ImagePath</td>
+                                                        <td>@item.SortOrder</td>
+                                                        <td>@item.DateCreated</td>
+                                                        <td>@item.FileSize</td>
+                                                        <td>
+                                                            @{
+                                                                string urlDetail = $"/chi-tiet-khoa-hoc/{Model.CourseDto.Alias}/{Model.CourseId}/chi-tiet-chuong/{item.Alias}/{item.Id}";
+                                                                string urlEdit = $"/chi-tiet-khoa-hoc/{Model.CourseDto.Alias}/{Model.CourseId}/cap-nhat-chuong/{item.Alias}/{item.Id}";
+                                                                string urlDelete = $"/chi-tiet-khoa-hoc/{Model.CourseDto.Alias}/{Model.CourseId}/xoa-chuong/{item.Alias}/{item.Id}";
+                                                            }
+                                                            <a asp-action="EditVideo" asp-controller="Lession" class="btn btn-warning btn-icon-split" asp-route-id="@item.Id">
+                                                                <span class="text">Cập nhật</span>
+                                                            </a>
+
+                                                            <a asp-action="DeleteVideo" class="btn btn-danger btn-icon-split" asp-route-id="@item.Id">
+                                                                <span class="text">Xóa</span>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th style="width:24%">Video</th>
+                                            <th style="width:20%">Path</th>
+                                            <th style="width:20%">Thứ tự</th>
+                                            <th style="width:20%">Ngày tạo</th>
+                                            <th style="width:16%">Size</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="tab-pane fade" id="vert-tabs-file" role="tabpanel" aria-labelledby="vert-tabs-file">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width:24%">File</th>
+                                        <th style="width:20%">Path</th>
+                                        <th style="width:20%">Thứ tự</th>
+                                        <th style="width:20%">Ngày tạo</th>
+                                        <th style="width:16%">Size</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @if(Model.LessionFileDocumentDtos != null)
+                                    {
+                                        @foreach (var item in Model.LessionFileDocumentDtos)
+                                        {
+                                            if (item != null)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @if ((item.ImagePath.ToString().Contains(".docx") || item.ImagePath.ToString().Contains(".docx")) == true)
+                                                        {
+                                                            <a href="@Configuration["BaseAddress"]/document/@item.ImagePath"><i class="fa fa-file-word-o"></i> @item.Caption</a>
+                                                        }
+                                                        @if (item.ImagePath.ToString().Contains(".pdf") == true)
+                                                        {
+                                                            <a href="@Configuration["BaseAddress"]/document/@item.ImagePath"><i class="fa fa-file-pdf-o"></i> @item.Caption</a>
+                                                        }
+                                                        @if ((item.ImagePath.ToString().Contains(".xlsx") || item.ImagePath.ToString().Contains(".xls")) == true)
+                                                        {
+                                                            <a href="@Configuration["BaseAddress"]/document/@item.ImagePath"><i class="fa fa-file-excel-o"></i> @item.Caption</a>
+                                                        }
+                                                    </td>
+                                                    <td>@item.ImagePath</td>
+                                                    <td>@item.SortOrder</td>
+                                                    <td>@item.DateCreated</td>
+                                                    <td>@item.FileSize</td>
+                                                    <td>
+
+                                                        <a asp-action="DeleteVideo" class="btn btn-danger btn-icon-split" asp-route-id="@item.Id">
+                                                            <span class="text">Xóa</span>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th style="width:24%">File</th>
+                                        <th style="width:20%">Path</th>
+                                        <th style="width:20%">Thứ tự</th>
+                                        <th style="width:20%">Ngày tạo</th>
+                                        <th style="width:16%">Size</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <a href="/chi-tiet-khoa-hoc/{@Model.CourseDto.Alias}/{@Model.CourseId}" class="btn btn-secondary">Cancel</a>
+                    <input type="submit" value="Xóa" class="btn btn-danger float-right">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</form>
+
+@section Scripts{
+    <script src="~/plugins/codemirror/codemirror.js"></script>
+    <script src="~/plugins/codemirror/mode/css/css.js"></script>
+    <script src="~/plugins/codemirror/mode/xml/xml.js"></script>
+
+    <script src="~/plugins/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+
+    <script>
+        jQuery(document).ready(function () {
+            $('#summernote').summernote({
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5'],
+                height: 500,
+                minHeight: null,
+                maxHeight: null,
+                focus: true
+            });
+        });
+        jQuery(document).ready(function () {
+            $('#summernote1').summernote({
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5'],
+                height: 500,
+                minHeight: null,
+                maxHeight: null,
+                focus: true
+            });
+        });
+    </script>
+
+}

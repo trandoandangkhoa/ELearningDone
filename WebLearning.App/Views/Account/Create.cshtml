@@ -1,0 +1,146 @@
+﻿@model WebLearning.Contract.Dtos.Account.CreateAccountDto
+
+@{
+    ViewData["Title"] = "Thêm tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link href="~/plugins/summernote/summernote-bs4.css" rel="stylesheet" />
+    <link href="~/plugins/summernote/summernote.css" rel="stylesheet" />
+}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Tài khoản - Tạo mới</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Account">Quay lại</a></li>
+                    <li class="breadcrumb-item active">Tài khoản - Tạo mới</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content">
+    <form asp-controller="Account" asp-action="Create" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin đăng nhập</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="inputName">Email</label>
+                            <input type="text" id="inputName" class="form-control" asp-for="Email">
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName">Password</label>
+                            <input type="text" id="inputName" class="form-control" asp-for="Password">
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputStatus">Trạng thái</label>
+                                <select class="form-control custom-select" asp-for="Active">
+                                    <option value="" disabled selected>Chọn danh mục</option>
+                                    <option value="0" >Khóa</option>
+                                    <option value="1" >Kích hoạt</option>
+
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputClientCompany">Quyền truy cập</label>
+                            <select class="form-control custom-select" asp-for="RoleId" asp-items="ViewBag.DanhMuc">
+                                <option value="" disabled selected>Chọn danh mục</option>
+                            </select>
+
+                        </div>
+@*                        <div class="form-group">
+                            <label for="exampleInputFile">Ảnh đại diện</label>
+                            <div class="input-group">
+                                <input type="file" id="exampleInputFile" name="fthumb" asp-for="Image">
+                            </div>
+                            <span asp-validation-for="Image" class="text-danger">@TempData["fileError"]</span>
+
+                        </div>*@
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <div class="col-md-6">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin liên lạc</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="inputName">FullName</label>
+                            <input type="text" id="inputName" class="form-control" asp-for="FullName">
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName">Địa chỉ</label>
+                            <input type="text" id="inputName" class="form-control" asp-for="Address">
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName">Điện thoại</label>
+                            <input type="text" id="inputName" class="form-control" asp-for="Phone">
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <a href="/tai-khoan.html" class="btn btn-secondary">Cancel</a>
+                <input type="submit" value="Tạo mới" class="btn btn-success float-right">
+            </div>
+        </div>
+    </form>
+
+</section>
+<!-- /.content -->
+
+
+@section Scripts{
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+    <link href="~/plugins/summernote/summernote-bs4.css" rel="stylesheet" />
+
+    <script>
+        jQuery(document).ready(function () {
+            $('.summernote').summernote({
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5'],
+                height: 200,
+                minHeight: null,
+                maxHeight: null,
+                focus: true
+            });
+        });
+    </script>
+}

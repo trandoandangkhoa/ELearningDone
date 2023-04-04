@@ -1,0 +1,80 @@
+﻿    <!-- Content Header (Page header) -->
+@model DashboardViewModel
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Trang chủ</h1>
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>@Model.CourseDtos.Count()</h3>
+
+                        <p>Khóa học</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-book"></i>
+                    </div>
+
+                    <ion-icon name="book-outline"></ion-icon>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>@Model.AccountDtos.Count()</h3>
+                        <p>Người dùng</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        @{
+                            var total = Model.QuizCourseDtos.Count() + Model.QuizlessionDtos.Count() + Model.QuizMonthlyDtos.Count();
+                        }
+                        <h3>@total</h3>
+
+                        <p>Bài kiểm tra</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-question-circle"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>@Model.LessionDtos.Count()</h3>
+
+                        <p>Chương</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-graduation-cap"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- ./col -->
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->

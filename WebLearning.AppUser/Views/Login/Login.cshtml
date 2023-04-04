@@ -1,0 +1,104 @@
+﻿@using WebLearning.Contract.Dtos.Login
+
+@model LoginDto
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Đăng nhập | </title>
+    <link rel="shortcut icon" type="image/x-icon" href="~/icon.ico" >
+
+    <!-- Bootstrap -->
+    <link href="~/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="~/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="~/vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- Animate.css -->
+    <link href="~/vendors/animate.css/animate.min.css" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="~/build/css/custom.min.css" rel="stylesheet">
+  </head>
+
+  <body class="login" style="background-color:#2a3f54;color:white">
+    <div>
+     <a class="hiddenanchor" id="signup"></a>
+      <a class="hiddenanchor" id="signin"></a>
+
+      <div class="login_wrapper">
+        <div class="animate form login_form">
+        <form asp-action="LoginAccount" asp-controller="Login">
+        <section class="login_content">
+
+            <h1>Đăng nhập</h1>
+            <div style="margin:10px">
+                <input type="text" class="form-control" placeholder="Username" asp-for="UserName" required="" />
+            </div>
+            <div style="margin:10px">
+                <input type="password" class="form-control" placeholder="Password" asp-for="Password" required="" />
+            </div>
+            <div class="clearfix" style="margin:10px">
+                <input type="submit" class="btn btn-primary btn-default" value="Đăng nhập" />
+
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="separator">
+                <br />
+
+                <div>
+                                <img src="~/build/images/LogoVXH.png" width="100%" height="100%" />
+                    <h4>VAN XUAN FCMG INVESTMENT CO.LTD </h4>
+@*                    <p>Van Xuan FMCG Investment CO.LTD </p>
+*@
+                </div>
+            </div>
+        </section>
+        </form>
+
+        </div>
+
+      </div>
+    </div>
+  </body>
+</html>
+
+@*<div class="login">
+    <a class="hiddenanchor" id="signup"></a>
+    <a class="hiddenanchor" id="signin"></a>
+
+    <div class="login_wrapper">
+        <div class="animate form login_form">
+
+            <section class="login_content">
+                <form asp-action="LoginAccount" asp-controller="Login">
+
+                    <h1>Đăng nhập</h1>
+                    <div>
+                        <input type="text" class="form-control" placeholder="Username" asp-for="UserName" required="" />
+                    </div>
+                    <div>
+                        <input type="password" class="form-control" placeholder="Password" asp-for="Password" required="" />
+                    </div>
+                    <div></div>
+
+                    <div class="clearfix" ></div>
+                    <input type="submit" class="btn btn-primary btn-submit" value="Đăng nhập" />
+                </form>
+
+            </section>
+
+        </div>
+    </div>
+</div>
+*@

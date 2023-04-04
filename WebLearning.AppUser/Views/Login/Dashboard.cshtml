@@ -1,0 +1,494 @@
+﻿@using WebLearning.Contract.Dtos.Account
+@model UserAllInformationDto
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+<div class="">
+<div class="page-title">
+    <div class="title_left">
+    <h3>Tài khoản của tôi</h3>
+    </div>
+
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+        <h2>Báo cáo cá nhân <small>Báo cáo hoạt động</small></h2>
+        <ul class="nav navbar-right panel_toolbox">
+
+        </ul>
+        <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="col-md-3 col-sm-3 col-xs-12 profile_left">
+                <div class="profile_img">
+                <div id="crop-avatar">
+                    <!-- Current avatar -->
+@*                    @if (Model.AccountDto.Avatar == null)
+                    {
+                        <img class="img-responsive avatar-view" src="~/build/images/user.png" alt="Avatar" title="Change the avatar">
+
+                    }
+                    else
+                    {
+                                    <img class="img-responsive avatar-view" src="@Configuration["BaseAddress"]/avatarImage/@Model.AccountDto.Avatar.ImagePath" alt="Avatar" title="Change the avatar">
+
+                        
+                    } *@
+                    @if (User.Claims.Where(x => x.Type == "Avatar").Select(x => x.Value).FirstOrDefault() == null || User.Identity.Name == null)
+                    {
+                        <img src="~/build/images/user.png" alt="Avatar" />
+
+                    }
+                    else
+                    {
+                        <img src="@User.Claims.Where(x => x.Type == "Avatar").Select(x => x.Value).FirstOrDefault()" alt="Avatar" loading="lazy" style="width:200px;height:200px" />
+
+
+                    }
+                </div>
+                </div>
+                    <h3>@Model.AccountDto.accountDetailDto.FullName</h3>
+
+                <ul class="list-unstyled user_data" style="font-size:14px">
+                <li>
+                                <i class="fa fa-map-marker user-profile-icon"></i> @Model.AccountDto.accountDetailDto.Address
+                </li>
+                <li>
+                                <i class="fa fa-phone user-profile-icon"></i> @Model.AccountDto.accountDetailDto.Phone
+                </li>
+                <li>
+                                <i class="fa fa-envelope user-profile-icon"></i> @Model.AccountDto.Email
+                </li>
+                <li >
+                                <i class="fa fa-cogs user-profile-icon"></i> Ngày tạo: @Model.AccountDto.DateCreated
+                </li>
+                <li >
+                                <i class="fa fa-sign-out user-profile-icon"></i> Lần đăng nhập cuối: @Model.AccountDto.LastLogin
+                </li>
+                </ul>
+                        @if (Model.AccountDto.Avatar == null)
+                {
+                            <a href="/upload-anh-dai-dien.html" class="btn btn-success"><i class="fa fa-edit m-right-xs"></i>Thêm ảnh</a>
+
+                }
+                else
+                {
+                            <a href="/cap-nhat-anh-dai-dien.html" class="btn btn-success"><i class="fa fa-edit m-right-xs"></i>Cập nhật ảnh</a>
+
+
+                }
+
+                <br />
+
+            </div>
+            <div class="col-md-9 col-sm-9 col-xs-12">
+
+                <h3>Bài kiểm tra</h3>
+                <!-- start of user-activity-graph -->
+                <div style="width:100%; height:3px;"></div>
+                <!-- end of user-activity-graph -->
+
+                <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Bài học</a>
+                    </li>
+                    <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab1" data-toggle="tab" aria-expanded="false">Cuối khóa</a>
+                    </li>
+                    <li role="presentation" class=""><a href="#tab_content3" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">Định kì</a>
+                    </li>
+                </ul>
+                <div id="myTabContent" class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
+
+                        <ul class="messages">
+                            <li>
+                            <table class="table table-striped projects">
+                                <thead>
+                                        <tr>
+                                            <th style="width:40%">Tên bài kiểm tra</th>
+                                        <th style="width:40%">Tên bài</th>
+                                        <th style="width:20%">Tình trạng</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                            <div style="overflow-y:auto;height:300px">
+                                <table class="table table-striped projects">
+                                    <tbody>
+                                        @if (Model.ReportScoreLessionDtos != null)
+                                        {
+                                            @foreach (var course in Model.ReportScoreLessionDtos.OrderByDescending(x => x.CompletedDate))
+                                            {
+
+                                                <tr>
+                                                    @foreach (var nameQuiz in Model.QuizlessionDtos.Where(x => x.ID.Equals(course.QuizLessionId)))
+                                                    {
+                                                        <td style="width:40%">
+
+                                                            <a>@nameQuiz.Name</a>
+                                                        </td>
+                                                    }
+                                                    @foreach (var nameCourse in Model.QuizlessionDtos.Where(x => x.ID.Equals(course.QuizLessionId)))
+                                                    {
+                                                            <td style="width:40%">
+
+                                                                <a>@nameCourse.LessionDto.Name</a>
+                                                            </td>
+
+                                                    }
+
+                                                    @foreach(var quizCourse in Model.QuizlessionDtos.Where(x => x.ID.Equals(course.QuizLessionId) == true ))
+                                                    {
+                                                        @if (course != null && course.Passed == true)
+                                                        {
+                                                            <td style="width:20%">
+                                                                <a class="label label-success" style="font-size:12px">Passed</a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="width:20%">
+                                                                <a class="label label-danger" style="font-size:12px">Failed</a>
+                                                            </td>
+                                                        }
+                                                    }
+
+                                                </tr>
+                                            }
+
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab1">
+                        <ul class="messages">
+                            <li>
+                                <table class="table table-striped projects">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:40%">Tên bài kiểm tra</th>
+                                            <th style="width:40%">Tên khóa học</th>
+                                            <th style="width:20%">Tình trạng</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                                <div style="overflow-y:auto;height:300px">
+                                    <table class="table table-striped projects">
+                                        <tbody>
+                                            @if(Model.ReportScoreCourseDtos != null)
+                                            {
+                                                @foreach (var course in Model.ReportScoreCourseDtos.OrderByDescending(x => x.CompletedDate))
+                                                {
+
+                                                    <tr>
+                                                        <td style="width:40%">
+                                                            @foreach (var nameQuiz in Model.QuizCourseDtos.Where(x => x.ID.Equals(course.QuizCourseId)))
+                                                            {
+
+                                                                <a>@nameQuiz.Name</a>
+                                                            }
+                                                        </td>
+                                                        <td style="width:40%">
+                                                                    @foreach (var nameCourse in Model.QuizCourseDtos.Where(x => x.ID.Equals(course.QuizCourseId)))
+                                                            {
+
+                                                                <a>@nameCourse.CourseDto.Name</a>
+                                                            }
+
+                                                        </td>
+                                                         @if (Model.QuizCourseDtos.Where(x => x.ID.Equals(course.QuizCourseId)) != null )
+                                                        {
+                                                            @if(course.Passed == true)
+                                                            {
+                                                                        <td style="width:20%">
+                                                                            <a class="label label-success" style="font-size:12px">Passed</a>
+                                                                        </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="width:20%">
+                                                                    <a class="label label-danger" style="font-size:12px">Failed</a>
+                                                                </td>
+                                                            }
+                                                        }
+       
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="profile-tab2">
+                        <ul class="messages">
+                            <li>
+                                <table class="table table-striped projects">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:40%">Tên bài kiểm tra</th>
+                                            <th style="width:40%">Tên bài</th>
+                                            <th style="width:20%">Tình trạng</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                                <div style="overflow-y:auto;height:300px">
+                                    <table class="table table-striped projects">
+                                        <tbody>
+                                            @if (Model.ReportScoreMonthlyDtos != null)
+                                            {
+                                                @foreach (var course in Model.ReportScoreMonthlyDtos.OrderByDescending(x => x.CompletedDate))
+                                                {
+
+                                                    <tr>
+                                                        <td style="width:40%">
+                                                            @foreach (var nameQuiz in Model.QuizMonthlyDtos.Where(x => x.ID.Equals(course.QuizMonthlyId)))
+                                                            {
+
+                                                                <a>@nameQuiz.Name</a>
+                                                            }
+                                                        </td>
+                                                        <td style="width:40%">
+                                                                    @foreach (var nameCourse in Model.QuizMonthlyDtos.Where(x => x.ID.Equals(course.QuizMonthlyId)))
+                                                            {
+
+                                                                <a>@nameCourse.Name</a>
+                                                            }
+
+                                                        </td>
+                                                        @if (course.Passed == true)
+                                                        {
+                                                            <td style="width:20%">
+                                                                <a class="label label-success" style="font-size:12px">Passed</a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="width:20%">
+                                                                <a class="label label-danger" style="font-size:12px">Failed</a>
+                                                            </td>
+                                                        }
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                </div>
+
+                <h3>Tiến độ học tập</h3>
+                <!-- start of user-activity-graph -->
+                <div style="width:100%; height:3px;"></div>
+                <!-- end of user-activity-graph -->
+
+                <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#tab" id="home-progress" role="tab" data-toggle="tab" aria-expanded="true">Bài học</a>
+                    </li>
+                    <li role="presentation" class="">
+                        <a href="#tab-progress" role="tab" id="profile-progress" data-toggle="tab" aria-expanded="false">Khóa học</a>
+                    </li>
+
+                </ul>
+                <div id="myTabContent" class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade active in" id="tab" aria-labelledby="home-progress">
+                        <ul class="messages">
+                            <li>
+                                <table class="table table-striped projects">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:40%">Tên bài học</th>
+                                            <th style="width:40%">Tên khóa học</th>
+                                            <th style="width:20%">Tình trạng</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                                <div style="overflow-y:auto;height:300px">
+                                    <table class="table table-striped projects">
+                                        <tbody>
+                                            @foreach(var lession in Model.OwnCourseDtos.Select(x => x.LessionDtos))
+                                            {
+                                                        @foreach (var item in lession.Where(x => x.Active == true).OrderByDescending(x => x.DateCreated))
+                                                        {
+                                                            <tr>
+                                                                <td style="width:40%">
+
+                                                                    <a>@item.Name</a>
+                                                                </td>
+                                                                <td>
+                                                                    @foreach (var nameCourse in Model.CourseDtos.Where(x => x.Id.Equals(item.CourseId)))
+                                                                    {
+
+                                                                        <a>@nameCourse.Name</a>
+                                                                    }
+                                                                </td>
+                                                                @{
+                                                                    var quizPass = 0;
+                                                                }
+
+                                                                @foreach (var reportScoreLession in Model.ReportScoreLessionDtos.Where(x => x.Passed == true && x.LessionId.Equals(item.Id)))
+                                                                {
+                                                                    quizPass++;
+                                                                }
+                                                                @{
+                                                                    var totalQuizLesion = Model.QuizlessionDtos.Where(x => x.LessionId.Equals(item.Id)).Count();
+                                                                }
+
+
+
+                                                                @if ((Model.ReportScoreLessionDtos.FirstOrDefault(x => x.LessionId.Equals(item.Id))) == null)
+                                                                {
+                                                                    <td style="width:20%">
+                                                                        <a class="label label-warning" style="font-size:12px">Not Finished</a>
+                                                                    </td>
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    @if ((Model.ReportScoreLessionDtos.Where(x => x.Passed == true && x.LessionId.Equals(item.Id))) != null)
+                                                                    {
+
+                                                                        @if (quizPass >= @totalQuizLesion)
+                                                                        {
+                                                                            <td style="width:20%">
+                                                                                <a class="label label-success" style="font-size:12px">Passed</a>
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td style="width:20%">
+                                                                                <a class="label label-danger" style="font-size:12px">Failed</a>
+                                                                            </td>
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                            </tr>
+                                                        }
+                                                    }
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </li>
+
+                        </ul>
+
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="tab-progress" aria-labelledby="" profile-progress">
+                        <ul class="messages">
+                            <li>
+                                <table class="table table-striped projects">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:35%">Tên khóa học</th>
+                                            <th style="width:10%">Số bài học</th>
+                                            <th style="width:10%">Bài hoàn thành</th>
+                                            <th style="width:40%">Tình trạng</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                                <div style="overflow-y:auto;height:300px">
+                                    <table class="table table-striped projects">
+                                        <tbody>
+                                            @if (Model.CourseDtos != null)
+                                            {
+                                                @foreach (var item in Model.CourseDtos.Where(x => x.Active == true).OrderByDescending(x => x.DateCreated))
+                                                {
+
+                                                    <tr>
+                                                        <td style="width:40%">
+
+                                                            <a>@item.Name</a>
+
+                                                        </td>
+
+                                                        <td >
+                                                            @Model.LessionDtos.Where(x => x.CourseId.Equals(item.Id)).Count()
+                                                        </td>
+
+                                                            @{
+                                                                var count = 0;
+                                                            }
+
+
+                                                            @foreach (var lession in Model.LessionDtos)
+                                                            {
+                                                                var quizPass = 0;
+
+                                                                @foreach (var reportScoreLession in Model.ReportScoreLessionDtos.Where(x => x.Passed == true && x.LessionId.Equals(lession.Id)))
+                                                                {
+                                                                    quizPass++;
+                                                                }
+
+                                                                var totalQuizLesion = Model.QuizlessionDtos.Where(x => x.LessionId.Equals(lession.Id)).Count();
+
+                                                                if(totalQuizLesion == quizPass)
+                                                                {
+                                                                    if ((Model.ReportScoreLessionDtos.FirstOrDefault(x => x.LessionId.Equals(lession.Id) && x.Passed == true)) != null
+                                                                    && lession.CourseId.Equals(item.Id))
+                                                                    {
+                                                                        count++;
+
+                                                                    }
+                                                                }
+                                                            }
+
+
+                                                        @{
+                                                            var progress = 0;
+                                                        }
+
+                                                        @if (count > 0 && Model.LessionDtos.Where(x => x.CourseId.Equals(item.Id)).Count() > 0)
+                                                        {
+                                                            var totalLessionCount = Model.LessionDtos.Where(x => x.CourseId.Equals(item.Id)).Count();
+
+                                                                    float c = (float)count;
+                                                                    float tL = (float)totalLessionCount;
+
+                                                            progress = Convert.ToInt32((c/tL) * 100);
+                                                        }
+                                                        <td>@count</td>
+                                                        <td class="project_progress" style="width:40%">
+                                                            <div class="progress progress_sm">
+                                                                <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="@progress"></div>
+                                                            </div>
+                                                            <small>Đang tiến hành @progress% </small>
+                                                        </td>
+                                                    </tr>
+
+
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+</div>

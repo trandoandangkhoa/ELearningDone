@@ -1,0 +1,78 @@
+﻿@using WebLearning.Application.Ultities
+@model PagedViewModel<WebLearning.Contract.Dtos.Role.RoleDto>
+<div class="wrapper">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Quyền truy cập</h3>
+
+
+        </div>
+
+        <!-- /.card-header -->
+        <div class="card-body">
+            <div>
+                <a href="/tao-moi-quyen.html" class="btn btn-success btn-icon-split">
+                    <span class="text">Tạo mới</span>
+                </a>
+            </div>
+            <br />
+
+            <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                                <th>Quyền</th>
+                                <th>Mô tả</th>
+                                <th>Alias</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+
+                            @if (item != null)
+                            {
+                                <td>@item.Code</td>
+                                <td>@item.RoleName</td>
+                                <td>@item.Description</td>
+                                <td>@item.Alias</td>
+
+                                <td>
+                                    @{
+                                        string urlEdit = $"/cap-nhat-quyen/{item.Id}";
+                                        string urlDelete = $"/xoa-quyen/{item.Id}";
+
+                                    }
+                                    <a href="@urlEdit" class="btn btn-warning btn-icon-split">
+                                        <span class="text">Cập nhật</span>
+                                    </a>
+                                    <a href="@urlDelete" class="btn btn-danger btn-icon-split">
+                                        <span class="text">Xóa</span>
+                                    </a>
+                                </td>
+                            }
+
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Quyền</th>
+                        <th>Mô tả</th>
+                        <th>Alias</th>
+                    </tr>
+                </tfoot>
+            </table>
+            <br />
+            @await Component.InvokeAsync("Pager" , Model)
+
+        </div>
+        <!-- /.card-body -->
+
+    </div>
+    <!-- /.card -->
+
+</div>
+

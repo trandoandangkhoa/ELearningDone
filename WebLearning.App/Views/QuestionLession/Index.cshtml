@@ -1,0 +1,112 @@
+﻿@using WebLearning.Application.Ultities;
+@model PagedViewModel<WebLearning.Contract.Dtos.Question.QuestionLessionDto>
+
+@{
+    ViewData["Title"] = "Câu hỏi kiểm tra";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="wrapper">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Câu hỏi cuối bài học</h3>
+
+
+        </div>
+
+        <!-- /.card-header -->
+        <div class="card-body">
+            <div>
+                <a href="/tao-moi-cau-hoi-kiem-tra-theo-bai-hoc.html" class="btn btn-success btn-icon-split">
+                    <span class="text">Tạo mới</span>
+                </a>
+            </div>
+            <form asp-action="Index" method="get">
+                <input type="text" placeholder="Từ khóa..." name="keyword" />
+                <input type="submit" class="btn btn-info" value="Tìm" />
+                <button type="submit" class="btn btn-default" onclick="window.location.href='/cau-hoi-kiem-tra-theo-bai-hoc.html'">Reset</button>
+
+            </form>
+            <br />
+
+            <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                                <th>Tên câu hỏi</th>
+                                <th>Bài kiểm tra</th>
+                                <th>Trạng thái</th>
+                                <th>Điểm</th>
+                        <th>Alias</th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            @if (item != null)
+                            {
+                                <td>@item.Code</td>
+                                <td>@Html.Raw(item.Name)</td>
+                                <td>@item.QuizlessionDto.Name</td>
+                                @if (item.Active == true)
+                                {
+                                    <td>
+                                        Kích hoạt
+
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        Khóa
+
+                                    </td>
+                                }
+                                <td>@item.Point</td>
+                                <td>@item.Alias</td>
+                                <td>
+                                    @{
+                                        string urlDetail = $"/chi-tiet-cau-hoi-kiem-tra-theo-bai-hoc/{item.Id}";
+                                        string urlEdit = $"/cap-nhat-cau-hoi-kiem-tra-theo-bai-hoc/{item.Id}";
+                                        string urlDelete = $"/xoa-cau-hoi-kiem-tra-theo-bai-hoc/{item.Id}";
+
+                                    }
+                                    <a href="@urlEdit" class="btn btn-warning btn-icon-split">
+                                        <span class="text">Cập nhật</span>
+                                    </a>
+
+                                    <a href="@urlDetail" class="btn btn-info btn-icon-split">
+                                        <span class="text">Chi tiết</span>
+                                    </a>
+                                    <a href="@urlDelete" class="btn btn-danger btn-icon-split">
+                                        <span class="text">Xóa</span>
+                                    </a>
+                                </td>
+                            }
+
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                                <th>Tên câu hỏi</th>
+                                <th>Bài kiểm tra</th>
+                                <th>Trạng thái</th>
+                                <th>Điểm</th>
+                        <th>Alias</th>
+
+                    </tr>
+                </tfoot>
+            </table>
+            <br />
+            @await Component.InvokeAsync("Pager" , Model)
+
+        </div>
+        <!-- /.card-body -->
+
+    </div>
+    <!-- /.card -->
+
+</div>

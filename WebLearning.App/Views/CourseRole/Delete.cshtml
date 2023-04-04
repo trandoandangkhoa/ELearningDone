@@ -1,0 +1,48 @@
+﻿@using WebLearning.Contract.Dtos.CourseRole
+@model CourseRoleDto
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form asp-action="Delete" asp-controller="CourseRole" method="post">
+    <div class="container-fluid">
+        <h1 class="h3 mb-2 text-gray-800">Thông tin chi tiết</h1>
+
+        <!-- Page Heading -->
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Mã quyền</th>
+                                <th>Tên quyền</th>
+                                <th>Mô tả</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <th>@Model.Code</th>
+                                <td>@Model.RoleId</td>
+                                <td>@Model.CourseDto.Name</td>
+                                <td>@Model.RoleName</td>
+                                <input type="text" value="@Model.RoleId" name="roldId" hidden />
+                                    <input type="text" value="@Model.CourseId" name="id" hidden />
+
+                                    <button type="submit" class="btn btn-danger btn-icon-split">Xóa</button>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</form>
+

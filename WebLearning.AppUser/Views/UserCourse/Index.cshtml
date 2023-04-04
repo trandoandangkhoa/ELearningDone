@@ -1,0 +1,92 @@
+﻿@using System.Globalization
+@using WebLearning.Application.Ultities
+@model PagedViewModel<WebLearning.Contract.Dtos.Course.CourseDto>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@if(Model.Items.Count() == 0){
+    <h2>Hiện tại chưa có khóa học nào</h2>
+}
+else{
+<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>Các khóa học</h3>
+        </div>
+        <form asp-action="Index" method="get">
+            <div class="title_right">
+                <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Từ khóa..." name="keyword">
+
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">Tìm kiếm!</button>
+                            <button type="submit" class="btn btn-default" onclick="window.location.href='/cau-hoi-kiem-tra-dinh-ki.html'">Reset</button>
+
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="x_panel">
+                <div class="row"> 
+                        <div class="clearfix" ></div>
+                        <div class="clearfix" ></div>
+                    @foreach (var item in Model.Items.Where(x => x.Active == true))
+                    {
+                        <div class="col-md-4 col-sm-4  profile_details" >
+                            <div class="well profile_view" style="width:100%" >
+                                <div class="col-sm-12" style="width:100%;flex-shrink:0">
+                                    <h4><strong>Tên khóa học: </strong></h4>
+
+                                    <div class="left col-xs-7 text-left" style="margin:auto;flex-shrink:0;height:100%">
+                                        <div style="flex:1;margin-bottom:20px;word-break:break-all;display: -webkit-box;-webkit-line-clamp: 7;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;word-break:break-word">
+                                            <h2>@item.Name</h2>
+
+                                        </div>
+                                    </div>
+                                    <div class="right col-xs-5 text-right" style="margin:auto">
+
+                                        @foreach (var i in item.CourseImageVideoDto)
+                                        {
+
+                                                <img src="@Configuration["BaseAddress"]/imageCourse/@i.ImagePath" alt="" class="img-circle" style="object-fit:cover;width:100%; margin:auto;height:150px;flex-shrink:0;" />
+
+                                        }
+                                    </div>
+
+                                </div>
+
+                                <div class="col-xs-12 bottom text-right" style="margin-top:auto;flex-shrink:0">
+                                        <button type="button" class="btn btn-success btn-xs">
+                                            <i class="fa fa-eye">
+                                            </i> @item.TotalWatched
+                                        </button>
+                                    <a type="button" class="btn btn-primary btn-xs" href=" /chi-tiet-khoa-hoc/{@item.Alias}/{@item.Id}">
+                                        <i class="fa fa-search"> </i> Xem chi tiết
+                                    </a>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    }
+                </div>
+                @await Component.InvokeAsync("Pager" , Model)
+
+            </div>
+        </div>
+    </div>
+</div>
+}
+

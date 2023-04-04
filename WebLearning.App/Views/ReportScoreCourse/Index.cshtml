@@ -1,0 +1,98 @@
+﻿@using WebLearning.Application.Ultities
+@model PagedViewModel<WebLearning.Contract.Dtos.ReportScore.ReportScoreCourseExport>
+<div class="wrapper">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Báo cáo điểm</h3>
+
+
+        </div>
+        <form asp-action="Export">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="inputName">Từ ngày</label>
+
+                    <input type="date" name="fromDate" class="from-control" data-inputmask="'alias':'dd/MM/yyyy'" data-mask />
+                </div>
+                <div class="form-group">
+                    <label for="inputName">Đến ngày</label>
+                    <input type="date" name="toDate" class="from-control" data-inputmask="'alias':'dd/MM/yyyy'" data-mask />
+
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Xuất File" class="btn btn-success" />
+
+                </div>
+
+            </div>
+        </form>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Họ và tên</th>
+                        <th>Email</th>
+                        <th>Khóa học</th>
+                        <th>Bài kiểm tra</th>
+                        <th>Ngày hoàn thành</th>
+                        <th>Điểm</th>
+                        <th>Hoàn thành</th>
+                        <th>IP</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+
+                            @if (item != null)
+                            {
+                                <td>@item.FullName</td>
+                                <td>@item.UserName</td>
+                                <th>@item.CourseName</th>
+                                <th>@item.QuizName</th>
+                                <td>@item.CompletedDate</td>
+                                <td>@item.TotalScore</td>
+                                @if (item.Passed == true)
+                                {
+                                    <td>Đã hoàn thành</td>
+                                }
+                                else
+                                {
+                                    <td>Chưa hoàn thành</td>
+
+                                }
+                                <td>@item.IpAddress</td>
+                            }
+
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Họ và tên</th>
+                        <th>Email</th>
+                        <th>Bài kiểm tra</th>
+                        <th>Ngày hoàn thành</th>
+                        <th>Điểm</th>
+                        <th>Hoàn thành</th>
+                        <th>IP</th>
+                    </tr>
+                </tfoot>
+            </table>
+            <br />
+
+
+
+            @await Component.InvokeAsync("Pager" , Model)
+
+        </div>
+        <!-- /.card-body -->
+
+    </div>
+    <!-- /.card -->
+
+</div>
+

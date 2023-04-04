@@ -1,0 +1,54 @@
+﻿@using WebLearning.Contract.Dtos.VideoLession
+@model LessionVideoDto
+@{
+    ViewData["Title"] = "DeleteVideo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+<section class="content">
+    <form asp-action="DeleteVideo" method="post" enctype="multipart/form-data">
+        <div class="table-responsive">
+
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Video</th>
+                        <th>Path</th>
+                        <th>Thứ tự</th>
+                        <th>Ngày tạo</th>
+                        <th>Size</th>
+                        <th>#</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td>@Model.Code</td>
+                        <td>
+                            <iframe width="560"
+                                    height="315"
+                                    src="@Configuration["BaseAddress"]/imageLession/@Model.ImagePath"
+                                    frameborder="0"
+                                    allowfullscreen></iframe>
+                        </td>
+                        <td>@Model.ImagePath</td>
+                        <td>@Model.SortOrder</td>
+                        <td>@Model.DateCreated</td>
+                        <td>@Model.FileSize</td>
+                        <td>
+                            <input type="submit" class="btn btn-danger btn-icon-split" value="Xóa" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <a href="/chi-tiet-khoa-hoc/{@Model.Alias}/@TempData["CourseId"]/chi-tiet-chuong/@TempData["AliasLession"]/@Model.LessionId" class="btn btn-info btn-icon-split">
+            <span class="text">Quay lại</span>
+        </a>
+    </form>
+
+</section>
+
+

@@ -1,0 +1,93 @@
+﻿@using WebLearning.Contract.Dtos.VideoLession
+@model UpdateLessionVideoDto
+@{
+    ViewData["Title"] = "EditVideo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+<section class="content">
+    <form asp-action="EditVideo" method="post" enctype="multipart/form-data">
+        <td class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <div class="form-group" id="filevideo">
+                    <label class="font-weight-semibold" for="productName">Video bài giảng</label>
+                    <div class="input-group">
+                        <input type="file" id="exampleInputFile" name="fthumb" asp-for="ImageFile">
+                    </div>
+                    <span asp-validation-for="ImageFile" class="text-danger">@TempData["fileError"]</span>
+
+                </div>
+                <div class="form-group" id="linkvideo" style="display:none">
+                    <label for="inputEstimatedBudget">Chèn Link</label>
+                    @if (Model.LinkVideo == null)
+                    {
+                        <input type="text" asp-for="LinkVideo" class="form-control" name="LinkVideo" value="https://www.youtube.com/embed/" />
+
+                    }
+                    <input type="text" asp-for="LinkVideo" class="form-control" name="LinkVideo" value="@Model.LinkVideo" />
+                    <span asp-validation-for="LinkVideo" class="text-danger"></span>
+                </div>
+                <thead>
+                    <tr>
+                        <th>Tên</th>
+                        <th>Thứ tự</th>
+                        <th>Thông báo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" class="form-control" asp-for="Caption" value="@Model.Caption">
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" asp-for="SortOrder" value="@Model.SortOrder">
+                        </td>
+                        <td>
+                            <select id="inputStatus" class="form-control custom-select" asp-for="Notify" value="@Model.Notify">
+                                <option selected disabled>Chọn danh mục</option>
+                                <option value="true">Có</option>
+                                <option value="false">Không</option>
+                            </select>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <div class="form-group" id="inputChange">
+            <input type="button" class="btn btn-warning" value="Chèn Link" onclick="link()" />
+            <input class="btn btn-warning btn-icon-split" type="submit" value="Cập nhật" />
+            <a href="/chi-tiet-khoa-hoc/@TempData["AliasCourse"]/@TempData["CourseId"]/chi-tiet-chuong/@TempData["AliasLession"]/@TempData["LessionId"]" class="btn btn-info btn-icon-split">
+                <span class="text">Quay lại</span>
+            </a>
+        </div>
+
+    </form>
+
+</section>
+<script>
+    const button = document.getElementById("inputChange").querySelector("input")
+    function link() {
+        if (document.getElementById("linkvideo").style.display == 'block') {
+            document.getElementById("linkvideo").style.display = 'none';
+            document.getElementById("filevideo").style.display = 'block';
+            button.value = "Chèn Link"
+
+        } else {
+            document.getElementById("filevideo").style.display = 'none';
+            document.getElementById("linkvideo").style.display = 'block';
+            button.value = "Chèn File"
+
+        }
+    }
+    function file() {
+        if (document.getElementById("linkvideo").style.display == 'block') {
+            document.getElementById("linkvideo").style.display = 'none';
+        } else {
+            document.getElementById("linkvideo").style.display = 'block';
+        }
+        document.getElementById("filevideo").style.display = "inlinde";
+        document.getElementById("linkvideo").style.display = "hidden";
+    }
+</script>

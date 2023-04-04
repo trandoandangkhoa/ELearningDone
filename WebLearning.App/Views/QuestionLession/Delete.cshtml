@@ -1,0 +1,155 @@
+﻿@model WebLearning.Contract.Dtos.Question.QuestionLessionDto;
+
+@{
+    ViewData["Title"] = "Xóa câu hỏi kiểm tra";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link href="~/plugins/summernote/summernote-bs4.css" rel="stylesheet" />
+    <link href="~/plugins/summernote/summernote.css" rel="stylesheet" />
+}
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Câu hỏi kiểm tra - Xóa</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/chi-tiet-bai-kiem-tra/@Model.QuizLessionId">Quay lại</a></li>
+                    <li class="breadcrumb-item active">Câu hỏi kiểm tra - Xóa</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+    <form asp-controller="QuestionLession" asp-action="Delete" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly"></div>
+        <a href="/chi-tiet-bai-kiem-tra/@Model.QuizLessionId" class="btn btn-secondary float-right" style="margin:3px">Cancel</a>
+        <input type="submit" value="Xóa" class="btn btn-danger float-right" style="margin:3px">
+        <div class="clearfix" style="margin:3px"></div>
+        <div class="row" >
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-table table-reponsive p-0">
+                        <table  class="table table-hover table-bordered table-striped">
+                            <tbody>
+                                <tr>
+                                    <td>Mã câu hỏi</td>
+                                    <td>@Model.Id</td>
+                                </tr>
+                                <tr>]
+                                    <td>Code</td>
+                                    <td>@Model.Code</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                            Nội dung câu hỏi
+                                    </td>
+                                    <td>
+                                        @Html.Raw(Model.Name)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Bài kiểm tra 
+                                    </td>
+                                    <td>
+                                        <i>
+                                            @Model.QuizlessionDto.Name
+                                        </i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Điểm</td>
+                                    <td>
+                                        <i>@Model.Point</i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Trạng thái</td>
+                                    <td> 
+                                        @if (Model.Active == true)
+                                        {
+                                            <i>
+                                                Kích hoạt
+                                            </i>
+                                        }
+                                        else
+                                        {
+                                            <i>
+                                                Khóa
+                                            </i>
+                                        }
+
+                                    </td>
+                                </tr>
+                                <tr >
+                                    <td>Lựa chọn</td>
+
+                                    <td >
+                                        <table id="OptionField" class="table table-bordered ">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:80%">Lựa chọn</th>
+                                                    <th style="width:10%">Đáp án đúng</th>
+                                                    <th style="width:10%; text-align:center">#</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var option in Model.OptionLessionDtos)
+                                                {
+                                                    <tr>
+                                                        <td>
+
+                                                                <p>@Html.Raw(option.Name)</p>
+                                                        </td>
+                                                        <td style="text-align:center">
+                                                            @foreach (var correct in Model.CorrectAnswerLessionDtos.Where(x => x.OptionLessionId.Equals(option.Id)))
+                                                            {
+                                                                <input type="checkbox" checked disabled/> 
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            <a href="/chi-tiet-bai-kiem-tra/{@Model.QuizLessionId}/xoa-cau-hoi-kiem-tra-theo-bai-hoc/@Model.Id/xoa-lua-chon/@option.Id" class="btn btn-danger" style="margin:3px">Xóa</a>
+                                                        </td>
+                                                    </tr>
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                    </td>   
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+</section>
+
+
+@section Scripts{
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+    <link href="~/plugins/summernote/summernote-bs4.css" rel="stylesheet" />
+
+    <script>
+        jQuery(document).ready(function () {
+            $('.summernote').summernote({
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5'],
+                height: 200,
+                minHeight: null,
+                maxHeight: null,
+                focus: true
+            });
+        });
+    </script>
+}

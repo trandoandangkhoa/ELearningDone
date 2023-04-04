@@ -1,0 +1,125 @@
+﻿@using WebLearning.Contract.Dtos;
+@{
+    ViewData["Title"] = "Tạo mới quyền";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model ImportResponse
+
+@section Styles{
+    <style>
+        .input-group input{
+            margin: 10px;
+        }
+    </style>
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Load dữ liệu</h1>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content">
+    <form asp-controller="Import" asp-action="Import" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3>Lựa chọn dữ liệu để load</h3>
+                        <div class="form-group" id="filevideo">
+                            <label class="font-weight-semibold" for="productName">File Excel</label>
+                            <div class="input-group">
+                                <input type="file" id="exampleInputFile" name="formFile" asp-for="@Model.File">
+                            </div>
+                            <span asp-validation-for="@Model.File" class="text-danger">@TempData["fileError"]</span>
+                            <div class="form-group">
+                                <div class="input-group">
+                                   <input type="checkbox" id="checkAll" class="checkAll"> Tất cả
+
+                                </div>
+                                <div class="input-group">
+                                    <input type="checkbox" name="role" value="true" /> Quyền
+
+                                </div>
+                                <div class="input-group">
+                                    <input type="checkbox" name="account" value="true" /> Tài khoản<br />
+
+                                </div>
+                                <div class="input-group">
+                                    <input type="checkbox" name="courseRole" value="true" /> Quyền truy cập khóa học <br />
+
+                                </div>
+                                <div class="input-group">
+                                    <input type="checkbox" name="lession" value="true" /> Chương
+
+                                </div>
+                                <div class="input-group">
+                                    <input type="checkbox" name="videolession" value="true" /> Link video youtube <br />
+
+                                </div>
+                                <div class="input-group">
+                                    <input type="checkbox" name="quizLession" value="true" /> Bài kiểm tra theo chương <br />
+
+                                </div>
+                                <div class="input-group">
+                                    <input type="checkbox" name="quizCourse" value="true" /> Bài kiểm tra cuối khóa <br />
+
+                                </div>
+                                <div class="input-group">
+                                    <input type="checkbox" name="quizMonthly" value="true" /> Bài kiểm tra định kì <br />
+
+                                </div>
+
+                                <div class="input-group">
+                                    <input type="checkbox" name="questionLession" value="true" /> Câu hỏi theo chương <br />
+
+                                </div>
+                                <div class="input-group">
+                                    <input type="checkbox" name="questionCourse" value="true" /> Câu hỏi cuối khóa <br />
+
+                                </div>
+                                <div class="input-group">
+                                    <input type="checkbox" name="questionMonthly" value="true" /> Câu hỏi định kì <br />
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <a href="/quyen.html" class="btn btn-secondary">Cancel</a>
+                <input type="submit" value="Tạo mới" class="btn btn-success float-right">
+            </div>
+        </div>
+    </form>
+
+</section>
+@section Scripts{
+    <script>
+        $("#checkAll").click(function () {
+            $('input:checkbox').not(this).prop('checked', this.checked);
+        });
+    </script>
+
+}

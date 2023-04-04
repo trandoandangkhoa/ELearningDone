@@ -1,0 +1,111 @@
+﻿@using WebLearning.Application.Ultities;
+@model PagedViewModel<WebLearning.Contract.Dtos.Quiz.QuizCourseDto>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="wrapper">
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Bài kiểm tra cuối chương</h3>
+
+
+    </div>
+
+    <!-- /.card-header -->
+    <div class="card-body">
+        <div>
+            <a href="/tao-moi-bai-kiem-tra-cuoi-khoa.html" class="btn btn-success btn-icon-split">
+                <span class="text">Tạo mới</span>
+            </a>
+        </div>
+            <form asp-action="Index" method="get">
+                <input type="text" placeholder="Từ khóa..." name="keyword" />
+                <input type="submit" class="btn btn-info" value="Tìm" />
+                <button type="submit" class="btn btn-default" onclick="window.location.href='/bai-kiem-tra-cuoi-khoa.html'">Reset</button>
+
+            </form>
+        <br />
+
+        <table id="example1" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Bài kiểm tra</th>
+                    <th>Chương</th>
+                    <th>Trạng thái</th>
+                    <th>Điểm</th>
+                    <th>Alias</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+
+                        @if (item != null)
+                        {
+                            <td>@item.Code</td>
+                            <td>@item.Name</td>
+                            <td>@item.CourseDto.Name</td>
+                            @if (item.Active == true)
+                            {
+                                <td>
+                                    Kích hoạt
+
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    Khóa
+
+                                </td>
+                            }
+                            <td>@item.ScorePass</td>
+
+                            <td>@item.Alias</td>
+                            <td>
+                                @{
+                                    string urlDetail = $"/chi-tiet-bai-kiem-tra-cuoi-khoa/{item.ID}";
+                                        string urlEdit = $"/cap-nhat-bai-kiem-tra-cuoi-khoa/{item.ID}";
+                                        string urlDelete = $"/xoa-bai-kiem-tra-cuoi-khoa/{item.ID}";
+
+                                }
+                                <a href="@urlEdit" class="btn btn-warning btn-icon-split">
+                                    <span class="text">Cập nhật</span>
+                                </a>
+
+                                <a href="@urlDetail" class="btn btn-info btn-icon-split">
+                                    <span class="text">Chi tiết</span>
+                                </a>
+                                <a href="@urlDelete" class="btn btn-danger btn-icon-split">
+                                    <span class="text">Xóa</span>
+                                </a>
+                            </td>
+                        }
+
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Bài kiểm tra</th>
+                    <th>Bài học</th>
+                    <th>Trạng thái</th>
+                    <th>Điểm</th>
+                    <th>Alias</th>
+                </tr>
+            </tfoot>
+        </table>
+        <br />
+        @await Component.InvokeAsync("Pager" , Model)
+
+    </div>
+    <!-- /.card-body -->
+
+</div>
+<!-- /.card -->
+</div>

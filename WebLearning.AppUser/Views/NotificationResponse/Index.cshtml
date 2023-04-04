@@ -1,0 +1,57 @@
+﻿@using WebLearning.Contract.Dtos.Notification;
+@model IEnumerable<NotificationResponseDto>;
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    @foreach (var item in Model)
+    {
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="x_panel" style="height:auto">
+
+                    <div class="x_title">
+                        <h2 class="collapse-link" style="cursor:pointer">@item.TargetName</h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div class="message_wrapper">
+                            <p class="url">
+                                <span class="fs1" aria-hidden="true" data-icon=""></span>
+                                <h4>Tên bài: <strong>@item.TargetName</strong></h4>
+
+                                <h4>@item.DescNotify </h4>
+                                <span>@item.DateCreated</span>
+                                @if(item.Notify == true)
+                                {
+                                    <a href="/danh-dau/@item.TargetNotificationId/@item.AccountName">
+                                        <span style="float:right">
+                                            Đánh dấu đã xem
+                                        </span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a>
+                                        <span style="float:right">
+                                            Đã xem
+                                        </span>
+                                    </a>
+                                }
+                            </p>
+
+                            <br />
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+
+
+</div>

@@ -1,0 +1,265 @@
+﻿@using WebLearning.Contract.Dtos.Question.QuestionCourseAdminView;
+
+@model CreateAllConcerningQuestionCourseDto
+@{
+    ViewData["Title"] = "Tạo mới câu hỏi kiểm tra";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link href="~/plugins/summernote/summernote-bs4.css" rel="stylesheet" />
+    <link href="~/plugins/summernote/summernote.css" rel="stylesheet" />
+        <style>
+        .select2-selection__rendered {
+            margin: 10px;
+        }
+
+        .select2-selection {
+            -webkit-box-shadow: 0;
+            box-shadow: 0;
+            background-color: #fff;
+            border: 0;
+            border-radius: 0;
+            color: #555555;
+            outline: 0;
+            min-height: 38px;
+            text-align: left;
+        }
+
+        .select2-selection__rendered {
+            margin: 10px;
+        }
+
+        .select2-selection__arrow {
+            margin: 10px;
+        }
+    </style>
+}
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var answer = HttpContextAccessor.HttpContext.Session.GetString("QuestionCourseId");
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Câu hỏi kiểm tra - Tạo mới</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/chi-tiet-bai-kiem-tra-cuoi-khoa/@TempData["QuizCourseId"]">Quay lại</a></li>
+                    <li class="breadcrumb-item active">Câu hỏi kiểm tra - Tạo mới</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+    <form asp-controller="QuestionCourse" asp-action="Create" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin bài kiểm tra</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-12 justify-content-center">
+                            <a href="/chi-tiet-bai-kiem-tra-cuoi-khoa/@TempData["QuizCourseId"]" class="btn btn-danger float-right" style="margin:3px">Cancel</a>
+                            <a href="/chi-tiet-bai-kiem-tra-cuoi-khoa/@TempData["QuizCourseId"]/chi-tiet-cau-hoi-kiem-tra-cuoi-khoa/@answer" class="btn btn-info float-right" style="margin:3px">Xem chi tiết</a>
+                            <button type="button" onclick="Add()" class="btn btn-success float-right" style="margin:3px">Thêm lựa chọn</button>
+                            <input type="submit" value="Lưu" class="btn btn-success float-right" style="margin:3px">
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="form-group">
+                            <label for="inputName">Câu hỏi</label>
+                            <textarea id="inputName" class="summernote" asp-for="@Model.CreateQuestionCourseDto.Name"></textarea>
+                            <span asp-validation-for="@Model.CreateQuestionCourseDto.Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputStatus">Trạng thái</label>
+                            <select id="inputStatus" class="form-control custom-select" asp-for="@Model.CreateQuestionCourseDto.Active">
+                                <option selected disabled>Chọn danh mục</option>
+                                <option value="false">Khóa</option>
+                                <option value="true">Kích hoạt</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputClientCompany">Bài kiểm tra</label>
+                            @*                            <select class="form-control custom-select" asp-for="@Model.CreateQuestionCourseDto.QuizCourseId" asp-items="ViewBag.DanhMuc" >
+                            <option value="" disabled selected>Chọn danh mục</option>
+                            </select>*@
+                            <div>
+                                <select id="ddlSelected" style="min-width:200px;" name="quizCourseId" asp-for="@Model.CreateQuestionCourseDto.QuizCourseId" class="form-control" asp-items="@ViewBag.Notification"></select>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName">Điểm </label>
+                            <input type="text" id="inputName" class="form-control" asp-for="@Model.CreateQuestionCourseDto.Point">
+                                <span asp-validation-for="@Model.CreateQuestionCourseDto.Point" class="text-danger"></span>
+                            
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <div class="col-md-12">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">Lựa chọn </h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body" style="max-height:738px;overflow-y:scroll">
+
+                        <table id="myTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Lựa chọn</th>
+                                    <th>Đáp án đúng</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </form>
+    <div class="clearfix"></div>
+</section>
+
+
+@section Scripts{
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+    <link href="~/plugins/summernote/summernote-bs4.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#ddlSelected").select2();
+        });
+    </script>
+    <script>
+        function Add() {
+            $('#myTable > tbody').append(
+                '<tr><td><textarea name="OptionCourses" class="summernote" required="required"></textarea><span class="field-validation-valid text-danger" data-valmsg-for="OptionCourses" data-valmsg-replace="true"></span></td>' +
+                '<td><select class="form-control custom-select" name="CorrectAnswers"><option value="false">Sai</option><option value="true">Đúng</option></select><span class="field-validation-valid text-danger" data-valmsg-for="CorrectAnswers" data-valmsg-replace="true"></span></td>' +
+                '<td><input type="button" onclick="Delete(this)" value="Xóa" class="btn btn-danger" /></td ></tr > '
+            );
+            jQuery(document).ready(function () {
+                $('.summernote').summernote({
+                    placeholder: 'Enter content....',
+                    tabsize: 2,
+                    height: 200,
+                    minHeight: 100,
+                    maxHeight: 300,
+                    focus: true,
+                    toolbar: [
+                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                        ['font', ['strikethrough', 'superscript', 'subscript']],
+                        ['fontsize', ['fontsize']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['height', ['height']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture', 'video']],
+                        ['view', ['fullscreen', 'codeview', 'help']],
+                    ],
+                    popover: {
+                        image: [
+                            ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+                            ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                            ['remove', ['removeMedia']]
+                        ],
+                        link: [
+                            ['link', ['linkDialogShow', 'unlink']]
+                        ],
+                        table: [
+                            ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+                            ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+                        ],
+                        air: [
+                            ['color', ['color']],
+                            ['font', ['bold', 'underline', 'clear']],
+                            ['para', ['ul', 'paragraph']],
+                            ['table', ['table']],
+                            ['insert', ['link', 'picture']]
+                        ]
+                    },
+                    codemirror: {
+                        theme: 'monokai'
+                    }
+                });
+            });
+        };
+        function Delete(d) {
+            $(d).closest("tr").remove();
+        };
+
+    </script>
+    <script>
+        jQuery(document).ready(function () {
+            $('.summernote').summernote({
+                placeholder: 'Enter content....',
+                tabsize: 2,
+                height: 200,
+                minHeight: 100,
+                maxHeight: 300,
+                focus: true,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']],
+                ],
+                popover: {
+                    image: [
+                        ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+                        ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                        ['remove', ['removeMedia']]
+                    ],
+                    link: [
+                        ['link', ['linkDialogShow', 'unlink']]
+                    ],
+                    table: [
+                        ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+                        ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+                    ],
+                    air: [
+                        ['color', ['color']],
+                        ['font', ['bold', 'underline', 'clear']],
+                        ['para', ['ul', 'paragraph']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture']]
+                    ]
+                },
+                codemirror: {
+                    theme: 'monokai'
+                }
+            });
+        });
+    </script>
+}
+

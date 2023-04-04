@@ -1,0 +1,182 @@
+﻿@using WebLearning.Contract.Dtos.VideoLession
+@model CreateLessionVideoDto
+@{
+    ViewData["Title"] = "Thêm video bài giảng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link href="~/plugins/summernote/summernote-bs4.css" rel="stylesheet" />
+    <link href="~/plugins/summernote/summernote.css" rel="stylesheet" />
+}
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Bài giảng - Tạo mới</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a class="btn btn-secondary" href="/chi-tiet-khoa-hoc/@TempData["AliasCourse"]/@TempData["CourseId"]/chi-tiet-chuong/@TempData["AliasLession"]/@TempData["LessionId"]">Quay lại</a></li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content">
+    <form asp-controller="Lession" asp-action="CreateVideo" method="post" enctype="multipart/form-data">
+
+        <div asp-validation-summary="ModelOnly"></div>
+        <div class="form-group" id="inputChange">
+            <input type="button" class="btn btn-warning" value="Chèn Link" onclick="link()" />
+            <input type="submit" value="Lưu" class="btn btn-success ">
+        </div>
+        <div class="row">
+            <div class="col-md" >
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin cơ bản</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="inputName">Tên Bài giảng</label>
+                            <input type="text" id="inputName" class="form-control" asp-for="Caption">
+                            <span asp-validation-for="Caption" class="text-danger"></span>
+                        </div>
+@*                        <div class="form-group">
+                            <label for="inputClientCompany">Khóa học</label>
+                            <select class="custom-select" asp-for="LessionId" style="min-width: 200px;" asp-items="ViewBag.DanhMuc">
+                                <option value="" disabled selected>Chọn danh mục</option>
+                            </select>
+
+                        </div>*@
+
+                        <div class="form-group"  id="filevideo">
+                            <label class="font-weight-semibold" for="productName">Video bài giảng</label>
+                                <div class="input-group">
+                                <input type="file" id="exampleInputFile" name="fthumb" asp-for="ImageFile">
+                            </div>
+                            <span asp-validation-for="ImageFile" class="text-danger">@TempData["fileError"]</span>
+
+                        </div>
+                        <div class="form-group" id="linkvideo" style="display:none" >
+                            <label for="inputEstimatedBudget">Chèn Link</label>
+                            <input type="text" asp-for="LinkVideo" class="form-control" name="LinkVideo" value="https://www.youtube.com/embed/" />
+                            <span asp-validation-for="LinkVideo" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputStatus">Thông báo</label>
+                            <select id="inputStatus" class="form-control custom-select" asp-for="Notify">
+                                <option selected disabled>Chọn danh mục</option>
+                                <option value="true">Có</option>
+                                <option value="false">Không</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+
+@*        <div class="row">
+            <div class="col-12">
+                <a href="/chuong.html" class="btn btn-secondary">Cancel</a>
+                <input type="submit" value="Tạo mới" class="btn btn-success ">
+            </div>
+        </div>*@
+    </form>
+
+</section>
+@section Scripts{
+    <script src="~/plugins/codemirror/codemirror.js"></script>
+    <script src="~/plugins/codemirror/mode/css/css.js"></script>
+    <script src="~/plugins/codemirror/mode/xml/xml.js"></script>
+
+    <script src="~/plugins/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+    <script src="~/plugins/summernote/summernote-bs4.js"></script>
+    <script>
+        const button = document.getElementById("inputChange").querySelector("input") 
+        function link() {
+          if (document.getElementById("linkvideo").style.display == 'block') {
+                document.getElementById("linkvideo").style.display = 'none';
+                document.getElementById("filevideo").style.display = 'block';
+                button.value = "Chèn Link"
+
+          } else {
+                document.getElementById("filevideo").style.display = 'none';
+                document.getElementById("linkvideo").style.display = 'block';
+                button.value = "Chèn File"
+
+          }
+        }
+        function file() {
+                      if (document.getElementById("linkvideo").style.display == 'block') {
+                document.getElementById("linkvideo").style.display = 'none';
+          } else {
+                document.getElementById("linkvideo").style.display = 'block';
+          }
+            document.getElementById("filevideo").style.display = "inlinde";
+            document.getElementById("linkvideo").style.display = "hidden";
+        }
+    </script>
+    <script>
+        jQuery(document).ready(function () {
+            $('#summernote').summernote({
+                placeholder: 'Enter content....',
+                tabsize: 2,
+                height: 200,
+                minHeight: 100,
+                maxHeight: 300,
+                focus: true,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']],
+                ],
+                popover: {
+                    image: [
+                        ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+                        ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                        ['remove', ['removeMedia']]
+                    ],
+                    link: [
+                        ['link', ['linkDialogShow', 'unlink']]
+                    ],
+                    table: [
+                        ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+                        ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+                    ],
+                    air: [
+                        ['color', ['color']],
+                        ['font', ['bold', 'underline', 'clear']],
+                        ['para', ['ul', 'paragraph']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture']]
+                    ]
+                },
+                codemirror: {
+                    theme: 'monokai'
+                }
+            });
+        });
+    </script>
+
+}
+
