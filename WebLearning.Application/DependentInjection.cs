@@ -6,6 +6,24 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using WebLearning.Application.BookingCalender.Services;
+using WebLearning.Application.Email;
+using WebLearning.Application.Mapping.AccountMappinng;
+using WebLearning.Application.Mapping.AnswerMapping;
+using WebLearning.Application.Mapping.AvatarMapping;
+using WebLearning.Application.Mapping.BookingCalender;
+using WebLearning.Application.Mapping.CorrectAnswerMappingProfile;
+using WebLearning.Application.Mapping.CourseMapping;
+using WebLearning.Application.Mapping.CourseRoleMapping;
+using WebLearning.Application.Mapping.HistorySubmitMapping;
+using WebLearning.Application.Mapping.LessionMapping;
+using WebLearning.Application.Mapping.LoginMapping;
+using WebLearning.Application.Mapping.NotificationMapping;
+using WebLearning.Application.Mapping.OptionMapping;
+using WebLearning.Application.Mapping.QuestionMapping;
+using WebLearning.Application.Mapping.QuizMapping;
+using WebLearning.Application.Mapping.ReportScoreMapping;
+using WebLearning.Application.Mapping.RoleMapping;
 using WebLearning.Application.Services;
 using WebLearning.Application.Validation;
 using WebLearning.Contract.Dtos;
@@ -27,9 +45,7 @@ namespace WebLearning.Application
         {
             services.AddDbContext<WebLearningContext>(options => options.UseSqlServer(configuration.GetConnectionString("WebLearningConnection")
                                                       , o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
-            //services.AddFluentValidationAutoValidation();
-            //services.AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
-            //services.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
+
             services.AddScoped<IAccountService, AccountService>();
 
             services.AddScoped<IAnswerCourseService, AnswerCourseService>();
@@ -48,6 +64,7 @@ namespace WebLearning.Application
 
             services.AddScoped<IOptionMonthlyService, OptionMonthlyService>();
 
+            services.AddScoped<IAppointmentService, AppointmentService>();
 
             services.AddScoped<ICorrectAnswerService, CorrectAnswerService>();
 
@@ -118,6 +135,84 @@ namespace WebLearning.Application
             services.AddScoped<IValidator<UpdateAllConcerningQuestionLesstionDto>, UpdateQuestionLessionValidation>();
             services.AddScoped<IValidator<UpdateAllConcerningQuestionCourseDto>, UpdateQuestionCourseValidation>();
             services.AddScoped<IValidator<UpdateAllConcerningQuestionMonthlyDto>, UpdateQuestionMonthlyValidation>();
+
+            services.AddScoped<IEmailSender, EmailSender>();
+
+            services.AddAutoMapper(typeof(AccountMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(AnswerCourseMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(AnswerLessionMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(AnswerMonthlyMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(AvatarMappingProfile).Assembly);
+
+
+            services.AddAutoMapper(typeof(AppointmentMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(RoomMappingProfile).Assembly);
+
+
+            services.AddAutoMapper(typeof(CorrectAnswerLessionMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(CorrectAnswerCourseMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(CorrectAnswerMonthlyMappingProfile).Assembly);
+
+
+
+            services.AddAutoMapper(typeof(OptionLessionMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(OptionCourseMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(OptionMonthlyMappingProfile).Assembly);
+
+
+
+            services.AddAutoMapper(typeof(CourseMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(CourseRoleMappingProfile).Assembly);
+
+
+            services.AddAutoMapper(typeof(HistorySubmitCourseMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(HistorySubmitLessionMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(HistorySubmitMonthlyMappingProfile).Assembly);
+            services.AddAutoMapper(typeof(HistoryAddSlotMappingProfile).Assembly);
+
+
+            services.AddAutoMapper(typeof(LessionMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(LoginMappingPofile).Assembly);
+
+            services.AddAutoMapper(typeof(QuestionLessionMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(QuestionCourseMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(QuestionMonthlyMappingProfile).Assembly);
+
+
+            services.AddAutoMapper(typeof(QuizLessionMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(QuizCourseMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(QuizMonthlyMappingProfile).Assembly);
+
+
+            services.AddAutoMapper(typeof(ReportScoreCourseMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(ReportScoreLessionMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(ReportScoreMonthlyMappingProfile).Assembly);
+
+
+            services.AddAutoMapper(typeof(RoleMappingProfile).Assembly);
+
+            services.AddAutoMapper(typeof(NotificationMappingProfile).Assembly);
+
+
             //Config AppSetting
             services.Configure<AppSetting>(configuration.GetSection("AppSettings"));
 
@@ -150,6 +245,10 @@ namespace WebLearning.Application
                 opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             });
 
+            var emailConfig = configuration
+            .GetSection("EmailConfiguration")
+            .Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
 
             return services;
         }

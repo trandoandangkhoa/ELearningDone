@@ -1,0 +1,252 @@
+/* 
+DayPilot Scheduler Theme
+https://themes.daypilot.org/scheduler/theme/xj7li7
+Theme Designer Version: 2021.09.25.67272
+*/
+.month_calender_main 
+{
+    border: 1px solid #ffffff;
+}
+.month_calender_main, .month_calender_main td 
+{
+    font-family: sans-serif;
+    font-size: 12px;
+}
+.month_calender_event { 
+}
+.month_calender_event { 
+    color: #333333;
+}
+.month_calender_event_inner { 
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    margin: 0px;
+    overflow: hidden;
+    background-color: #ffffff;
+    background: linear-gradient(to bottom, #ffffff 0%, #fafafa);
+    padding: 2px;
+    border: 1px solid #cccccc;
+    display: flex;
+    align-items: center;
+}
+.month_calender_timeheadergroup,
+.month_calender_timeheadercol
+{
+    color: #ffffff;
+    background: #bf040a;
+}
+.month_calender_rowheader,
+.month_calender_corner
+{
+    color: #ffffff;
+    background: #bf040a;
+}
+.month_calender_rowheader_inner {
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	bottom: 0px;
+    border-right: 1px solid #e0e0e0;
+    padding: 7px;
+    display: flex;
+    align-items: center;
+}
+.month_calender_timeheadergroup,
+.month_calender_timeheadercol
+{
+}
+.month_calender_timeheadergroup_inner,
+.month_calender_timeheadercol_inner
+{
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    border-right: 1px solid #ffffff;
+    padding: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.month_calender_timeheadergroup_inner {
+    border-bottom: 1px solid #ffffff;
+}
+.month_calender_divider,
+.month_calender_splitter,
+.month_calender_divider_horizontal,
+.month_calender_resourcedivider 
+{
+    background-color: #ffffff;
+}
+.month_calender_matrix_vertical_line,
+.month_calender_matrix_horizontal_line 
+{
+    background-color: #e8e3e8;
+}
+.month_calender_cell 
+{
+    background: #fafafa;
+}
+.month_calender_cell.month_calender_cell_business 
+{
+    background: #ffcccc;
+}
+.month_calender_message 
+{
+    padding: 10px;
+    opacity: 0.9;
+    color: #ffffff;
+    background: #ffa216;
+}
+.month_calender_shadow_inner 
+{
+    background-color: #666666;
+    opacity: 0.5;
+    height: 100%;
+}
+.month_calender_matrix_vertical_break 
+{
+    background-color: #999;
+}
+.month_calender_cellparent {
+}
+.month_calender_tree_image_no_children {
+}
+.month_calender_tree_image_expand {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><path d='M 1.5 0.5 L 6.5 5 L 1.5 9.5' style='fill:none;stroke:%23999999;stroke-width:2;stroke-linejoin:round;stroke-linecap:butt' /></svg>");
+}
+.month_calender_tree_image_collapse {
+    background-image: url("data:image/svg+xml;utf8,<svg width='10' height='10' xmlns='http://www.w3.org/2000/svg'><path d='M 0.5 1.5 L 5 6.5 L 9.5 1.5' style='fill:none;stroke:%23999999;stroke-width:2;stroke-linejoin:round;stroke-linecap:butt' /></svg>");
+}
+.month_calender_columnheader 
+{
+}
+.month_calender_columnheader_inner {
+    font-weight: bold;
+}
+.month_calender_columnheader_cell {
+}
+.month_calender_columnheader_splitter { box-sizing: border-box; border-right: 1px solid #c0c0c0; }
+.month_calender_columnheader_splitter:hover { background-color: #c0c0c0; }
+.month_calender_columnheader_cell_inner {
+    position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; padding: 2px; display: flex; align-items: center;
+}
+.month_calender_timeheader_float {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.month_calender_timeheader_float_inner {
+    padding: 7px;
+}
+.month_calender_event_float {
+    display: flex;
+    align-items: center;
+}
+.month_calender_event_float_inner {
+    padding: 3px 2px 2px 7px;
+    padding-left: 9px;
+    /*top: -2px;*/
+    position: relative;    
+}
+.month_calender_event_float_inner:after {
+    content:"";
+    border-color: transparent #333333 transparent transparent;
+    border-style:solid;
+    border-width:5px;
+    width:0;
+    height:0;
+    position:absolute;
+    top:5px;
+    left:-4px;
+}
+.month_calender_event_move_left {
+    box-sizing: border-box; 
+    padding: 2px;
+    border: 1px solid #ccc;
+    background: #fff;
+    background: linear-gradient(to bottom, #ffffff 0%, #eeeeee);
+    display: flex;
+    align-items: center;
+}
+.month_calender_event_move_right {
+    box-sizing: border-box; 
+    padding: 2px;
+    border: 1px solid #ccc;
+    background: #fff;
+    background: linear-gradient(to bottom, #ffffff 0%, #eeeeee);
+    display: flex;
+    align-items: center;
+}
+.month_calender_event_delete {
+    background: url("data:image/svg+xml;utf8,<svg width='12' height='12' xmlns='http://www.w3.org/2000/svg'><path d='M 0.5 0.5 L 11.5 11.5 M 0.5 11.5 L 11.5 0.5' style='fill:none;stroke:%23464646;stroke-width:3;stroke-linejoin:round;stroke-linecap:butt' /></svg>") no-repeat center center; opacity: 0.6; cursor: pointer;
+    cursor: pointer;
+    opacity: 0.6;
+}
+.month_calender_event_delete:hover {
+    opacity: 1;
+}
+.month_calender_rowmove_handle { background-repeat: no-repeat; background-position: center center; background-color: #ccc; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAKCAYAAACT+/8OAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjExR/NCNwAAAClJREFUGFdj+P//P4O9vX2Bg4NDP4gNFgBytgPxebgAMsYuQGMz/jMAAFsTZDPYJlDHAAAAAElFTkSuQmCC); cursor: move; }
+.month_calender_rowmove_source { background-color: black; opacity: 0.2; }
+.month_calender_rowmove_position_before, .month_calender_rowmove_position_after { background-color: #999; height: 2px; }
+.month_calender_rowmove_position_child { margin-left: 10px; background-color: #999; height: 2px; }
+.month_calender_rowmove_position_child:before { content: '+'; color: #999; position: absolute; top: -8px; left: -10px; }
+.month_calender_rowmove_position_forbidden { background-color: red; height: 2px; margin-left: 10px; }
+.month_calender_rowmove_position_forbidden:before { content: 'x'; color: red; position: absolute; top: -8px; left: -10px; }
+.month_calender_link_horizontal { border-bottom-style: solid; border-bottom-color: #cc0000; }
+.month_calender_link_vertical { border-right-style: solid; border-right-color: #cc0000; }
+.month_calender_link_arrow_right:before { content: ''; border-width: 6px; border-color: transparent transparent transparent #cc0000; border-style: solid; width: 0px; height:0px; position: absolute; }
+.month_calender_link_arrow_left:before { content: ''; border-width: 6px; border-color: transparent #cc0000 transparent transparent; border-style: solid; width: 0px; height:0px; position: absolute; }
+.month_calender_link_arrow_down:before { content: ''; border-width: 6px; border-color: #cc0000 transparent transparent transparent; border-style: solid; width: 0px; height:0px; position: absolute; }
+.month_calender_link_arrow_up:before { content: ''; border-width: 6px; border-color: transparent transparent #cc0000 transparent; border-style: solid; width: 0px; height:0px; position: absolute; }
+.month_calender_shadow_overlap .month_calender_shadow_inner { background-color: red; }
+.month_calender_overlay { background-color: gray; opacity: 0.5; }
+.month_calender_main .month_calender_event_group { box-sizing: border-box; font-size:12px; color:#666; padding:2px; overflow:hidden; border:1px solid #ccc; background-color: #fff; display: flex; align-items: center; white-space: nowrap; }
+.month_calender_header_icon { box-sizing: border-box; border: 1px solid #ffffff; background-color: #bf040a; color: #ffffff; }
+.month_calender_header_icon:hover { background-color: #bb040a; }
+.month_calender_header_icon_hide:before { content: '\00AB'; }
+.month_calender_header_icon_show:before { content: '\00BB'; }
+.month_calender_rowheader.month_calender_rowheader_selected { background-color: #aaa; background-image: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent); background-size: 35px 35px; }
+.month_calender_cell.month_calender_cell_business.month_calender_cell_selected, .month_calender_cell.month_calender_cell_selected { background-color: #ccc; background-image: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent); background-size: 20px 20px; }
+.month_calender_row_new .month_calender_rowheader_inner { cursor: text; background-position: 0px 50%; background-repeat: no-repeat; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABUSURBVChTY0ACslAaK2CC0iCQDMSlECYmQFYIAl1AjFUxukIQwKoYm0IQwFCMSyEIaEJpMMClcD4Qp0CYEIBNIUzRPzAPCtAVYlWEDgyAGIdTGBgAbqEJYyjqa3oAAAAASUVORK5CYII=); }
+.month_calender_row_new .month_calender_rowheader_inner:hover { background: white; }
+.month_calender_rowheader textarea { padding: 3px; }
+.month_calender_rowheader_scroll { cursor: default; }
+.month_calender_shadow_forbidden .month_calender_shadow_inner { background-color: red; }
+.month_calender_event_moving_source { opacity: 0.5; }
+.month_calender_linkpoint { background-color: white; border: 1px solid gray; border-radius: 5px; }
+.month_calender_linkpoint.month_calender_linkpoint_hover { background-color: black; }
+.month_calender_event.month_calender_event_version .month_calender_event_inner { overflow:hidden; background-color: #cfdde8; background-image: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent); background-size: 20px 20px; }
+.month_calender_crosshair_vertical, .month_calender_crosshair_horizontal, .month_calender_crosshair_left, .month_calender_crosshair_top { background-color: gray; opacity: 0.2; }
+.month_calender_link_dot { border-radius: 10px; background-color: #cc0000; }
+.month_calender_task_milestone .month_calender_event_inner { position:absolute;top:16%;left:16%;right:16%;bottom:16%; background: #38761d; border: 0px none; transform: rotate(45deg); filter: none; }
+.month_calender_event_left { white-space: nowrap; padding-top: 5px; color: #666; cursor: default; }
+.month_calender_event_right { white-space: nowrap; padding-top: 5px; color: #666; cursor: default; }
+.month_calender_selectionrectangle { background-color: #0000ff; border: 1px solid #000033; opacity: 0.4; }
+.month_calender_link_shadow { border:1px solid black; }
+.month_calender_link_shadow_circle { background-color:black; }
+.month_calender_link_hover { box-shadow: 0px 0px 2px 2px rgba(255, 0, 0, 0.3); }
+.month_calender_block { background-color: #808080; opacity: 0.5; }
+.month_calender_main:focus { outline: none; }
+.month_calender_shadow_invalid .month_calender_shadow_inner { outline: red 2px solid; z-index: 100; opacity: 0.5; }
+.month_calender_sorticon { opacity: 0.2;background-position: center center; background-repeat: no-repeat; cursor: pointer; }
+.month_calender_sorticon.month_calender_sorticon_asc { background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBvbHlnb24gcG9pbnRzPSI1IDEuNSwgMTAgMTAsIDAgMTAiLz48L3N2Zz4='); }
+.month_calender_sorticon.month_calender_sorticon_desc { background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBvbHlnb24gcG9pbnRzPSI1IDguNSwgMCAwLCAxMCAwIi8+PC9zdmc+'); }
+.month_calender_sorticon.month_calender_sorticon_active { opacity: 1; }
+.month_calender_loading { background-color: orange; color: white; padding: 2px; }
+.month_calender_cell_focus { outline: red 2px solid; outline-offset: -2px; z-index: 100; opacity: 0.5; }
+.month_calender_cell_focus.month_calender_cell_focus_top { border-top: 4px solid red; }
+.month_calender_cell_focus.month_calender_cell_focus_bottom { border-bottom: 4px solid red; }
+.month_calender_event_focus { outline: red 2px solid; z-index: 100; opacity: 0.5; }
+.month_calender_rowheader_scroll {
+    cursor: default;
+    background: #bf040a;
+}
+.month_calender_timeheader_scroll {
+    background: #bf040a;
+}

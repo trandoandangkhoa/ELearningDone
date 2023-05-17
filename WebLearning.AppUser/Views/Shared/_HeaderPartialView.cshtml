@@ -44,24 +44,38 @@
                     }
                 </ul>
             </li>
-            <li role="presentation" class="dropdown" >
-                <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
-                    @await Component.InvokeAsync("NumberNotify")
+            @if (User.Identity.IsAuthenticated)
+            {
+                <li role="presentation" class="dropdown">
+                    <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                        @await Component.InvokeAsync("NumberNotify")
 
-                </a>
-                <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu" style="max-height:300px; overflow-y:scroll;">
-                 @await Component.InvokeAsync("HeaderNotify")
-                <li >
-                    <div class="text-center">
-                        <a href="/thong-bao.html">
-                            <strong>Xem tất cả</strong>
-                            <i class="fa fa-angle-right"></i>
-                        </a>
-                    </div>
+                    </a>
+                    <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu" style="max-height:300px; overflow-y:scroll;">
+                        @await Component.InvokeAsync("HeaderNotify")
+                        <li>
+                            <div class="text-center">
+                                <a href="/thong-bao.html">
+                                    <strong>Xem tất cả</strong>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+
                 </li>
-                </ul>
-
-            </li>
+            }
+            else
+            {
+                <li role="presentation" class="dropdown">
+                    <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-bell-o"></i>
+                        <span class="badge bg-green">0</span>
+                    </a>
+                    
+                </li>
+            }
+            
 
         </ul>
     </nav>

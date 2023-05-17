@@ -182,6 +182,51 @@ namespace WebLearning.Persistence.Migrations
                     b.ToTable("AnswerMonthly", (string)null);
                 });
 
+            modelBuilder.Entity("WebLearning.Domain.Entites.AppointmentSlot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<Guid>("CodeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("End")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PatientId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PatientName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("Appointments");
+                });
+
             modelBuilder.Entity("WebLearning.Domain.Entites.Avatar", b =>
                 {
                     b.Property<Guid>("Id")
@@ -374,6 +419,51 @@ namespace WebLearning.Persistence.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("CourseRole", (string)null);
+                });
+
+            modelBuilder.Entity("WebLearning.Domain.Entites.HistoryAddSlot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<Guid>("CodeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("End")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("OldCodeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TypedSubmit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("HistoryAddSlots");
                 });
 
             modelBuilder.Entity("WebLearning.Domain.Entites.HistorySubmitFinal", b =>
@@ -1126,6 +1216,39 @@ namespace WebLearning.Persistence.Migrations
                     b.ToTable("Role", (string)null);
                 });
 
+            modelBuilder.Entity("WebLearning.Domain.Entites.Room", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Rooms");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Hội trường"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Lầu 2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Lầu 3"
+                        });
+                });
+
             modelBuilder.Entity("WebLearning.Domain.Entites.Account", b =>
                 {
                     b.HasOne("WebLearning.Domain.Entites.Role", "Role")
@@ -1179,6 +1302,15 @@ namespace WebLearning.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("QuestionMonthly");
+                });
+
+            modelBuilder.Entity("WebLearning.Domain.Entites.AppointmentSlot", b =>
+                {
+                    b.HasOne("WebLearning.Domain.Entites.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId");
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("WebLearning.Domain.Entites.Avatar", b =>
@@ -1245,6 +1377,17 @@ namespace WebLearning.Persistence.Migrations
                     b.Navigation("Course");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("WebLearning.Domain.Entites.HistoryAddSlot", b =>
+                {
+                    b.HasOne("WebLearning.Domain.Entites.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("WebLearning.Domain.Entites.Lession", b =>

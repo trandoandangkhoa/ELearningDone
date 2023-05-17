@@ -127,7 +127,7 @@ namespace WebLearning.AppUser.Controllers
 
                 string AliasCourse = TempData["AliasCourse"].ToString();
 
-                string url = $"/chi-tiet-khoa-hoc/{AliasCourse}/{CourseId}/bai-kiem-tra-cuoi-khoa/{Alias}/{quizCourseId}";
+                string url = $"/chi-tiet-khoa-hoc/{AliasCourse}/{CourseId}/bai-kiem-tra-cuoi-khoa/{Alias}/{quizCourseId}#{questionId}";
 
                 if (string.IsNullOrEmpty(User.Identity.Name))
                 {

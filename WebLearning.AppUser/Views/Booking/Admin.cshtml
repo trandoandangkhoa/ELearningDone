@@ -1,0 +1,416 @@
+﻿
+@inject IHttpContextAccessor Accessor
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+<input type="text" id="baseAddress" value="@Configuration["BaseAddress"]" />
+<input type="text" id="email" value="@User.Identity.Name" />
+<div class="row">
+    <div class="col-md-3 mt-sm-20">
+        <div id="nav"></div>
+
+    </div>
+    <div class="col-md-9 mt-sm-20">
+
+        <div id="month-container" style="height:auto;margin:auto">
+            <span class="toolbar-item"><label for="business-only"><input type="checkbox" id="business-only"> <strong>Giờ làm việc</strong></label></span>
+            <label for='scale-hours'><input type="radio" value="hours" name="scale" id='scale-hours' switch-wrap d-flex justify-content-between checked><strong>Theo giờ</strong> </label>
+            <label for='scale-shifts'><input type="radio" value="shifts" name="scale" id='scale-shifts'> <strong>Theo ca</strong></label>
+
+            <div id="scheduler"></div>
+        </div>
+        <div style="margin-top:5px">
+            <table>
+                <tr>
+                    <th>
+                    </th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <td>
+                        Xóa lịch trống tháng này:
+                    </td>
+                    <td>
+                        <button id="clear" class="genric-btn danger circle arrow">Xóa</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Tạo lịch trống cho 6 tháng:
+                    </td>
+                    <td>
+                        <button id="autoadd" class="genric-btn success circle arrow">Tạo</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="fileUpload" name="fileUpload" type="file" />
+
+                    </td>
+                    <td>
+                        <input type="button" onclick="uploadFiles('fileUpload');" value="Load" class=" genric-btn info circle arrow" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<form>
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    function uploadFiles(inputId) {
+        var input = document.getElementById(inputId); //get file input id
+        var files = input.files; //get files
+        var formData = new FormData(); //create form
+
+        for (var i = 0; i != files.length; i++) {
+            formData.append("formFile", files[i]); //loop through all files and append
+        }
+
+        $.ajax(
+            {
+                url: "/import.html",
+                data: formData, // send it as formData
+                processData: false,
+                contentType: false,
+                type: "POST", //type is post as we will need to post files
+                success: function (data) {
+                    scheduler.message(data.message);
+                }
+            }
+        );
+    }
+</script>
+
+<script>
+    var ba = document.getElementById("baseAddress").value;
+    var em = document.getElementById("email").value;
+    const app = {
+
+        elements: {
+            get businessOnly() { return document.querySelector("#business-only"); },
+            get radios() { return Array.apply(null, document.querySelectorAll("input[name=scale]")); },
+            get clear() { return document.querySelector("#clear"); },
+            get autoadd() { return document.querySelector("#autoadd"); },
+            get scaleChecked() { return document.querySelector("input[name=scale]:checked"); }
+        },
+        async loadEvents(day) {
+            let from = scheduler.visibleStart();
+            let to = scheduler.visibleEnd();
+            if (day) {
+                from = new DayPilot.Date(day).firstDayOfMonth();
+                to = from.addMonths(1);
+            }
+
+            const { data } = await DayPilot.Http.get(`${ba}/api/Appointments?start=${from}&end=${to}`);
+
+            if (data == null) {
+                window.location.href = "/dang-nhap.html"
+            }
+
+            const options = {
+                events: data
+            };
+
+            if (day) {
+                options.timeline = app.getTimeline(day);
+                options.scrollTo = day;
+            }
+
+            scheduler.update(options);
+
+            nav.events.list = data;
+            nav.update();
+        },
+
+        async loadResources() {
+            const { data } = await DayPilot.Http.get(`${ba}/api/Rooms`);
+            if (data == null) {
+                window.location.href = "/dang-nhap.html"
+            }
+            scheduler.update({
+                resources: data,
+                visible: true
+            });
+        },
+        getTimeline(date) {
+            date = date || DayPilot.Date.today();
+            const start = new DayPilot.Date(date).firstDayOfMonth();
+            const days = start.daysInMonth();
+            const scale = app.elements.scaleChecked.value;
+            const businessOnly = app.elements.businessOnly.checked;
+            let morningShiftStarts = 8;
+            let morningShiftEnds = 12;
+            let afternoonShiftStarts = 14;
+            let afternoonShiftEnds = 18;
+
+            if (!businessOnly) {
+                morningShiftStarts = 0;
+                morningShiftEnds = 12;
+                afternoonShiftStarts = 12;
+                afternoonShiftEnds = 24;
+            }
+
+            const timeline = [];
+
+            let increaseMorning;  // in hours
+            let increaseAfternoon;  // in hours
+            switch (scale) {
+                case "30min":
+                    increaseMorning = 0.5;
+                    increaseAfternoon = 0.5;
+                    break;
+                case "hours":
+                    increaseMorning = 1;
+                    increaseAfternoon = 1;
+                    break;
+                case "shifts":
+                    increaseMorning = morningShiftEnds - morningShiftStarts;
+                    increaseAfternoon = afternoonShiftEnds - afternoonShiftStarts;
+                    break;
+                default:
+                    throw "Invalid scale value";
+            }
+
+            for (let i = 0; i < days; i++) {
+                const day = start.addDays(i);
+
+                for (let x = morningShiftStarts; x < morningShiftEnds; x += increaseMorning) {
+                    timeline.push({ start: day.addHours(x), end: day.addHours(x + increaseMorning) });
+                }
+                for (let x = afternoonShiftStarts; x < afternoonShiftEnds; x += increaseAfternoon) {
+                    timeline.push({ start: day.addHours(x), end: day.addHours(x + increaseAfternoon) });
+                }
+            }
+
+            return timeline;
+        },
+        getTimeHeaders() {
+            const scale = app.elements.scaleChecked.value;
+            switch (scale) {
+                case "30min":
+                    return [
+                        { groupBy: "Month" },
+                        { groupBy: "Day", format: "dddd d" },
+                        { groupBy: "Hour", format: "h tt" },
+                        { groupBy: "Cell", format: "m" }
+                    ];
+                case "hours":
+                    return [
+                        { groupBy: "Month" },
+                        { groupBy: "Day", format: "dddd d" },
+                        { groupBy: "Hour", format: "h tt" }
+                    ];
+                case "shifts":
+                    return [
+                        { groupBy: "Month" },
+                        { groupBy: "Day", format: "dddd d" },
+                        { groupBy: "Cell", format: "tt" }
+                    ];
+            }
+        },
+
+        init() {
+            app.loadResources();
+            app.loadEvents(DayPilot.Date.today());
+
+            app.elements.businessOnly.addEventListener("click", () => {
+                scheduler.timeline = app.getTimeline();
+                scheduler.update();
+            });
+
+            app.elements.radios.forEach(item => {
+                item.addEventListener("change", () => {
+                    scheduler.timeline = app.getTimeline();
+                    scheduler.timeHeaders = app.getTimeHeaders();
+                    scheduler.update();
+                });
+            });
+
+            app.elements.clear.addEventListener("click", async () => {
+                const dp = scheduler;
+                const params = {
+                    start: dp.visibleStart(),
+                    end: dp.visibleEnd()
+                };
+
+                const { data } = await DayPilot.Http.post(`${ba}/api/Appointments/clear`, params);
+                scheduler.message(data.message);
+
+                app.loadEvents();
+            });
+            app.elements.autoadd.addEventListener("click", async () => {
+                const dp = scheduler;
+                const params = {
+                    start: dp.visibleStart(),
+                    end: dp.visibleEnd()
+                };
+
+                const { data } = await DayPilot.Http.post(`${ba}/api/Appointments/create/months`, params);
+                scheduler.message(data.message);
+
+                app.loadEvents();
+            });
+        }
+
+    };
+
+    const nav = new DayPilot.Navigator("nav", {
+        theme: "nav_calender",
+        selectMode: "month",
+        showMonths: 2,
+        skipMonths: 2,
+        onTimeRangeSelected: args => {
+            if (scheduler.visibleStart().getDatePart() <= args.day && args.day < scheduler.visibleEnd()) {
+                scheduler.scrollTo(args.day, "fast");  // just scroll
+            } else {
+                app.loadEvents(args.day);  // reload and scroll
+            }
+        }
+    });
+    nav.init();
+
+
+    const scheduler = new DayPilot.Scheduler("scheduler", {
+        theme: "month_calender",
+        visible: false, // will be displayed after loading the resources
+        scale: "Manual",
+        timeline: app.getTimeline(),
+        timeHeaders: app.getTimeHeaders(),
+        useEventBoxes: "Never",
+        eventDeleteHandling: "Update",
+        eventClickHandling: "Disabled",
+        eventMoveHandling: "Disabled",
+        eventResizeHandling: "Disabled",
+        rowHeaderColumnsMode: "Legacy",
+
+        allowEventOverlap: false,
+        onBeforeTimeHeaderRender: (args) => {
+            args.header.text = args.header.text.replace(" AM", "a").replace(" PM", "p");  // shorten the hour header
+        },
+        onBeforeEventRender: (args) => {
+            switch (args.data.status) {
+                case "free":
+                    args.data.backColor = "#3d85c6";
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    args.data.deleteDisabled = app.elements.scaleChecked.value === "shifts"; // only allow deleting in the more detailed hour scale mode
+                    break;
+                case "waiting":
+                    args.data.backColor = "#e69138";  // orange
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    break;
+                case "confirmed":
+                    args.data.backColor = "#6aa84f";  // green
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    break;
+            }
+        },
+        rowClickHandling: "Edit",
+        onRowEdit: async (args) => {
+            if (args.canceled) {
+                console.log("User-canceled.");
+                return;
+            }
+        },
+        onRowEdited: async (args) => {
+            if (args.canceled) {
+                return;
+            }
+            const params = {
+                id: args.row.id,
+                name: args.newText,
+                //value: args.newText
+            };
+            const check = await DayPilot.Modal.confirm("Bạn có muốn chỉnh sửa thông tin?", { okText: "Xác nhận", cancelText: "Không" });
+            if (check.result == "OK") {
+                const { data: result } = await DayPilot.Http.put(`${ba}/api/Rooms/${params.id}`, params);
+                scheduler.message(result.message);
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2500);
+
+            } else {
+                scheduler.message("Hủy thao tác thành công!");
+            }
+
+        },
+        rowClickHanding: "Delete",
+        onRowDelete: async (args) => {
+            if (args.canceled) {
+                console.log("User-canceled.");
+                return;
+            }
+        },
+        onRowDeleted: async (args) => {
+            if (args.canceled) {
+                return;
+            }
+            console.log("Delete");
+
+        },
+
+        rowCreateHandling: "Enabled",
+
+        onRowCreate: async (args) => {
+            const params = {
+                name: args.text
+                //value: args.newText
+            };
+            const check = await DayPilot.Modal.confirm("Bạn có muốn thêm mới?", { okText: "Xác nhận", cancelText: "Không" });
+            if (check.result == "OK") {
+                const { data: result } = await DayPilot.Http.post(`${ba}/api/Rooms/`, params);
+                scheduler.message(result.message);
+                scheduler.update();
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2500);
+
+            } else {
+                scheduler.message("Hủy thao tác thành công!");
+            }
+
+
+        },
+
+
+        onEventDeleted: async (args) => {
+            const params = {
+                id: args.e.id(),
+            };
+            const { data: result } = await DayPilot.Http.delete(`${ba}/api/Appointments/${params.id}`);
+
+            scheduler.message(result.message);
+        },
+        onTimeRangeSelected: async (args) => {
+            const dp = scheduler;
+            const scale = app.elements.scaleChecked.value;
+
+            const params = {
+                start: args.start.toString(),
+                end: args.end.toString(),
+                resource: args.resource,
+                scale: scale
+            };
+
+            dp.clearSelection();
+
+            const { data } = await DayPilot.Http.post(`${ba}/api/Appointments/create`, params);
+
+            scheduler.message(data.message);
+            app.loadEvents();
+            //dp.message(data.message);
+        }
+
+    });
+    scheduler.init();
+
+    app.init();
+
+</script>

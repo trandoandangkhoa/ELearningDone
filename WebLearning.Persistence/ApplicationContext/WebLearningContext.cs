@@ -35,7 +35,6 @@ namespace WebLearning.Persistence.ApplicationContext
 
         public DbSet<Avatar> Avatars { get; set; }
 
-
         public DbSet<Role> Roles { get; set; }
 
         public DbSet<CourseRole> CourseRoles { get; set; }
@@ -88,6 +87,14 @@ namespace WebLearning.Persistence.ApplicationContext
         public DbSet<OptionCourse> OptionCourses { get; set; }
 
         public DbSet<OptionMonthly> OptionMonthlies { get; set; }
+
+        //============= BOOKING =====================================
+
+        public DbSet<AppointmentSlot> Appointments { get; set; }
+
+        public DbSet<Room> Rooms { get; set; }
+
+        public DbSet<HistoryAddSlot> HistoryAddSlots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -169,7 +176,11 @@ namespace WebLearning.Persistence.ApplicationContext
 
             modelBuilder.Entity<OtherFileUpload>().ToTable("OtherFileUpload");
 
+            //======================BOOKING==================================
 
+            modelBuilder.Entity<Room>().HasData(new Room { Id = 1, Name = "Hội trường" });
+            modelBuilder.Entity<Room>().HasData(new Room { Id = 2, Name = "Lầu 2" });
+            modelBuilder.Entity<Room>().HasData(new Room { Id = 3, Name = "Lầu 3" });
         }
     }
 }

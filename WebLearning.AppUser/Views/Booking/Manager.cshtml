@@ -1,0 +1,707 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+<input type="text" id="baseAddress" value="@Configuration["BaseAddress"]" />
+<input type="text" id="email" value="@User.Identity.Name" />
+<div class="row">
+    <div class="col-md-12">
+        <div class="x_panel" style="min-height:695px">
+            <div class="col-md-4">
+                <div class="x_title" style="min-height:39.8px;border:none">
+                </div>
+
+                <div class="x_content">
+                    <div class="fc-toolbar fc-header-toolbar" style="min-height:23.11px">
+                    </div>
+                    <div class="fc-clear"></div>
+
+                    <div>
+                        <div id="nav" style="margin:auto"></div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="x_title">
+                    <h2>Lịch sự kiện <small>Chi tiết</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            Phòng:
+                            <select id="doctor" name="doctor"></select>
+
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content" id="day-container">
+
+                    <div class="fc-toolbar fc-header-toolbar">
+                        <div class="fc-left">
+                            <div class="fc-button-group">
+                                <a href="javascript:dp.startDate = dp.startDate.addDays(-1); dp.update();">
+                                    <button type="button" class="fc-prev-button fc-button fc-state-default fc-corner-left">
+                                        <span class="fc-icon fc-icon-left-single-arrow"></span>
+
+
+                                    </button>
+                                </a>
+                                <a href="javascript:dp.startDate = dp.startDate.addDays(1); dp.update();">
+                                    <button type="button" class="fc-next-button fc-button fc-state-default fc-corner-right">
+                                        <span class="fc-icon fc-icon-right-single-arrow"></span>
+                                    </button>
+                                </a>
+
+
+                            </div>
+                            <button type="button" class="fc-today-button fc-button fc-state-default fc-corner-left fc-corner-right">Tuần này</button>
+                        </div>
+                        <div class="fc-right">
+                            <div class="fc-button-group">
+                                <button type="button" class="fc-agendaDay-button fc-button fc-state-default" onclick="day()">Ngày</button>
+                                <button type="button" class="fc-agendaWeek-button fc-button fc-state-default" onclick="week()">Tuần</button>
+                                <button type="button" class="fc-month-button fc-button fc-state-default fc-corner-left" onclick="month()">Tháng</button>
+                            </div>
+                        </div>
+                        <div class="fc-center">
+                        </div>
+                        <div class="fc-clear"></div>
+                    </div>
+                    <div id="dp">
+                    </div>
+                </div>
+                <div class="x_content" id="week-container" style="display:none;">
+                    <div class="fc-toolbar fc-header-toolbar">
+                        <div class="fc-left">
+                            <div class="fc-button-group">
+                                <a href="javascript:calendar.startDate = calendar.startDate.addDays(-7); calendar.update();">
+                                    <button type="button" class="fc-prev-button fc-button fc-state-default fc-corner-left">
+                                        <span class="fc-icon fc-icon-left-single-arrow"></span>
+
+
+                                    </button>
+                                </a>
+                                <a href="javascript:calendar.startDate = calendar.startDate.addDays(7); calendar.update();">
+                                    <button type="button" class="fc-next-button fc-button fc-state-default fc-corner-right">
+                                        <span class="fc-icon fc-icon-right-single-arrow"></span>
+                                    </button>
+                                </a>
+
+
+                            </div>
+                            <button type="button" class="fc-today-button fc-button fc-state-default fc-corner-left fc-corner-right">Tuần này</button>
+                        </div>
+                        <div class="fc-right">
+                            <div class="fc-button-group">
+                                <button type="button" class="fc-agendaDay-button fc-button fc-state-default" onclick="day()">Ngày</button>
+                                <button type="button" class="fc-agendaWeek-button fc-button fc-state-default" onclick="week()">Tuần</button>
+                                <button type="button" class="fc-month-button fc-button fc-state-default fc-corner-left" onclick="month()">Tháng</button>
+                            </div>
+                        </div>
+                        <div class="fc-center">
+                        </div>
+                        <div class="fc-clear"></div>
+                    </div>
+                    <div id="calendar"></div>
+
+
+                </div>
+                <div class="x_content" id="month-container" style="display:none;">
+                    <div class="fc-toolbar fc-header-toolbar">
+                        <div class="fc-left">
+                            <span class="toolbar-item"><label for="business-only"><input type="checkbox" id="business-only">  <strong>Giờ làm việc</strong></label></span>
+
+                        </div>
+                        <div class="fc-right">
+                            <div class="fc-button-group">
+                                <button type="button" class="fc-agendaDay-button fc-button fc-state-default" onclick="day()">Ngày</button>
+                                <button type="button" class="fc-agendaWeek-button fc-button fc-state-default" onclick="week()">Tuần</button>
+                                <button type="button" class="fc-month-button fc-button fc-state-default fc-corner-left" onclick="month()">Tháng</button>
+                            </div>
+                        </div>
+                        <div class="fc-center">
+                        </div>
+                        <div class="fc-clear"></div>
+                    </div>
+                    <div id="scheduler"></div>
+
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript">
+    function day() {
+        var day = document.getElementById("day-container");
+        var week = document.getElementById("week-container");
+        var month = document.getElementById("month-container");
+        if (day.style.display !== "none") {
+            day.style.display = "block";
+            week.style.display = "none";
+            month.style.display = "none";
+
+        }
+        else {
+            day.style.display = "block";
+            week.style.display = "none";
+            month.style.display = "none";
+
+        }
+    };
+    function week() {
+        var day = document.getElementById("day-container");
+        var week = document.getElementById("week-container");
+        var month = document.getElementById("month-container");
+        if (week.style.display !== "none") {
+            week.style.display = "block";
+            day.style.display = "none";
+            month.style.display = "none";
+
+        }
+        else {
+            week.style.display = "block";
+            day.style.display = "none";
+            month.style.display = "none";
+
+        }
+    };
+    function month() {
+        var day = document.getElementById("day-container");
+        var week = document.getElementById("week-container");
+        var month = document.getElementById("month-container");
+        if (month.style.display !== "none") {
+            month.style.display = "block";
+            day.style.display = "none";
+            week.style.display = "none";
+
+        }
+        else {
+            month.style.display = "block";
+            day.style.display = "none";
+            week.style.display = "none";
+
+        }
+    };
+
+</script>
+<script>
+    var ba = document.getElementById("baseAddress").value;
+    var em = document.getElementById("email").value;
+    const app = {
+        doctors: [],
+        elements: {
+            doctor: document.querySelector("#doctor"),
+            get businessOnly() { return document.querySelector("#business-only"); },
+
+        },
+
+        get patientId() {
+            if (!localStorage["patientId"]) {
+                localStorage["patientId"] = DayPilot.guid();
+            }
+            return localStorage["patientId"];
+        },
+        async loadEvents(day) {
+            const start = nav.visibleStart();
+            const end = nav.visibleEnd();
+            const doctor = app.elements.doctor.value;
+
+            const { data } = await DayPilot.Http.get(`${ba}/api/Appointments?start=${start}&end=${end}&doctor=${doctor}`);
+
+            if (data == null) {
+                window.location.href = "/dang-nhap.html"
+            }
+            if (day) {
+                calendar.startDate = day;
+                dp.startDate = day;
+            }
+            calendar.events.list = data;
+            dp.events.list = data;
+
+            calendar.update();
+            dp.update();
+
+            nav.events.list = data;
+            nav.update();
+        },
+
+        //Use for monthly-Calender
+        async loadEventsInMonth(day) {
+            let from = scheduler.visibleStart();
+            let to = scheduler.visibleEnd();
+            if (day) {
+                from = new DayPilot.Date(day).firstDayOfMonth();
+
+                to = from.addMonths(2);
+            }
+
+            const { data } = await DayPilot.Http.get(`${ba}/api/Appointments?start=${from}&end=${to}`);
+
+            if (data == null) {
+                window.location.href = "/dang-nhap.html"
+            }
+
+            const options = {
+                events: data
+            };
+
+            if (day) {
+                options.timeline = app.getTimeline(day);
+                options.scrollTo = day;
+            }
+
+            scheduler.update(options);
+
+            nav.events.list = data;
+            nav.update();
+        },
+        async loadResources() {
+            const { data } = await DayPilot.Http.get(`${ba}/api/Rooms/managergetrooms`);
+            if (data == null) {
+                window.location.href = "/dang-nhap.html"
+            }
+            scheduler.update({
+                resources: data,
+                visible: true
+            });
+        },
+        getTimeline(date) {
+            date = date || DayPilot.Date.today();
+            const start = DayPilot.Date.today();
+            const days = (start.daysInMonth()) * 3;
+            const businessOnly = app.elements.businessOnly.checked;
+            let morningShiftStarts = 8;
+            let morningShiftEnds = 12;
+            let afternoonShiftStarts = 14;
+            let afternoonShiftEnds = 18;
+
+            if (!businessOnly) {
+                morningShiftStarts = 0;
+                morningShiftEnds = 12;
+                afternoonShiftStarts = 12;
+                afternoonShiftEnds = 24;
+            }
+
+            const timeline = [];
+
+            let increaseMorning;  // in hours
+            let increaseAfternoon;  // in hours
+            increaseMorning = morningShiftEnds - morningShiftStarts;
+            increaseAfternoon = afternoonShiftEnds - afternoonShiftStarts;
+
+
+            for (let i = 0; i < days; i++) {
+                const day = start.addDays(i);
+
+                for (let x = morningShiftStarts; x < morningShiftEnds; x += increaseMorning) {
+                    timeline.push({ start: day.addHours(x), end: day.addHours(x + increaseMorning) });
+                }
+                for (let x = afternoonShiftStarts; x < afternoonShiftEnds; x += increaseAfternoon) {
+                    timeline.push({ start: day.addHours(x), end: day.addHours(x + increaseAfternoon) });
+                }
+            }
+
+            return timeline;
+        },
+        getTimeHeaders() {
+            return [
+                { groupBy: "Month" },
+                { groupBy: "Day", format: "dddd d" },
+                { groupBy: "Cell", format: "tt" }
+            ];
+        },
+        async init() {
+            app.loadResources();
+            const { data } = await DayPilot.Http.get(`${ba}/api/Rooms/managergetrooms`);
+            if (data == null) {
+                window.location.href = "/dang-nhap.html"
+            }
+            app.doctors = data;
+
+            app.doctors.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item.id;
+                option.innerText = item.name;
+                app.elements.doctor.appendChild(option);
+            });
+            app.elements.doctor.addEventListener("change", () => {
+                app.loadEvents();
+            });
+
+            app.elements.businessOnly.addEventListener("click", () => {
+                scheduler.timeline = app.getTimeline();
+                scheduler.update();
+            });
+            app.loadEvents();
+            app.loadEventsInMonth();
+        }
+    };
+    const nav = new DayPilot.Navigator("nav",
+        {
+            theme: "nav_calender",
+            selectMode: "week",
+            showMonths: 2,
+            skipMonths: 2,
+            onTimeRangeSelected: (args) => {
+                const weekStarts = DayPilot.Locale.find(nav.locale).weekStarts;
+                const start = args.start.firstDayOfWeek(weekStarts);
+                const end = args.start.addDays(7);
+                if (scheduler.visibleStart().getDatePart() <= args.day && args.day < scheduler.visibleEnd()) {
+                    scheduler.scrollTo(args.day, "fast");  // just scroll
+                } else {
+                    app.loadEvents(args.day);  // reload and scroll
+                }
+                app.loadEvents(start, end);
+            }
+
+        });
+    nav.init();
+
+    const calendar = new DayPilot.Calendar("calendar", {
+        cellHeight: "40",
+        viewType: "Week",
+        columnWidthSpec: "Fixed",
+        theme: "red_calendar",
+        timeRangeSelectedHandling: "Disabled",
+        eventMoveHandling : "Disabled",
+        eventResizeHandling: "Disabled",
+        eventDeleteHandling: "Update",
+        onEventDeleted: async (args) => {
+            const check = await DayPilot.Modal.confirm("Bạn có muốn xóa?", { okText: "Xác nhận", cancelText: "Không" });
+            if (check.result == "OK") {
+                const id = args.e.data.id;
+                await DayPilot.Http.delete(`${ba}/api/Appointments/${id}`);
+
+                calendar.message("Xóa thành công!");
+
+            } else {
+                calendar.message("Hủy thao tác thành công!");
+            }
+            setTimeout(function () {
+                window.location.reload();
+            }, 2500);
+        },
+        onBeforeEventRender: (args) => {
+            switch (args.data.status) {
+                case "free":
+                    args.data.backColor = "#3d85c6";  // blue
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    break;
+                case "waiting":
+                    args.data.backColor = "#e69138";  // orange
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    args.data.html = `${args.data.patientName}`;
+
+                    break;
+                case "confirmed":
+                    args.data.backColor = "#6aa84f";  // green
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    args.data.html = `${args.data.patientName}`;
+
+                    break;
+            }
+        },
+        onEventClick: async (args) => {
+
+            const form = [
+                { name: "Cập nhật tình trạng phòng" },
+                { name: "Thông tin người đặt", id: "patientName", disabled: true },
+                { name: "Nội dung", id: "description", disabled: true },
+                { name: "Ghi chú", id: "note", disabled: true },
+                {
+                    name: "Tình trạng", id: "status", type: "select", options: [
+                        { name: "Trống", id: "free" },
+                        { name: "Chờ", id: "waiting" },
+                        { name: "Xác nhận", id: "confirmed" },
+                    ]
+                },
+                {
+                    name: "Tạo lịch", id: "customAdd", type: "radio", options: [
+                        {
+                            name: ' Tạo lịch hàng tuần trong 1 tháng',
+                            id: '1',
+                        },
+                        {
+                            name: ' Tạo lịch hàng tuần trong nhiều tháng',
+                            id: '2',
+                        },
+                        {
+                            name: ' Khác',
+                            id: '3',
+                        },
+                    ]
+                },
+                { name: "Ngày bắt đầu", id: "start", dateFormat: "dd/MM/yyyy h:mm tt", onValidate: validateDate },
+                { name: "Ngày kết thúc", id: "end", dateFormat: "dd/MM/yyyy h:mm tt", onValidate: validateDate },
+                { name: "Phòng", id: "resource", options: app.rooms, onValidate: validateTextRequired },
+                {
+                    type: 'html',
+                    html: 'Ghi chú: Hội trường: 1, Lầu 2: 2, Lầu 3: 3, ...',
+                },
+            ];
+
+            const data = args.e.data;
+            const options = {
+                focus: "start",
+                focus: "end",
+                focus: "resource",
+                focus: "customAdd"
+            };
+
+            const modal = await DayPilot.Modal.form(form, data, options);
+            if (modal.canceled) {
+                return;
+            }
+
+            const params = {
+                ...args.e.data,
+                start: modal.result.start,
+                end: modal.result.end,
+                resource: modal.result.resource,
+                status: modal.result.status,
+                customAdd: modal.result.customAdd,
+
+            };
+
+            const check = await DayPilot.Modal.confirm("Bạn có muốn thay đổi?", { okText: "Xác nhận", cancelText: "Không" });
+            if (check.result == "OK") {
+
+                var rs = await DayPilot.Http.put(`${ba}/api/Appointments/${params.id}/${em}`, params);
+                calendar.events.update(modal.result);
+
+                calendar.message(rs.data.message);
+
+                if (rs.data.message == "Cập nhật thành công!") {
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 2500);
+                }else{
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 3500);
+                }
+
+            } else {
+                dp.message("Hủy thao tác thành công!");
+
+            }
+
+        }
+    });
+    const scheduler = new DayPilot.Scheduler("scheduler", {
+        theme: "month_calender",
+        visible: false, // will be displayed after loading the resources
+        scale: "Manual",
+        timeline: app.getTimeline(),
+        timeHeaders: app.getTimeHeaders(),
+        useEventBoxes: "Never",
+        eventClickHandling: "Disabled",
+        eventMoveHandling: "Disabled",
+        eventResizeHandling: "Disabled",
+        allowEventOverlap: false,
+
+        onBeforeEventRender: (args) => {
+            switch (args.data.status) {
+                case "free":
+                    args.data.backColor = "#3d85c6";
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    break;
+                case "waiting":
+                    args.data.backColor = "#e69138";  // orange
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    break;
+                case "confirmed":
+                    args.data.backColor = "#6aa84f";  // green
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    break;
+            }
+        },
+    });
+    function validateTextRequired(args) {
+        var value = args.value || "" ;
+        if (value.trim().length === 0) {
+            args.valid = false;
+            args.message = "Text required";
+        }
+
+
+    }
+    function validateDate(args){
+        var value = args.value;
+        var date = new DayPilot.Date(value);
+        if(value == null){
+            args.valid = false;
+            args.message = "Thời gian không hợp lệ";
+        }
+        else if(date.getHours() < 8){
+            args.valid = false;
+            args.message = "Chưa đến thời gian làm việc";
+        }
+        else if (date.getHours() >= 17 && date.getMinutes() > 30 || date.getHours() >= 18) {
+            args.valid = false;
+            args.message = "Hết thời gian làm việc";
+        }
+
+    }
+    const dp = new DayPilot.Calendar("dp", {
+        cellHeight: "40",
+        eventDeleteHandling: "Update",
+        timeRangeSelectedHandling: "Disabled",
+        eventMoveHandling : "Disabled",
+        eventResizeHandling: "Disabled",
+        theme: "red_calendar",
+        onEventDeleted: async (args) => {
+            const check = await DayPilot.Modal.confirm("Bạn có muốn xóa?", { okText: "Xác nhận", cancelText: "Không" });
+            if (check.result == "OK") {
+                const id = args.e.data.id;
+                await DayPilot.Http.delete(`${ba}/api/Appointments/${id}`);
+
+                dp.message("Xóa thành công!");
+
+            } else {
+                dp.message("Hủy thao tác thành công!");
+            }
+            setTimeout(function () {
+                window.location.reload();
+            }, 2500);
+        },
+        onBeforeEventRender: (args) => {
+            switch (args.data.status) {
+                case "free":
+                    args.data.backColor = "#3d85c6";  // blue
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    break;
+                case "waiting":
+                    args.data.backColor = "#e69138";  // orange
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    args.data.html = `${args.data.patientName}`;
+                    break;
+                case "confirmed":
+                    args.data.backColor = "#6aa84f";  // green
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                                        args.data.html = `${args.data.patientName}`;
+                    break;
+            }
+        },
+
+
+        onEventClick: async (args) => {
+
+            const form = [
+                { name: "Cập nhật tình trạng phòng" },
+                { name: "Thông tin người đặt", id: "patientName", disabled: true },
+                { name: "Nội dung", id: "description", disabled: true },
+                { name: "Ghi chú", id: "note", disabled: true },
+                {
+                    name: "Tình trạng", id: "status", type: "select", options: [
+                        { name: "Trống", id: "free" },
+                        { name: "Chờ", id: "waiting" },
+                        { name: "Xác nhận", id: "confirmed" },
+                    ]
+                },
+                {
+                    name: "Tạo lịch", id: "customAdd", type: "radio", options: [
+                        {
+                            name: ' Tạo lịch hàng tuần trong 1 tháng',
+                            id: '1',
+                        },
+                        {
+                            name: ' Tạo lịch hàng tuần trong nhiều tháng',
+                            id: '2',
+                        },
+                        {
+                            name: ' Khác',
+                            id: '3',
+                        },
+                    ]
+                },
+                { name: "Ngày bắt đầu", id: "start", dateFormat: "dd/MM/yyyy h:mm tt", onValidate: validateDate },
+                { name: "Ngày kết thúc", id: "end", dateFormat: "dd/MM/yyyy h:mm tt", onValidate: validateDate },
+                { name: "Phòng", id: "resource", options: app.rooms, onValidate: validateTextRequired },
+                {
+                    type: 'html',
+                    html: 'Ghi chú: Hội trường: 1, Lầu 2: 2, Lầu 3: 3, ...',
+                },
+            ];
+            const data = args.e.data;
+
+            const options = {
+                focus: "start",
+                focus: "end",
+                focus: "resource",
+                focus: "customAdd"
+            };
+
+            const modal = await DayPilot.Modal.form(form, data, options);
+            if (modal.canceled) {
+                return;
+            }
+            const params = {
+                ...args.e.data,
+                start: modal.result.start,
+                end: modal.result.end,
+                resource: modal.result.resource,
+                status: modal.result.status,
+                customAdd: modal.result.customAdd,
+
+            };
+            const check = await DayPilot.Modal.confirm("Bạn có muốn thay đổi?", { okText: "Xác nhận", cancelText: "không" });
+            if (check.result == "OK") {
+
+                var rs = await DayPilot.Http.put(`${ba}/api/Appointments/${params.id}/${em}`, params);
+                calendar.events.update(modal.result);
+
+                dp.message(rs.data.message);
+
+                if(rs.data.message == "Cập nhật thành công!"){
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 2500);
+                } else {
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 3500);
+                }
+
+            }else
+            {
+                dp.message("Hủy thao tác thành công!");
+
+            }
+
+
+
+        }
+
+    });
+    dp.viewType = "Day";
+
+    dp.init();
+
+    calendar.init();
+
+    scheduler.init();
+    app.init();
+</script>
+

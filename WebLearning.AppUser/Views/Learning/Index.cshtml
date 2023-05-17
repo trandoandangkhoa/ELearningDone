@@ -1,0 +1,402 @@
+﻿@model DashboardViewModel
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@section Styles{
+<style>
+.mySlides {display:none}
+.w3-left, .w3-right, .w3-badge {cursor:pointer}
+.w3-badge {height:13px;width:13px;padding:0}
+</style>
+
+}
+@if(Model != null)
+{
+    <div class="">
+        <div class="row ">
+            <img class="mySlides w3-animate-fading" src="~/build/images/imgfix.jpg" width="98.5%" height="auto" style="margin:auto;object-fit:fill;border-radius:20px" />
+            <img class="mySlides w3-animate-fading" src="~/build/images/coverfix.jpg" width="98.5%" height="auto" style="margin:auto;object-fit:fill;border-radius:20px" />
+            <img class="mySlides w3-animate-fading" src="~/build/images/miri-cosmetics-hinh-7.jpg" width="98.5%" height="auto" style="margin:auto;object-fit:fill;border-radius:20px" />
+        </div>
+        <div class="row top_tiles" style="margin-top:10px">
+
+            <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="background-color:#2A3F54;color:white;border-radius:20px">
+                    <div class="icon"><i class="fa fa-book" style="color:#ff9200"></i></div>
+                    <div class="count">@Model.CourseDtos.Count()</div>
+                    <h3 style="color:white">Tổng Khóa học</h3>
+                    <p>Tổng cộng</p>
+
+                </div>
+            </div>
+            <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="background-color:#2A3F54;color:white;border-radius:20px">
+                    <div class="icon"><i class="fa fa-mortar-board" style="color:#41b8f0"></i></div>
+                    <div class="count">@Model.OwnCourseDtos.Count()</div>
+                    <h3 style="color:white">Khóa học của tôi</h3>
+                    <p>Tổng cộng</p>
+
+                </div>
+            </div>
+            @{
+                var a = Model.OwnCourseDtos.Where(x => x.QuizCourseDto != null).Count();
+                var b = Model.OwnCourseDtos.Where(x => x.LessionDtos.Any(y => y.QuizlessionDtos != null) != false).Count();
+                var c = a + b;
+
+
+            }
+            <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="background-color:#2A3F54;color:white;border-radius:20px">
+                    <div class="icon"><i class="fa fa-question-circle" style="color:#ffea00"></i></div>
+                    <div class="count"> @c</div>
+                    <h3 style="color:white">Bài kiểm tra</h3>
+                    <p>Tổng cộng</p>
+
+                </div>
+            </div>
+            <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="background-color:#2A3F54;color:white;border-radius:20px">
+                    <div class="icon"><i class="fa fa-check-square" style="color:#5cb85c"></i></div>
+                    @{
+                        if (Model.ReportScoreLessionDtos != null && Model.ReportScoreCourseDtos != null && Model.ReportScoreMonthlyDtos != null)
+                        {
+                            var rpL = Model.ReportScoreLessionDtos.Where(x => x.Passed == true).Count();
+                            var rpC = Model.ReportScoreCourseDtos.Where(x => x.Passed == true).Count();
+                            var rpM = Model.ReportScoreMonthlyDtos.Where(x => x.Passed == true).Count();
+
+                            var rpT = rpC + rpL + rpM;
+                            <div class="count">@rpT</div>
+
+                        }
+                    }
+                    <h3 style="color:white">Bài kiểm tra</h3>
+                    <p>Hoàn thành</p>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="row" style="margin-top:auto">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <div>
+                    <div class="col">
+                        <div class="x_panel" style="background-color:#2A3F54;color:white;border-radius:20px;height:319px">
+                            <div class="x_title">
+                                <h2>Kết quả bài kiểm tra<small style="color:white">Hoàn thành</small></h2>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content" style="max-height:238px;overflow-y:scroll">
+
+
+                                @if (Model.LessionDtos.Count > 0 && Model.LessionDtos != null)
+                                {
+                                    @if (Model.ReportScoreLessionDtos != null && Model.ReportScoreLessionDtos.Count() > 0)
+                                    {
+                                        @foreach (var item in Model.ReportScoreLessionDtos.Where(x => x.Passed == true))
+                                        {
+                                            @foreach (var quizId in Model.QuizlessionDtos.Where(x => x.ID.Equals(item.QuizLessionId)).OrderByDescending(x => x.DateCreated))
+                                            {
+
+                                                var scorePass = quizId.ScorePass;
+
+                                                var totalScore = quizId.QuestionLessionDtos.Sum(x => x.Point);
+
+                                                var month = item.CompletedDate.Month;
+
+                                                var day = item.CompletedDate.Day;
+
+                                                <article class="media event">
+                                                    <a class="pull-left date" style="background-color:white;margin-top:10px">
+                                                        <p class="month" style="color:#2a3f54">@month</p>
+                                                        <p class="day" style="color:#2a3f54">@day</p>
+                                                    </a>
+
+                                                    <div class="media-body">
+                                                        <a class="title" style="color:white" href="/chi-tiet-khoa-hoc/{@quizId.LessionDto.CourseDto.Alias}/{@quizId.LessionDto.CourseId/{@quizId.LessionId}/bai-kiem-tra-theo-bai/{@quizId.Alias}/{@quizId.ID}">@quizId.Name</a>
+
+                                                        <div class="project_progress">
+                                                            <div style="margin:5px">
+                                                                <p class="label label-success">Hoàn thành</p>
+                                                            </div>
+                                                            <div>
+                                                                <strong>Điểm: @item.TotalScore / @quizId.QuestionLessionDtos.Sum(x => x.Point)</strong>
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </article>
+                                            }
+                                        }
+
+
+                                    }
+                                    else
+                                    {
+                                        <article class="media event">
+                                            <a class="pull-left date" style="background-color:white">
+                                                <p class="month" style="color:#2a3f54"></p>
+                                                <p class="day" style="color:#2a3f54"></p>
+                                            </a>
+                                            <div class="media-body">
+                                                <a style="color:white">Chưa có bài kiểm tra</a>
+
+                                            </div>
+                                        </article>
+                                    }
+
+                                }
+                                else
+                                {
+
+                                    <article class="media event">
+                                        <a class="pull-left date" style="background-color:white">
+                                            <p class="month" style="color:#2a3f54"></p>
+                                            <p class="day" style="color:#2a3f54"></p>
+                                        </a>
+                                        <div class="media-body">
+                                            <a style="color:white">Chưa có bài kiểm tra</a>
+
+                                        </div>
+                                    </article>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="x_panel" style="background-color:#2A3F54;color:white;border-radius:20px;height:319px">
+                            <div class="x_title">
+                                <h2>
+                                    Khóa học mới nhất<small class="badge bg-red pull-right" style="margin-left:10px">New!</small>
+                                </h2>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content" id="newCourse" style="max-height:250px;overflow-y:scroll">
+                                @foreach (var item in Model.CourseDtos.Take(5))
+                                {
+                                    var month = item.DateCreated.Month;
+                                    var day = item.DateCreated.Day;
+                                    <article class="media event">
+                                        <a class="pull-right date" style="background-color:white">
+                                            <p class="month" style="color:#2a3f54">@month</p>
+                                            <p class="day" style="color:#2a3f54">@day</p>
+                                        </a>
+                                        <div class="media-body">
+                                            <div style="display:flex">
+                                                <div>
+                                                    @foreach (var i in item.CourseImageVideoDto.Where(x => x.CourseId == item.Id))
+                                                    {
+
+                                                        <img src="@Configuration["BaseAddress"]/imageCourse/@i.ImagePath" alt="" class="img-circle" style="object-fit:cover;object-position:center;width:70px;height:70px">
+
+                                                    }
+                                                </div>
+                                                <div style="margin-left:20px">
+                                                    <a class="title" href="/chi-tiet-khoa-hoc/{@item.Alias}/{@item.Id}" style="color:white">Tên khóa học: @item.Name</a>
+
+                                                    <p>Tổng số bài học: @item.LessionDtos.Count</p>
+
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                    </article>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+@*                    <div class="col" style="color:white">
+                        <div class="x_panel" style="background-color:#2A3F54;color:white;border-radius:20px;">
+                            <div class="x_title">
+                                <h2>Bài học mới nhất<small class="badge bg-red pull-right" style="margin-left:10px">New!</small></h2>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content" style="max-height:440px;overflow-y:scroll">
+                                @foreach (var lessions in Model.CourseDtos.Where(x => x.Active == true).Select(x => x.LessionDtos).Take(3))
+                                {
+                                    foreach (var item in lessions.Where(x => x.Active == true).Take(3))
+                                    {
+                                        var month = item.DateCreated.Month;
+                                        var day = item.DateCreated.Day;
+                                        <article class="media event">
+                                            <a class="pull-left date" style="background-color:white">
+                                                <p class="month" style="color:#2a3f54">@month</p>
+                                                <p class="day" style="color:#2a3f54">@day</p>
+                                            </a>
+                                            <div class="media-body">
+                                                <a class="title" href="/chi-tiet-khoa-hoc/{@item.Alias}/{@item.CourseId}" style="color:white">@item.Name</a>
+                                                <p style="color:white">@Html.Raw(item.ShortDesc)</p>
+
+                                            </div>
+                                        </article>
+                                    }
+
+                                }
+                            </div>
+                        </div>
+                    </div>
+*@                </div>
+
+
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <div>
+                    <div>
+                        <div class="col">
+                            <div class="x_panel" style="background-color:#2A3F54;color:white;border-radius:20px;height:648px;">
+                                <div class="x_title">
+                                    <h2>Khóa học của tôi</h2>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="x_content" style="max-height:608px;overflow-y:scroll">
+                                    @foreach (var item in Model.OwnCourseDtos.Take(5))
+                                    {
+                                        var month = item.DateCreated.Month;
+                                        var day = item.DateCreated.Day;
+
+                                        <article class="media event">
+                                            <a class="pull-right date" style="background-color:white">
+                                                <p class="month" style="color:#2a3f54">@month</p>
+                                                <p class="day" style="color:#2a3f54">@day</p>
+                                            </a>
+                                            <div class="media-body">
+                                                <div style="display:flex">
+                                                    <div>
+                                                        @foreach (var i in item.CourseImageVideoDto.Where(x => x.CourseId.Equals(item.Id)))
+                                                        {
+
+                                                            <img src="@Configuration["BaseAddress"]/imageCourse/@i.ImagePath" alt="" class="img-circle" style="object-fit:cover;object-position:center;width:70px;height:70px">
+
+                                                        }
+                                                    </div>
+                                                    <div style="margin-left:20px">
+                                                        <a class="title" href="/chi-tiet-khoa-hoc/{@item.Alias}/{@item.Id}" style="color:white">Tên khóa học: @item.Name</a>
+                                                        <p>Tổng số bài học: @item.LessionDtos.Count</p>
+
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </article>
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+@*                        <div class="col">
+                            <div class="x_panel" style="background-color:#2A3F54;color:white;border-radius:20px;">
+                                <div class="x_title">
+                                    <h2>Bài học của tôi</h2>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="x_content" style="max-height:440px;overflow-y:scroll">
+
+                                    @foreach (var item in Model.OwnCourseDtos.Where(x => x.Active == true).Select(x => x.LessionDtos).Take(3))
+                                    {
+                                        @foreach (var ownLession in item.Where(x => x.Active == true).Take(3))
+                                        {
+
+                                            var month = ownLession.DateCreated.Month;
+                                            var day = ownLession.DateCreated.Day;
+
+                                            <article class="media event">
+                                                <a class="pull-left date" style="background-color:white">
+                                                    <p class="month" style="color:#2a3f54">@month</p>
+                                                    <p class="day" style="color:#2a3f54">@day</p>
+                                                </a>
+                                                <div class="media-body">
+                                                    <a class="title" style="color:white" href="/chi-tiet-khoa-hoc/{@ownLession.Alias}/{@ownLession.CourseId}">@ownLession.Name</a>
+                                                    <p>@Html.Raw(ownLession.ShortDesc)</p>
+                                                </div>
+                                            </article>
+
+                                        }
+
+                                    }
+                                </div>
+
+                            </div>
+                        </div>
+*@                    </div>
+
+                </div>
+
+            </div>
+    </div>
+
+    </div>
+
+
+}
+@section Scripts{
+    <script type="text/javascript">
+        var myIndex = 0;
+        carousel();
+
+        function carousel() {
+            var i;
+            var x = document.getElementsByClassName("mySlides");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+            }
+            myIndex++;
+            if (myIndex > x.length) { myIndex = 1 }
+            x[myIndex - 1].style.display = "block";
+            setTimeout(carousel, 9000);
+        }
+    </script>
+
+    <script type="text/javascript">
+        var slideIndex = 1;
+        showDivs(slideIndex);
+
+        function plusDivs(n) {
+          showDivs(slideIndex += n);
+        }
+
+        function showDivs(n) {
+          var i;
+          var x = document.getElementsByClassName("mySlides");
+          if (n > x.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = x.length} ;
+          for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";
+          }
+          x[slideIndex-1].style.display = "block";
+        }
+    </script>
+@*    <script>
+        var slideIndex = 1;
+        showDivs(slideIndex);
+
+        function plusDivs(n) {
+            showDivs(slideIndex += n);
+        }
+
+        function currentDiv(n) {
+            showDivs(slideIndex = n);
+        }
+
+        function showDivs(n) {
+            var i;
+            var x = document.getElementsByClassName("mySlides");
+            var dots = document.getElementsByClassName("demo");
+            if (n > x.length) { slideIndex = 1 }
+            if (n < 1) { slideIndex = x.length }
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+            }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" w3-white", "");
+            }
+            x[slideIndex - 1].style.display = "block";
+            dots[slideIndex - 1].className += " w3-white";
+        }
+    </script>*@
+}

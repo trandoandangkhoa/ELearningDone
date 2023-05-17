@@ -21,6 +21,10 @@ namespace WebLearning.Api.Controllers
             _accountService = accountService;
         }
         // GET: api/<AccountController>
+        /// <summary>
+        /// Danh sách tài khoản
+        /// </summary>
+
         [HttpGet]
         public async Task<IEnumerable<AccountDto>> GetUsers()
         {
@@ -28,8 +32,11 @@ namespace WebLearning.Api.Controllers
             return await _accountService.GetAccount();
 
         }
-
+        /// <summary>
+        /// Phân trang tài khoản
+        /// </summary>
         [HttpGet("/accountpaging")]
+
         [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<PagedViewModel<AccountDto>> GetUsers([FromQuery] GetListPagingRequest getListPagingRequest)
@@ -39,6 +46,10 @@ namespace WebLearning.Api.Controllers
 
         }
         // GET api/<AccountController>/5
+        /// <summary>
+        /// Lấy thông tin tài khoản bằng Id
+        /// </summary>
+
         [HttpGet("{id}")]
 
         public async Task<IActionResult> GetAccountById(Guid id)
@@ -50,6 +61,11 @@ namespace WebLearning.Api.Controllers
             return Ok(await _accountService.GetUserById(id));
 
         }
+
+        /// <summary>
+        /// Lấy họ và tên tài khoản bằng Email
+        /// </summary>
+
         [HttpGet("GetFullName/{accountName}")]
         public async Task<IActionResult> GetFullName(string accountName)
         {
@@ -60,7 +76,13 @@ namespace WebLearning.Api.Controllers
             return Ok(await _accountService.GetNameUser(accountName));
 
         }
+
+        /// <summary>
+        /// Lấy thông tin chi tiết tài khoản bằng Email
+        /// </summary>
+
         [HttpGet("AccountDetail/{accountName}")]
+
         public async Task<IActionResult> GetAccountByEmail(string accountName)
         {
             if (await _accountService.GetUserByKeyWord(accountName) == null)
@@ -70,6 +92,11 @@ namespace WebLearning.Api.Controllers
             return Ok(await _accountService.GetUserByKeyWord(accountName));
 
         }
+
+        /// <summary>
+        /// Lấy đường dẫn ảnh đại diện bằng Email
+        /// </summary>
+
         [HttpGet("AvatarImagePath")]
         public async Task<IActionResult> GetAvatarImagePath(string accountName)
         {
@@ -81,6 +108,11 @@ namespace WebLearning.Api.Controllers
 
         }
         // POST api/<AccountController>
+
+        /// <summary>
+        /// Tạo mới tài khoản
+        /// </summary>
+
         [HttpPost]
         [SecurityRole(AuthorizeRole.AdminRole)]
 
@@ -115,6 +147,10 @@ namespace WebLearning.Api.Controllers
         }
 
         // PUT api/<AccountController>/5
+        /// <summary>
+        /// Cập nhật tài khoản
+        /// </summary>
+
         [HttpPut("{id}")]
         [SecurityRole(AuthorizeRole.AdminRole)]
 
@@ -144,6 +180,10 @@ namespace WebLearning.Api.Controllers
         }
 
         // DELETE api/<AccountController>/5
+        /// <summary>
+        /// Xóa tài khoản
+        /// </summary>
+
         [HttpDelete("{id}")]
         [SecurityRole(AuthorizeRole.AdminRole)]
         public async Task<IActionResult> DeleteUser(Guid id)
@@ -163,6 +203,10 @@ namespace WebLearning.Api.Controllers
                     e.Message);
             }
         }
+
+        /// <summary>
+        /// Tạo ảnh đại diện tài khoản
+        /// </summary>
 
         [HttpPost("{accountId}/Avatar")]
         [RequestFormLimits(MultipartBodyLengthLimit = 700000000)]
@@ -190,6 +234,10 @@ namespace WebLearning.Api.Controllers
             }
 
         }
+
+        /// <summary>
+        /// Cập nhật ảnh đại diện tài khoản
+        /// </summary>
 
         [HttpPut("{accountId}/Avatar")]
         [Consumes("multipart/form-data")]

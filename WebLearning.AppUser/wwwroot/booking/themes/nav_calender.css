@@ -1,0 +1,48 @@
+/* 
+DayPilot Navigator Theme 
+https://themes.daypilot.org/navigator/theme/f7gbhx
+Theme Designer Version: 2021.09.25.67272
+*/
+.nav_calender_main { border-left: 1px solid #ffffff;border-right: 1px solid #ffffff;border-bottom: 1px solid #ffffff; font-family: sans-serif; font-size: 14px; }
+.nav_calender_main *, .nav_calender_main *:before, .nav_calender_main *:after { box-sizing: border-box; }
+.nav_calender_line { border-bottom: 1px solid #ffffff; }
+/* month header */ 
+.nav_calender_title, .nav_calender_titleleft, .nav_calender_titleright { 
+	border-top: 1px solid #ffffff;
+	color: #ffffff;
+	background: #9a0000;
+}
+.nav_calender_title { text-align: center; }
+.nav_calender_titleleft, .nav_calender_titleright { text-align: center; }
+/* day headers */
+.nav_calender_dayheader { 
+	color: #ffffff;
+	background: #bf040a;
+	padding: 0px;
+	text-align: center;
+}
+/* day cells */
+.nav_calender_cell { 
+	color: #333333;
+	background: #ffcccc;
+	text-align: center;
+}
+.nav_calender_cell_text {
+	padding: 0px;
+}
+.nav_calender_weeknumber { 
+	color: #ffffff;
+	background: #bf040a;
+	text-align: center;
+	padding: 0px;
+}
+.nav_calender_weekend { 
+	color: #000000;
+	background: #eeeeee;
+	text-align: center;
+	padding: 0px;
+}
+.nav_calender_dayother { color: gray; }
+.nav_calender_todaybox { border: 1px solid red; }
+.nav_calender_busy { font-weight: bold; }
+.nav_calender_select .nav_calender_cell_box { background-color: #ffe794; opacity: 0.5; }

@@ -1,5 +1,3 @@
-
-
 using AspNetCoreHero.ToastNotification;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using WebLearning.ApiIntegration.Services;
@@ -65,9 +63,10 @@ builder.Services.AddScoped<IReportScoreLessionService, ReportScoreLessionService
 builder.Services.AddScoped<IReportScoreCourseService, ReportScoreCourseService>();
 
 builder.Services.AddScoped<IReportScoreMonthlyService, ReportScoreMonthlyService>();
-
+    
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
+builder.Services.AddScoped<IBookingService, BookingService>();
 
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; });
 
