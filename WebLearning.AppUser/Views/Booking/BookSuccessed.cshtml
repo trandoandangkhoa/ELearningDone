@@ -7,7 +7,7 @@
 {
         @foreach (var item in Model)
         {
-            <div style="border-bottom: 1.5px solid #bebebe;">
+        <div style="border-bottom: 1.5px solid #bebebe" id="@item.CodeId">
                 <div style="margin:10px">
 @*                    <input type="text" value="@item.Email" id="Email" hidden />
         *@                    
@@ -21,8 +21,8 @@
                         <strong>Tạo mới</strong>
                     }
                     <br />
-                    <a style="width:40%" class="percentage" id="PatientName" hidden /><strong>Nội dung: </strong> @item.Description<br />
-                    <a style="width:40%" class="percentage" id="PatientName" hidden /><strong>Chi chú: </strong> @item.Note<br />
+                    <a style="width:40%" class="percentage" id="PatientName" hidden /><strong>Nội dung: </strong> @Html.Raw(item.Description)<br />
+                <a style="width:40%" class="percentage" id="PatientName" hidden /><strong>Chi chú: </strong>@Html.Raw(@item.Note) <br />
                     <a style="width:25%" class="percentage" id="PatientName" hidden /><strong>Phòng: </strong> @item.RoomId<br />
 
                     <a style="width:25%" class="country" id="fromDate" hidden /><strong>Ngày bắt đầu: </strong>@item.Start<br />
@@ -33,9 +33,10 @@
                         @if (item.Status == "waiting")
                         {
                             <span class="label label-warning" style="background-color: #f0ad4e;">Đang chờ</span>
-                            <span class="label label-danger" style="background-color: #d9534f;cursor:pointer" onclick="window.location.href='xoa-lich/@item.CodeId'">Xóa</span>
+                        <span class="label label-danger" style="background-color: #d9534f;cursor:pointer" onclick="window.location.href='/xoa-lich/@item.CodeId'">Xóa</span>
 
                         }
+
                         @if (item.Status == "confirmed")
                         {
                             <span class="label label-warning" style="background-color: #5cb85c">Thành công</span>

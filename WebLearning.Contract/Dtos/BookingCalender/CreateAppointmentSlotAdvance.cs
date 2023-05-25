@@ -14,6 +14,7 @@ namespace WebLearning.Contract.Dtos.BookingCalender
 
         public DateTime End { get; set; }
 
+        public string Title { get; set; }
         public string Note { get; set; }
 
         public string Description { get; set; }

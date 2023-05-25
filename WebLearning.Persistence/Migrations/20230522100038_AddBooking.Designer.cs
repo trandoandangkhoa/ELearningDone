@@ -12,8 +12,8 @@ using WebLearning.Persistence.ApplicationContext;
 namespace WebLearning.Persistence.Migrations
 {
     [DbContext(typeof(WebLearningContext))]
-    [Migration("20230512042357_CustomHistoryAdd")]
-    partial class CustomHistoryAdd
+    [Migration("20230522100038_AddBooking")]
+    partial class AddBooking
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -437,6 +437,9 @@ namespace WebLearning.Persistence.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Editor")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -456,6 +459,9 @@ namespace WebLearning.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TypedSubmit")

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebLearning.Contract.Dtos.BookingCalender
+namespace WebLearning.Contract.Dtos.BookingCalender.Room
 {
-    public class RoomDto
+    public class CreateRoomDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

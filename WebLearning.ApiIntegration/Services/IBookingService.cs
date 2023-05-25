@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
@@ -9,6 +10,7 @@ using System.Text;
 using WebLearning.Application.Helper;
 using WebLearning.Contract.Dtos.BookingCalender;
 using WebLearning.Contract.Dtos.BookingCalender.HistoryAddSlot;
+using WebLearning.Contract.Dtos.BookingCalender.Room;
 using WebLearning.Contract.Dtos.Role;
 using WebLearning.Domain.Entites;
 
@@ -17,12 +19,15 @@ namespace WebLearning.ApiIntegration.Services
     public interface IBookingService
     {
         Task<string> GetUrlBooking(string role);
-        Task<IEnumerable<AppointmentSlot>> GetAppointmentSlots();
+        Task<IEnumerable<AppointmentSlotDto>> GetAppointmentSlots(DateTime start, DateTime end, int doctor);
         Task<IEnumerable<HistoryAddSlot>> BookSuccessed(string email);
         Task<List<Result>> CreateAppointmentSlotAdvance(CreateAppointmentSlotAdvance createAppointmentSlotAdvance);
         Task<Result> ConfirmedBookingAccepted(UpdateHistoryAddSlotDto updateHistoryAddSlotDto, Guid fromId, Guid toId,string email);
         Task<Result> ConfirmedBookingRejected(UpdateHistoryAddSlotDto updateHistoryAddSlotDto, Guid fromId, Guid toId, string email);
-        Task<Result> ReplyBookingAccepted(Guid fromId, Guid toId);
+        Task<Result> ReplyMoveBookingAccepted(Guid fromId, Guid toId);
+        Task<Result> ReplyMoveBookingRejected(Guid fromId, Guid toId);
+
+        Task<Result> DeleteAppointmentBooked(Guid codeId);
 
     }
     public class BookingService : IBookingService
@@ -122,12 +127,47 @@ namespace WebLearning.ApiIntegration.Services
             var body = await response.Content.ReadAsStringAsync();
 
             var url = JsonConvert.DeserializeObject<List<Result>>(body);
+
             return url;
         }
 
-        public Task<IEnumerable<AppointmentSlot>> GetAppointmentSlots()
+        public async Task<Result> DeleteAppointmentBooked(Guid codeId)
         {
-            throw new NotImplementedException();
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+
+            var client = _httpClientFactory.CreateClient();
+
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+            var response = await client.DeleteAsync($"/api/Appointments/booked/{codeId}");
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            var url = JsonConvert.DeserializeObject<Result>(body);
+
+            return url;
+        }
+
+        public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentSlots([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int doctor)
+        {
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+
+            var client = _httpClientFactory.CreateClient();
+
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+
+            var response = await client.GetAsync($"/api/Appointments?start={start}&end={end}&doctor={doctor}");
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            var users = JsonConvert.DeserializeObject<IEnumerable<AppointmentSlotDto>>(body);
+
+            return users;
         }
 
         public async Task<string> GetUrlBooking(string role)
@@ -149,7 +189,7 @@ namespace WebLearning.ApiIntegration.Services
             return url;
         }
 
-        public async Task<Result> ReplyBookingAccepted(Guid fromId, Guid toId)
+        public async Task<Result> ReplyMoveBookingAccepted(Guid fromId, Guid toId)
         {
             var client = _httpClientFactory.CreateClient();
 
@@ -160,6 +200,25 @@ namespace WebLearning.ApiIntegration.Services
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
 
             var response = await client.GetAsync($"/api/Appointments/mailreplied/accepted/{fromId}/{toId}/");
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            var url = JsonConvert.DeserializeObject<Result>(body);
+
+            return url;
+        }
+
+        public async Task<Result> ReplyMoveBookingRejected(Guid fromId, Guid toId)
+        {
+            var client = _httpClientFactory.CreateClient();
+
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+            var response = await client.GetAsync($"/api/Appointments/mailreplied/rejected/{fromId}/{toId}/");
 
             var body = await response.Content.ReadAsStringAsync();
 

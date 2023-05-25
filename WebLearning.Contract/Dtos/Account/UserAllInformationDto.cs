@@ -1,4 +1,5 @@
-﻿using WebLearning.Contract.Dtos.Course;
+﻿using WebLearning.Contract.Dtos.BookingCalender.HistoryAddSlot;
+using WebLearning.Contract.Dtos.Course;
 using WebLearning.Contract.Dtos.Lession;
 using WebLearning.Contract.Dtos.Quiz;
 using WebLearning.Contract.Dtos.ReportScore;
@@ -26,5 +27,7 @@ namespace WebLearning.Contract.Dtos.Account
         public List<ReportScoreCourseDto> ReportScoreCourseDtos { get; set; }
 
         public List<ReportScoreMonthlyDto> ReportScoreMonthlyDtos { get; set; }
+
+        public List<HistoryAddSlotDto> HistoryAddSlotDtos { get; set; }
     }
 }

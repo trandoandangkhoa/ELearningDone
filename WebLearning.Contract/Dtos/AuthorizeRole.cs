@@ -4,9 +4,9 @@
     {
         AdminRole,
         ManagerRole,
+        StaffRole,
         TeacherRole,
         StudentRole,
-        StudentNotInCompanyRole,
         Guest,
     }
 }

@@ -7,6 +7,7 @@ using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos;
 using WebLearning.Contract.Dtos.Account;
 using WebLearning.Contract.Dtos.Avatar;
+using WebLearning.Contract.Dtos.BookingCalender.HistoryAddSlot;
 using WebLearning.Contract.Dtos.Course;
 using WebLearning.Contract.Dtos.Lession;
 using WebLearning.Contract.Dtos.Quiz;
@@ -149,9 +150,7 @@ namespace WebLearning.Application.Services
         }
         public async Task<AccountDto> GetNameUser(string accountName)
         {
-            var account = await _context.Accounts.Include(x => x.AccountDetail).Include(x => x.Role).FirstOrDefaultAsync(x => x.Email.Equals(accountName));
-
-            return _mapper.Map<AccountDto>(account);
+            return _mapper.Map<AccountDto>(await _context.Accounts.Include(x => x.AccountDetail).Include(x => x.Role).FirstOrDefaultAsync(x => x.Email.Equals(accountName)));
         }
         public async Task<UserAllInformationDto> GetUserByKeyWord(string keyword)
         {
@@ -162,57 +161,21 @@ namespace WebLearning.Application.Services
                 return default;
             }
 
-            var lession = await _context.Lessions.Include(x => x.Courses).Include(x => x.LessionVideoImages).Include(x => x.Quizzes).Include(x => x.OtherFileUploads).OrderByDescending(x => x.DateCreated).ToListAsync();
-
             var course = await _context.Courses.Include(x => x.QuizCourse).Include(x => x.CourseImageVideo).Include(x => x.Lessions).Include(x => x.CourseRoles).OrderByDescending(x => x.DateCreated).ToListAsync();
-
-            var ownCourse = course.Where(x => x.CourseRoles.Any(x => x.RoleId.Equals(account.RoleId)));
-
-            var quizCourse = _context.QuizCourses.Include(x => x.Course).ThenInclude(x => x.CourseRoles).Include(x => x.QuestionFinals).AsQueryable();
-
-            var quizLession = _context.QuizLessions.Include(x => x.Lession).Include(x => x.QuestionLessions).AsQueryable();
-
-
-            var quizMonthly = _context.QuizMonthlies.Include(x => x.QuestionMonthlies).AsQueryable();
-
-            var reportCourse = _context.ReportUserScoreFinals.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).AsQueryable();
-
-            var reportLesion = _context.ReportUsersScore.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).AsQueryable();
-
-            var reportMonthly = _context.ReportUserScoreMonthlies.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).AsQueryable();
-
-            var accountDto = _mapper.Map<AccountDto>(account);
-
-            var courseDto = _mapper.Map<List<CourseDto>>(course);
-
-            var lessionDto = _mapper.Map<List<LessionDto>>(lession);
-
-            var quizCourseDto = _mapper.Map<List<QuizCourseDto>>(quizCourse);
-
-            var quizLessionDto = _mapper.Map<List<QuizlessionDto>>(quizLession);
-
-            var quizMonthlyDto = _mapper.Map<List<QuizMonthlyDto>>(quizMonthly);
-
-            var reportCourseDto = _mapper.Map<List<ReportScoreCourseDto>>(reportCourse);
-
-            var reportLessionDto = _mapper.Map<List<ReportScoreLessionDto>>(reportLesion);
-
-            var reportMonthlyDto = _mapper.Map<List<ReportScoreMonthlyDto>>(reportMonthly);
-
-            var ownCourseDto = _mapper.Map<List<CourseDto>>(ownCourse);
 
             UserAllInformationDto userAllInformationDto = new()
             {
-                AccountDto = accountDto,
-                CourseDtos = new List<CourseDto>(courseDto),
-                OwnCourseDtos = new List<CourseDto>(ownCourseDto),
-                LessionDtos = new List<LessionDto>(lessionDto),
-                QuizCourseDtos = new List<QuizCourseDto>(quizCourseDto),
-                QuizlessionDtos = new List<QuizlessionDto>(quizLessionDto),
-                QuizMonthlyDtos = new List<QuizMonthlyDto>(quizMonthlyDto),
-                ReportScoreCourseDtos = new List<ReportScoreCourseDto>(reportCourseDto),
-                ReportScoreLessionDtos = new List<ReportScoreLessionDto>(reportLessionDto),
-                ReportScoreMonthlyDtos = new List<ReportScoreMonthlyDto>(reportMonthlyDto),
+                AccountDto = _mapper.Map<AccountDto>(account),
+                CourseDtos = _mapper.Map<List<CourseDto>>(course),
+                OwnCourseDtos = _mapper.Map<List<CourseDto>>(course.Where(x => x.CourseRoles.Any(x => x.RoleId.Equals(account.RoleId)))),
+                LessionDtos = _mapper.Map<List<LessionDto>>(await _context.Lessions.Include(x => x.Courses).Include(x => x.LessionVideoImages).Include(x => x.Quizzes).Include(x => x.OtherFileUploads).OrderByDescending(x => x.DateCreated).ToListAsync()),
+                QuizCourseDtos = _mapper.Map<List<QuizCourseDto>>(_context.QuizCourses.Include(x => x.Course).ThenInclude(x => x.CourseRoles).Include(x => x.QuestionFinals).AsQueryable()),
+                QuizlessionDtos = _mapper.Map<List<QuizlessionDto>>(_context.QuizLessions.Include(x => x.Lession).Include(x => x.QuestionLessions).AsQueryable()),
+                QuizMonthlyDtos = _mapper.Map<List<QuizMonthlyDto>>(_context.QuizMonthlies.Include(x => x.QuestionMonthlies).AsQueryable()),
+                ReportScoreCourseDtos = _mapper.Map<List<ReportScoreCourseDto>>(_context.ReportUserScoreFinals.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).AsQueryable()),
+                ReportScoreLessionDtos = _mapper.Map<List<ReportScoreLessionDto>>(_context.ReportUsersScore.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).AsQueryable()),
+                ReportScoreMonthlyDtos = _mapper.Map<List<ReportScoreMonthlyDto>>(_context.ReportUserScoreMonthlies.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).AsQueryable()),
+                HistoryAddSlotDtos = _mapper.Map<List<HistoryAddSlotDto>>(_context.HistoryAddSlots.Include(x => x.Room).Where(x => x.Email.Equals(account.Email)).AsQueryable()),
             };
 
 
@@ -238,6 +201,20 @@ namespace WebLearning.Application.Services
                 {
                     createAccountDto.AuthorizeRole = AuthorizeRole.AdminRole;
                     account.AuthorizeRole = Domain.AuthorizeRoles.AdminRole;
+
+                }
+                else if (roleName.RoleName == "Manager")
+                {
+
+                    createAccountDto.AuthorizeRole = AuthorizeRole.ManagerRole;
+                    account.AuthorizeRole = Domain.AuthorizeRoles.ManagerRole;
+
+                }
+                else if (roleName.RoleName == "Staff")
+                {
+
+                    createAccountDto.AuthorizeRole = AuthorizeRole.StaffRole;
+                    account.AuthorizeRole = Domain.AuthorizeRoles.StaffRole;
 
                 }
                 else if (roleName.RoleName == "Guest")
@@ -298,11 +275,18 @@ namespace WebLearning.Application.Services
                         account.AuthorizeRole = Domain.AuthorizeRoles.AdminRole;
 
                     }
-                    else if (roleName.RoleName == "Guest")
+                    else if (roleName.RoleName == "Manager")
                     {
 
-                        updateUserDetailDto.AuthorizeRole = AuthorizeRole.Guest;
-                        account.AuthorizeRole = Domain.AuthorizeRoles.Guest; ;
+                        updateUserDetailDto.AuthorizeRole = AuthorizeRole.ManagerRole;
+                        account.AuthorizeRole = Domain.AuthorizeRoles.ManagerRole;
+
+                    }
+                    else if (roleName.RoleName == "Staff")
+                    {
+
+                        updateUserDetailDto.AuthorizeRole = AuthorizeRole.StaffRole;
+                        account.AuthorizeRole = Domain.AuthorizeRoles.StaffRole;
 
                     }
                     else if (roleName.RoleName == "Teacher")
@@ -310,6 +294,13 @@ namespace WebLearning.Application.Services
 
                         updateUserDetailDto.AuthorizeRole = AuthorizeRole.TeacherRole;
                         account.AuthorizeRole = Domain.AuthorizeRoles.TeacherRole;
+
+                    }
+                    else if (roleName.RoleName == "Guest")
+                    {
+
+                        updateUserDetailDto.AuthorizeRole = AuthorizeRole.Guest;
+                        account.AuthorizeRole = Domain.AuthorizeRoles.Guest; ;
 
                     }
                     else

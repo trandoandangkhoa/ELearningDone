@@ -1,9 +1,23 @@
 ﻿
 @inject IHttpContextAccessor Accessor
 @using Microsoft.Extensions.Configuration
+@using WebLearning.Contract.Dtos.BookingCalender.Room;
 @inject IConfiguration Configuration
-<input type="text" id="baseAddress" value="@Configuration["BaseAddress"]" />
-<input type="text" id="email" value="@User.Identity.Name" />
+@model CreateRoomDto;
+@section metatags{
+    <meta name="keywords" content="VXH, ELearning, Booking, ESign, Ticket" />
+    <meta name="author" content="Magentech">
+    <meta name="robots" content="index, follow" />
+    <meta name="description" content="VXH APP là một website tích hợp đào tạo trực tiếp cho sale cũng như một số chức năng khác dành cho nhân viên tại công ty">
+    <meta property="og:site_name" content="VXH APP BOOKING" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VXH APP BOOKING" />
+    <meta property="og:image" content="@Configuration["CurrentAddress"]/build/images/LogoVXH.png" />
+    <meta property="og:description" content="VXH APP là một website tích hợp đào tạo trực tiếp cho sale cũng như một số chức năng khác dành cho nhân viên tại công ty" />
+    <meta property="og:url" content="@Configuration["CurrentAddress"]/" />
+}
+<input type="text" id="baseAddress" value="@Configuration["BaseAddress"]" hidden/>
+<input type="text" id="email" value="@User.Identity.Name" hidden />
 <div class="row">
     <div class="col-md-3 mt-sm-20">
         <div id="nav"></div>
@@ -30,25 +44,32 @@
                         Xóa lịch trống tháng này:
                     </td>
                     <td>
-                        <button id="clear" class="genric-btn danger circle arrow">Xóa</button>
+                        <button id="clear" class="btn btn-danger" style="margin-left:10px">Xóa</button>
                     </td>
                 </tr>
-                <tr>
+                <tr style="margin-top:5px">
                     <td>
                         Tạo lịch trống cho 6 tháng:
                     </td>
                     <td>
-                        <button id="autoadd" class="genric-btn success circle arrow">Tạo</button>
+                        <button id="autoadd" class="btn btn-success" style="margin-left:10px">Tạo mới</button>
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <input id="fileUpload" name="fileUpload" type="file" />
 
-                    </td>
-                    <td>
-                        <input type="button" onclick="uploadFiles('fileUpload');" value="Load" class=" genric-btn info circle arrow" />
-                    </td>
+                    <form asp-action="CreateRoom" asp-controller="Room" method="post" enctype="multipart/form-data">
+                        <td>
+                            <div class="form-group">
+                            <input type="text" class="form-control" asp-for="@Model.Name" placeholder="Tên phòng:" />
+                            </div>
+
+                        </td>
+                        <td >
+                        <input type="submit" class="btn btn-success" value="Tạo mới" style="margin-left:10px" />
+
+                        </td>
+                    </form>
+
                 </tr>
             </table>
         </div>
@@ -103,11 +124,9 @@
                 to = from.addMonths(1);
             }
 
-            const { data } = await DayPilot.Http.get(`${ba}/api/Appointments?start=${from}&end=${to}`);
+            const { data } = await DayPilot.Http.get(`${window.location.origin}/lich-theo-thang/` + `${from}/${to}`);
 
-            if (data == null) {
-                window.location.href = "/dang-nhap.html"
-            }
+            
 
             const options = {
                 events: data
@@ -125,10 +144,8 @@
         },
 
         async loadResources() {
-            const { data } = await DayPilot.Http.get(`${ba}/api/Rooms`);
-            if (data == null) {
-                window.location.href = "/dang-nhap.html"
-            }
+            const { data } = await DayPilot.Http.get(`${window.location.origin}/danh-sach-phong`);
+
             scheduler.update({
                 resources: data,
                 visible: true
@@ -290,32 +307,40 @@
             args.header.text = args.header.text.replace(" AM", "a").replace(" PM", "p");  // shorten the hour header
         },
         onBeforeEventRender: (args) => {
+            if (args.e.text == null) {
+                args.data.bubbleHtml = "Tiêu đề: Chưa có" + "<br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm");
+
+            } else {
+                args.data.bubbleHtml = "Tiêu đề: " + args.e.text + "<br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm");
+
+            }
             switch (args.data.status) {
                 case "free":
                     args.data.backColor = "#3d85c6";
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
-                    args.data.deleteDisabled = app.elements.scaleChecked.value === "shifts"; // only allow deleting in the more detailed hour scale mode
+                    args.data.html = "";
                     break;
                 case "waiting":
                     args.data.backColor = "#e69138";  // orange
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
+                    args.data.html = "";
                     break;
                 case "confirmed":
                     args.data.backColor = "#6aa84f";  // green
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
+                    args.data.html = "";
                     break;
             }
         },
         rowClickHandling: "Edit",
         onRowEdit: async (args) => {
             if (args.canceled) {
-                console.log("User-canceled.");
                 return;
             }
         },
@@ -341,43 +366,42 @@
             }
 
         },
-        rowClickHanding: "Delete",
-        onRowDelete: async (args) => {
-            if (args.canceled) {
-                console.log("User-canceled.");
-                return;
-            }
-        },
-        onRowDeleted: async (args) => {
-            if (args.canceled) {
-                return;
-            }
-            console.log("Delete");
+        //rowClickHanding: "Delete",
+        //onRowDelete: async (args) => {
+        //    if (args.canceled) {
+        //        return;
+        //    }
+        //},
+        //onRowDeleted: async (args) => {
+        //    if (args.canceled) {
+        //        return;
+        //    }
+        //    console.log("Delete");
 
-        },
+        //},
 
-        rowCreateHandling: "Enabled",
+        //rowCreateHandling: "Enabled",
 
-        onRowCreate: async (args) => {
-            const params = {
-                name: args.text
-                //value: args.newText
-            };
-            const check = await DayPilot.Modal.confirm("Bạn có muốn thêm mới?", { okText: "Xác nhận", cancelText: "Không" });
-            if (check.result == "OK") {
-                const { data: result } = await DayPilot.Http.post(`${ba}/api/Rooms/`, params);
-                scheduler.message(result.message);
-                scheduler.update();
-                setTimeout(function () {
-                    window.location.reload();
-                }, 2500);
+        //onRowCreate: async (args) => {
+        //    const params = {
+        //        name: args.text
+        //        //value: args.newText
+        //    };
+        //    const check = await DayPilot.Modal.confirm("Bạn có muốn thêm mới?", { okText: "Xác nhận", cancelText: "Không" });
+        //    if (check.result == "OK") {
+        //        const { data: result } = await DayPilot.Http.delete(`${ba}/api/Rooms/`, params);
+        //        scheduler.message(result.message);
+        //        scheduler.update();
+        //        setTimeout(function () {
+        //            window.location.reload();
+        //        }, 2500);
 
-            } else {
-                scheduler.message("Hủy thao tác thành công!");
-            }
+        //    } else {
+        //        scheduler.message("Hủy thao tác thành công!");
+        //    }
 
 
-        },
+        //},
 
 
         onEventDeleted: async (args) => {
@@ -408,6 +432,13 @@
             //dp.message(data.message);
         }
 
+    });
+    scheduler.cellBubble = new DayPilot.Bubble({
+        onLoad: function (args) {
+            var cell = args.source;
+
+            args.html = cell.start.toString("dd/MM/yyyy");
+        }
     });
     scheduler.init();
 

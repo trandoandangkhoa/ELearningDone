@@ -15,9 +15,10 @@ namespace WebLearning.Contract.Dtos.BookingCalender.HistoryAddSlot
         public Guid CodeId { get; set; }
 
         public Guid OldCodeId { get; set; }
+        public string Title { get; set; }
+        public string Editor { get; set; }
 
         public string Email { get; set; }
-
         public string Description { get; set; }
 
         public string Note { get; set; }

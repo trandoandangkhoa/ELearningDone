@@ -21,7 +21,7 @@ namespace WebLearning.AppUser.Controllers
             _accountService = accountService;
         }
         [Authorize]
-
+        [Route("elearning.html")]
         public async Task<IActionResult> Index(DashboardViewModel dasboardModel)
         {
             var account = await _accountService.GetAccountByEmail(User.Identity.Name);

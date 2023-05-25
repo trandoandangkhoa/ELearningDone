@@ -32,12 +32,43 @@
     </style>
 }
 @inject IConfiguration Configuration
+
+@section metatags{
+    <!-- COMMON TAGS -->
+    <!-- Search Engine -->
+    <meta name="description" content="@Model.CourseDto.Description">
+    <meta name="image" content="@Configuration["BaseAddress"]/imageCourse/@Model.CourseDto.CourseImageVideoDto.Where(x => x.CourseId.Equals(Model.CourseId))">
+    <!-- Schema.org for Google -->
+    <meta itemprop="name" content="@Model.CourseDto.Name">
+    <meta itemprop="description" content="@Model.CourseDto.Description">
+    <meta itemprop="image" content="@Configuration["BaseAddress"]/imageCourse/@Model.CourseDto.CourseImageVideoDto.Where(x => x.CourseId.Equals(Model.CourseId))">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="@Model.CourseDto.Name">
+    <meta name="twitter:description" content="@Model.CourseDto.Description">
+    <meta name="twitter:image:src" content="@Configuration["BaseAddress"]/imageCourse/@Model.CourseDto.CourseImageVideoDto.Where(x => x.CourseId.Equals(Model.CourseId))">
+    <!-- Twitter - Product (e-commerce) -->
+    <!-- Open Graph general (Facebook, Pinterest & Google+) -->
+    <meta name="og:title" content="@Model.CourseDto.Name">
+    <meta name="og:description" content="@Model.CourseDto.Description">
+    <meta name="og:image" content="@Configuration["BaseAddress"]/imageCourse/@Model.CourseDto.CourseImageVideoDto.Where(x => x.CourseId.Equals(Model.CourseId))">
+    <meta name="og:url" content="@Configuration["CurrentAddress"]/chi-tiet-khoa-hoc/@Model.CourseDto.Alias/@Model.CourseDto.Id">
+    <meta name="og:site_name" content="@Configuration["CurrentAddress"]/chi-tiet-khoa-hoc/@Model.CourseDto.Alias/@Model.CourseDto.Id">
+    <meta name="og:type" content="website">
+    <!-- Open Graph - Product (e-commerce) -->
+    <meta property="og:title" content="@Model.CourseDto.Name" />
+    <meta property="og:image" content="@Configuration["BaseAddress"]/imageCourse/@Model.CourseDto.CourseImageVideoDto.Where(x => x.CourseId.Equals(Model.CourseId))" />
+    <meta property="og:description" content="@Model.CourseDto.Description" />
+    <meta property="og:url" content="@Configuration["CurrentAddress"]/chi-tiet-khoa-hoc/@Model.CourseDto.Alias/@Model.CourseDto.Id" />
+    <meta property="og:type" content="website">
+
+}
 @if(Model.CourseDto != null)
 {
     <div class="page-title">
         <div class="title_left">
             <h4>
-                <a href="/khoa-hoc.html"><i class="fa fa-home"></i> Trang chủ </a>- @Model.CourseDto.Name
+                <a href="/khoa-hoc.html"><i class="fa fa-home"></i> Quay lại </a>- @Model.CourseDto.Name
             </h4>
         </div>
     </div>

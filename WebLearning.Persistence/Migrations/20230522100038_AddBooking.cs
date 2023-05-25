@@ -5,30 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebLearning.Persistence.Migrations
 {
-    public partial class AddBookingCalendar : Migration
+    public partial class AddBooking : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "HistoryAddSlots",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CodeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Start = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    End = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RoomId = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HistoryAddSlots", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Rooms",
                 columns: table => new
@@ -69,6 +49,36 @@ namespace WebLearning.Persistence.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "HistoryAddSlots",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoomId = table.Column<int>(type: "int", nullable: false),
+                    CodeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OldCodeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Start = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    End = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Editor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TypedSubmit = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HistoryAddSlots", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_HistoryAddSlots_Rooms_RoomId",
+                        column: x => x.RoomId,
+                        principalTable: "Rooms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Rooms",
                 columns: new[] { "Id", "Name" },
@@ -87,6 +97,11 @@ namespace WebLearning.Persistence.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Appointments_RoomId",
                 table: "Appointments",
+                column: "RoomId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HistoryAddSlots_RoomId",
+                table: "HistoryAddSlots",
                 column: "RoomId");
         }
 

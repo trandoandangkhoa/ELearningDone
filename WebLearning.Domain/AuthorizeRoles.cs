@@ -3,6 +3,8 @@
     public enum AuthorizeRoles
     {
         AdminRole,
+        ManagerRole,
+        StaffRole,
         TeacherRole,
         StudentRole,
         Guest,

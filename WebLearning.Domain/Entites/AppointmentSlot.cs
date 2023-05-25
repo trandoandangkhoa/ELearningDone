@@ -38,7 +38,5 @@ namespace WebLearning.Domain.Entites
         public string DoctorName { get { return Room.Name; } }
 
         public Guid CodeId { get; set; }
-
     }
-
 }

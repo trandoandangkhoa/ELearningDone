@@ -1,10 +1,20 @@
 ﻿@using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
-<input type="text" id="baseAddress" value="@Configuration["BaseAddress"]" />
-<input type="text" id="email" value="@User.Identity.Name" />
+@section metatags{
+    <meta name="keywords" content="VXH, ELearning, Booking, ESign, Ticket" />
+    <meta name="author" content="Magentech">
+    <meta name="robots" content="index, follow" />
+    <meta name="description" content="VXH APP là một website tích hợp đào tạo trực tiếp cho sale cũng như một số chức năng khác dành cho nhân viên tại công ty">
+    <meta property="og:site_name" content="VXH APP BOOKING" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VXH APP BOOKING" />
+    <meta property="og:image" content="@Configuration["CurrentAddress"]/build/images/LogoVXH.png" />
+    <meta property="og:description" content="VXH APP là một website tích hợp đào tạo trực tiếp cho sale cũng như một số chức năng khác dành cho nhân viên tại công ty" />
+    <meta property="og:url" content="@Configuration["CurrentAddress"]/" />
+}
 <div class="row">
     <div class="col-md-12">
-        <div class="x_panel" style="min-height:695px">
+        <div class="x_panel" style="min-height:750px">
             <div class="col-md-4">
                 <div class="x_title" style="min-height:39.8px;border:none">
                 </div>
@@ -61,6 +71,7 @@
                                 <button type="button" class="fc-agendaDay-button fc-button fc-state-default" onclick="day()">Ngày</button>
                                 <button type="button" class="fc-agendaWeek-button fc-button fc-state-default" onclick="week()">Tuần</button>
                                 <button type="button" class="fc-month-button fc-button fc-state-default fc-corner-left" onclick="month()">Tháng</button>
+                                <button type="button" class="fc-year-button fc-button fc-state-default fc-corner-left" onclick="year()">Năm</button>
                             </div>
                         </div>
                         <div class="fc-center">
@@ -96,6 +107,8 @@
                                 <button type="button" class="fc-agendaDay-button fc-button fc-state-default" onclick="day()">Ngày</button>
                                 <button type="button" class="fc-agendaWeek-button fc-button fc-state-default" onclick="week()">Tuần</button>
                                 <button type="button" class="fc-month-button fc-button fc-state-default fc-corner-left" onclick="month()">Tháng</button>
+                                <button type="button" class="fc-year-button fc-button fc-state-default fc-corner-left" onclick="year()">Năm</button>
+
                             </div>
                         </div>
                         <div class="fc-center">
@@ -109,7 +122,7 @@
                 <div class="x_content" id="month-container" style="display:none;">
                     <div class="fc-toolbar fc-header-toolbar">
                         <div class="fc-left">
-                            <span class="toolbar-item"><label for="business-only"><input type="checkbox" id="business-only">  <strong>Giờ làm việc</strong></label></span>
+                            <span class="toolbar-item"><label for="detail-only"><input type="checkbox" id="detail-only">  <span>Xem chi tiết</span></label></span>
 
                         </div>
                         <div class="fc-right">
@@ -117,6 +130,29 @@
                                 <button type="button" class="fc-agendaDay-button fc-button fc-state-default" onclick="day()">Ngày</button>
                                 <button type="button" class="fc-agendaWeek-button fc-button fc-state-default" onclick="week()">Tuần</button>
                                 <button type="button" class="fc-month-button fc-button fc-state-default fc-corner-left" onclick="month()">Tháng</button>
+                                <button type="button" class="fc-year-button fc-button fc-state-default fc-corner-left" onclick="year()">Năm</button>
+                            </div>
+                        </div>
+                        <div class="fc-center">
+                        </div>
+                        <div class="fc-clear"></div>
+                    </div>
+                    <div id="m"></div>
+
+
+                </div>
+                <div class="x_content" id="year-container" style="display:none;">
+                    <div class="fc-toolbar fc-header-toolbar">
+                        <div class="fc-left">
+                            <span class="toolbar-item"><label for="business-only"><input type="checkbox" id="business-only">  <span>Giờ làm việc</span></label></span>
+
+                        </div>
+                        <div class="fc-right">
+                            <div class="fc-button-group">
+                                <button type="button" class="fc-agendaDay-button fc-button fc-state-default" onclick="day()">Ngày</button>
+                                <button type="button" class="fc-agendaWeek-button fc-button fc-state-default" onclick="week()">Tuần</button>
+                                <button type="button" class="fc-month-button fc-button fc-state-default fc-corner-left" onclick="month()">Tháng</button>
+                                <button type="button" class="fc-year-button fc-button fc-state-default fc-corner-left" onclick="year()">Năm</button>
                             </div>
                         </div>
                         <div class="fc-center">
@@ -127,27 +163,29 @@
 
 
                 </div>
-
             </div>
         </div>
 
     </div>
 </div>
-<script type="text/javascript">
+<script>
     function day() {
         var day = document.getElementById("day-container");
         var week = document.getElementById("week-container");
         var month = document.getElementById("month-container");
+        var year = document.getElementById("year-container");
+
         if (day.style.display !== "none") {
             day.style.display = "block";
             week.style.display = "none";
             month.style.display = "none";
-
+            year.style.display = "none";
         }
         else {
             day.style.display = "block";
             week.style.display = "none";
             month.style.display = "none";
+            year.style.display = "none";
 
         }
     };
@@ -155,16 +193,20 @@
         var day = document.getElementById("day-container");
         var week = document.getElementById("week-container");
         var month = document.getElementById("month-container");
+        var year = document.getElementById("year-container");
+
         if (week.style.display !== "none") {
             week.style.display = "block";
             day.style.display = "none";
             month.style.display = "none";
+            year.style.display = "none";
 
         }
         else {
             week.style.display = "block";
             day.style.display = "none";
             month.style.display = "none";
+            year.style.display = "none";
 
         }
     };
@@ -172,24 +214,48 @@
         var day = document.getElementById("day-container");
         var week = document.getElementById("week-container");
         var month = document.getElementById("month-container");
+        var year = document.getElementById("year-container");
+
         if (month.style.display !== "none") {
             month.style.display = "block";
             day.style.display = "none";
             week.style.display = "none";
+            year.style.display = "none";
 
         }
         else {
             month.style.display = "block";
             day.style.display = "none";
             week.style.display = "none";
+            year.style.display = "none";
 
         }
     };
+    function year() {
+        var day = document.getElementById("day-container");
+        var week = document.getElementById("week-container");
+        var month = document.getElementById("month-container");
+        var year = document.getElementById("year-container");
 
+        if (year.style.display !== "none") {
+            month.style.display = "none";
+            day.style.display = "none";
+            week.style.display = "none";
+            year.style.display = "block";
+
+        }
+        else {
+            year.style.display = "block";
+            day.style.display = "none";
+            week.style.display = "none";
+            month.style.display = "none";
+
+        }
+    };
 </script>
 <script>
-    var ba = document.getElementById("baseAddress").value;
-    var em = document.getElementById("email").value;
+    var ba = null;
+    var em = null;
     const app = {
         doctors: [],
         elements: {
@@ -209,20 +275,18 @@
             const end = nav.visibleEnd();
             const doctor = app.elements.doctor.value;
 
-            const { data } = await DayPilot.Http.get(`${ba}/api/Appointments?start=${start}&end=${end}&doctor=${doctor}`);
+            const { data } = await DayPilot.Http.get(`${window.location.origin}/lich-theo-ngay-va-tuan/` + `${start}/${end}/${doctor}`);
 
-            if (data == null) {
-                window.location.href = "/dang-nhap.html"
-            }
             if (day) {
                 calendar.startDate = day;
                 dp.startDate = day;
             }
             calendar.events.list = data;
             dp.events.list = data;
-
+            m.events.list = data;
             calendar.update();
             dp.update();
+            m.update();
 
             nav.events.list = data;
             nav.update();
@@ -238,11 +302,7 @@
                 to = from.addMonths(2);
             }
 
-            const { data } = await DayPilot.Http.get(`${ba}/api/Appointments?start=${from}&end=${to}`);
-
-            if (data == null) {
-                window.location.href = "/dang-nhap.html"
-            }
+            const { data } = await DayPilot.Http.get(`${window.location.origin}/lich-theo-thang/` + `${from}/${to}`);
 
             const options = {
                 events: data
@@ -259,7 +319,7 @@
             nav.update();
         },
         async loadResources() {
-            const { data } = await DayPilot.Http.get(`${ba}/api/Rooms/managergetrooms`);
+            const { data } = await DayPilot.Http.get(`${window.location.origin}/danh-sach-phong`);
             if (data == null) {
                 window.location.href = "/dang-nhap.html"
             }
@@ -308,6 +368,7 @@
         },
         getTimeHeaders() {
             return [
+                { groupBy: "Year" },
                 { groupBy: "Month" },
                 { groupBy: "Day", format: "dddd d" },
                 { groupBy: "Cell", format: "tt" }
@@ -315,10 +376,8 @@
         },
         async init() {
             app.loadResources();
-            const { data } = await DayPilot.Http.get(`${ba}/api/Rooms/managergetrooms`);
-            if (data == null) {
-                window.location.href = "/dang-nhap.html"
-            }
+            const { data } = await DayPilot.Http.get(`${window.location.origin}/danh-sach-phong`);
+
             app.doctors = data;
 
             app.doctors.forEach(item => {
@@ -361,7 +420,12 @@
     nav.init();
 
     const calendar = new DayPilot.Calendar("calendar", {
-        cellHeight: "40",
+        cellHeight: "80",
+        dayBeginsHour: 8,
+        dayEndsHour: 18,
+        height: 600,
+        heightSpec: "Fixed",
+        columnWidth: 250,
         viewType: "Week",
         columnWidthSpec: "Fixed",
         theme: "red_calendar",
@@ -369,6 +433,8 @@
         eventMoveHandling : "Disabled",
         eventResizeHandling: "Disabled",
         eventDeleteHandling: "Update",
+
+
         onEventDeleted: async (args) => {
             const check = await DayPilot.Modal.confirm("Bạn có muốn xóa?", { okText: "Xác nhận", cancelText: "Không" });
             if (check.result == "OK") {
@@ -391,22 +457,29 @@
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
+                    //args.data.html = `${args.data.doctorName}<br/>Còn trống`;
+
+                    args.data.toolTip = "Bấm để đặt lịch";
                     break;
                 case "waiting":
                     args.data.backColor = "#e69138";  // orange
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
-                    args.data.html = `${args.data.patientName}`;
-
+                    args.data.html = `<span style="text-decoration:underline">Trạng thái:  </span> <span style="font-weight:bold;font-size:13px">CHỜ XÁC NHẬN...</span><br>
+                                <span style="text-decoration:underline">Người đặt:</span>  ${args.data.email}<br>
+                            <span style="text-decoration:underline">Tiêu đề:</span>  ${args.data.text}<br>
+                            <span style="text-decoration:underline">Nội dung:</span>  ${args.data.description}`;
                     break;
                 case "confirmed":
                     args.data.backColor = "#6aa84f";  // green
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
-                    args.data.html = `${args.data.patientName}`;
-
+                    args.data.html = `<span style="text-decoration:underline">Trạng thái:  </span> <span style="font-weight:bold;font-size:13px">ĐẶT THÀNH CÔNG</span><br>
+                                <span style="text-decoration:underline">Người đặt:</span>  ${args.data.email}<br>
+                                <span style="text-decoration:underline">Tiêu đề:</span>  ${args.data.text}<br>
+                                <span style="text-decoration:underline">Nội dung:</span>  ${args.data.description}`;
                     break;
             }
         },
@@ -414,9 +487,9 @@
 
             const form = [
                 { name: "Cập nhật tình trạng phòng" },
-                { name: "Thông tin người đặt", id: "patientName", disabled: true },
-                { name: "Nội dung", id: "description", disabled: true },
-                { name: "Ghi chú", id: "note", disabled: true },
+                { name: "Tiêu đề", id: "text", disabled: true },
+                { name: "Nội dung", id: "description", disabled: true, type: "textarea" },
+                { name: "Ghi chú", id: "note", disabled: true, type: "textarea" },
                 {
                     name: "Tình trạng", id: "status", type: "select", options: [
                         { name: "Trống", id: "free" },
@@ -451,6 +524,7 @@
 
             const data = args.e.data;
             const options = {
+                focus: "text",
                 focus: "start",
                 focus: "end",
                 focus: "resource",
@@ -464,6 +538,7 @@
 
             const params = {
                 ...args.e.data,
+                name:modal.result.text,
                 start: modal.result.start,
                 end: modal.result.end,
                 resource: modal.result.resource,
@@ -491,7 +566,7 @@
                 }
 
             } else {
-                dp.message("Hủy thao tác thành công!");
+                calendar.message("Hủy thao tác thành công!");
 
             }
 
@@ -499,7 +574,8 @@
     });
     const scheduler = new DayPilot.Scheduler("scheduler", {
         theme: "month_calender",
-        visible: false, // will be displayed after loading the resources
+        visible: false,
+        // will be displayed after loading the resources
         scale: "Manual",
         timeline: app.getTimeline(),
         timeHeaders: app.getTimeHeaders(),
@@ -510,27 +586,44 @@
         allowEventOverlap: false,
 
         onBeforeEventRender: (args) => {
+            if (args.e.text == null) {
+                args.data.bubbleHtml = "Tiêu đề: Chưa có" + "<br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm");
+
+            } else {
+                args.data.bubbleHtml = "Tiêu đề: " + args.e.text + "<br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm");
+
+            }
             switch (args.data.status) {
                 case "free":
                     args.data.backColor = "#3d85c6";
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
+                    args.data.html = "";
                     break;
                 case "waiting":
                     args.data.backColor = "#e69138";  // orange
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
+                    args.data.html = "";
                     break;
                 case "confirmed":
                     args.data.backColor = "#6aa84f";  // green
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
+                    args.data.html = "";
                     break;
             }
         },
+    });
+    scheduler.cellBubble = new DayPilot.Bubble({
+        onLoad: function (args) {
+            var cell = args.source;
+
+            args.html = cell.start.toString("dd/MM/yyyy");
+        }
     });
     function validateTextRequired(args) {
         var value = args.value || "" ;
@@ -558,13 +651,108 @@
         }
 
     }
+    const m = new DayPilot.Month("m", {
+        maxEvents: 19,
+        cellMarginBottom: 20,
+        //columnWidth: 300,
+        //cellHeight: "200",
+        height: 600,
+        theme: "m_calendar",
+        heightSpec: "Fixed",
+        minCellHeight: 10,
+        eventHeight: 15,
+        //columnWidthSpec: "Fixed",
+        //eventResizeHandling: "Disabled",
+        //eventArrangement: "SideBySide",
+        //timeRangeSelectedHandling: "Disabled",
+        //eventMoveHandling: "Disabled",
+
+        onBeforeEventRender: (args) => {
+            switch (args.data.status) {
+                case "free":
+                    args.data.backColor = "#3d85c6";  // blue
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    //args.data.html = `${args.data.doctorName}<br/>Còn trống`;
+                    break;
+                case "waiting":
+                    args.data.backColor = "#e69138";  // orange
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    args.data.html = "";
+                    break;
+                case "confirmed":
+                    args.data.backColor = "#6aa84f";  // green
+                    args.data.barHidden = true;
+                    args.data.borderColor = "darker";
+                    args.data.fontColor = "white";
+                    args.data.html = "";
+
+                    break;
+            }
+            if (args.e.text == null) {
+                args.e.bubbleHtml = "Tiêu đề: Chưa có <br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm");
+
+            } else {
+                args.e.bubbleHtml = "Tiêu đề: " + args.e.text + "<br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm");
+
+            }
+        },
+        onBeforeCellRender: (args) => {
+            const events = args.cell.events();
+            if (args.cell.start.getDayOfWeek() === 7) {
+                args.cell.properties.backColor = "#eeeeee";
+            }
+
+            const maxSpecified = typeof m.maxEvents === "number";
+            if (maxSpecified && events.length > m.maxEvents) {
+                const more = events.length - m.maxEvents;
+                let text = "+" + more + " events";
+                if (more === 1) {
+                    text = "+1 event";
+                }
+                args.cell.areas = [
+                    {
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        height: 25,
+                        text: text,
+                        //onClick: (args) => {
+                        //    const form = [];
+                        //    const options ={
+                        //        height:"30",
+                        //        width: "45",
+                        //        autoStretch: true,
+
+                        //    };
+                        //    events.forEach(e => {
+                        //        form.push({ html: `<div style="border: 1px solid black">Tiêu đề: ${e.text()}<br>Ngày bắt đầu: ${e.start()}<br>Ngày kết thúc: ${e.end()}<br>Phòng: ${e.resource()}</div>` })
+                        //    });
+                        //    DayPilot.Modal.form(form,options);
+
+                        //}
+                    }
+                ];
+            }
+        }
+    });
+
+
+    m.init();
     const dp = new DayPilot.Calendar("dp", {
-        cellHeight: "40",
+        cellHeight: "80",
+        height: 600,
+        heightSpec: "Fixed",
         eventDeleteHandling: "Update",
         timeRangeSelectedHandling: "Disabled",
         eventMoveHandling : "Disabled",
         eventResizeHandling: "Disabled",
         theme: "red_calendar",
+        dayBeginsHour: 8,
+        dayEndsHour: 18,
         onEventDeleted: async (args) => {
             const check = await DayPilot.Modal.confirm("Bạn có muốn xóa?", { okText: "Xác nhận", cancelText: "Không" });
             if (check.result == "OK") {
@@ -587,20 +775,30 @@
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
+                    //args.data.html = `${args.data.doctorName}<br/>Còn trống`;
+
+                    args.data.html = "Trạng thái: Trống";
+                    args.data.toolTip = "Bấm để đặt lịch";
                     break;
                 case "waiting":
                     args.data.backColor = "#e69138";  // orange
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
-                    args.data.html = `${args.data.patientName}`;
+                    args.data.html = `<span style="text-decoration:underline">Trạng thái:  </span> <span style="font-weight:bold;font-size:13px">CHỜ XÁC NHẬN...</span><br>
+                                <span style="text-decoration:underline">Người đặt:</span>  ${args.data.email}<br>
+                            <span style="text-decoration:underline">Tiêu đề:</span>  ${args.data.text}<br>
+                            <span style="text-decoration:underline">Nội dung:</span>  ${args.data.description}`;
                     break;
                 case "confirmed":
                     args.data.backColor = "#6aa84f";  // green
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
-                                        args.data.html = `${args.data.patientName}`;
+                    args.data.html = `<span style="text-decoration:underline">Trạng thái:  </span> <span style="font-weight:bold;font-size:13px">ĐẶT THÀNH CÔNG</span><br>
+                                <span style="text-decoration:underline">Người đặt:</span>  ${args.data.email}<br>
+                                <span style="text-decoration:underline">Tiêu đề:</span>  ${args.data.text}<br>
+                                <span style="text-decoration:underline">Nội dung:</span>  ${args.data.description}`;
                     break;
             }
         },
@@ -610,9 +808,9 @@
 
             const form = [
                 { name: "Cập nhật tình trạng phòng" },
-                { name: "Thông tin người đặt", id: "patientName", disabled: true },
-                { name: "Nội dung", id: "description", disabled: true },
-                { name: "Ghi chú", id: "note", disabled: true },
+                { name: "Tiêu đề", id: "text", disabled: true },
+                { name: "Nội dung", id: "description", disabled: true, type: "textarea" },
+                { name: "Ghi chú", id: "note", disabled: true, type: "textarea" },
                 {
                     name: "Tình trạng", id: "status", type: "select", options: [
                         { name: "Trống", id: "free" },
@@ -647,6 +845,7 @@
             const data = args.e.data;
 
             const options = {
+                focus: "text",
                 focus: "start",
                 focus: "end",
                 focus: "resource",
@@ -659,6 +858,7 @@
             }
             const params = {
                 ...args.e.data,
+                name:modal.result.text,
                 start: modal.result.start,
                 end: modal.result.end,
                 resource: modal.result.resource,
@@ -703,5 +903,17 @@
 
     scheduler.init();
     app.init();
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/jscript">
+    var url = "/Booking/Address";
+    $.get(url, null, function (ad) {
+        ba = ad;
+    });
+    var user = "/Booking/Name";
+    $.get(user, null, function (us) {
+        em = us;
+    });
 </script>
 

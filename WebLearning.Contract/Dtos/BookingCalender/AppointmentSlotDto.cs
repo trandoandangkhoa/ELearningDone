@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using WebLearning.Contract.Dtos.BookingCalender.Room;
 
 namespace WebLearning.Contract.Dtos.BookingCalender
 {
@@ -36,6 +37,7 @@ namespace WebLearning.Contract.Dtos.BookingCalender
 
         [NotMapped]
         public string DoctorName { get { return Room.Name; } }
+        public string Title { get; set; }
 
         public Guid CodeId { get; set; }
     }

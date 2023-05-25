@@ -3,18 +3,22 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Org.BouncyCastle.Asn1.Mozilla;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
 using System.Numerics;
 using System.Security.Principal;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using WebLearning.Application.Email;
 using WebLearning.Contract.Dtos.Account;
 using WebLearning.Contract.Dtos.BookingCalender;
 using WebLearning.Contract.Dtos.BookingCalender.HistoryAddSlot;
+using WebLearning.Contract.Dtos.BookingCalender.Room;
 using WebLearning.Contract.Dtos.Role;
 using WebLearning.Domain.Entites;
 using WebLearning.Persistence.ApplicationContext;
@@ -29,12 +33,17 @@ namespace WebLearning.Application.BookingCalender.Services
 
         Task<Result> CreateAppointment(int id, AppointmentSlotRequest slotRequest, string name);
         Task<IEnumerable<AppointmentSlotDto>> GetAppointments([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor);
+        Task<IEnumerable<AppointmentSlotDto>> GetAppointmentsEvents([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor);
+
         Task<IEnumerable<AppointmentSlotDto>> AppointmentsFree([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] string patient);
 
         Task<Result> AdminCreateNewSingleAppointment(AppointmentSlotRange range);
 
         Task<Result> AdminDeleteMultiAppointment(ClearRange range);
         Task<Result> DeleteSingleAppointment(int id);
+        Task<Result> DeleteAppointmentBooked(Guid codeId);
+
+
         Task<List<Result>> CreateAppointmentSlotAdvance(CreateAppointmentSlotAdvance createAppointmentSlotAdvance);
 
         Task<Result> ConfirmBookingAccepted(UpdateHistoryAddSlotDto updateHistoryAddSlotDto, Guid fromId, Guid toId, string email);
@@ -222,8 +231,9 @@ namespace WebLearning.Application.BookingCalender.Services
             Result result = new();
 
             var historyNow = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(toId));
+            var historyPrevious = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(fromId));
 
-            if(historyNow != null)
+            if (historyNow != null && historyNow.Status != "confirmed")
             {
                 var room = await _context.Rooms.SingleOrDefaultAsync(x => x.Id == historyNow.RoomId);
 
@@ -238,6 +248,8 @@ namespace WebLearning.Application.BookingCalender.Services
                 var roomDto = _mapper.Map<RoomDto>(room);
 
                 var hsNowDto = _mapper.Map<HistoryAddSlotDto>(historyNow);
+
+                var historyPreviousDto = _mapper.Map<HistoryAddSlotDto>(historyPrevious);
 
                 using var transaction = _context.Database.BeginTransaction();
 
@@ -293,11 +305,13 @@ namespace WebLearning.Application.BookingCalender.Services
 
             var accountDb = await _context.Accounts.Include(x => x.AccountDetail).FirstOrDefaultAsync(a => a.Email.Contains(name));
 
+            if (accountDb == null) { result.message = "Không tìm thấy tài khoản.\nVui lòng đăng nhập trước khi đặt lịch!"; return result; }
+
             var apDto = _mapper.Map<AppointmentSlotDto>(appointmentSlot);
 
             var account = _mapper.Map<AccountDto>(accountDb);
 
-            appointmentSlot.PatientName = " - " + "Người đặt: " + account.Email + "\n" + " - " + "Nội dung: " + slotRequest.Description;
+            appointmentSlot.PatientName = slotRequest.Name;
 
             appointmentSlot.PatientId = slotRequest.Patient;
 
@@ -332,6 +346,8 @@ namespace WebLearning.Application.BookingCalender.Services
                 OldCodeId = appointmentSlot.CodeId,
                 TypedSubmit = "Create",
                 RoomId = appointmentSlot.Room.Id,
+                Editor = name,
+                Title =  appointmentSlot.PatientName,
             };
             HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(createHistoryAddSlotDto);
 
@@ -405,7 +421,7 @@ namespace WebLearning.Application.BookingCalender.Services
                     {
                         listSlot.ForEach(item =>
                         {
-                            item.PatientName = " - " + "Người đặt: " + createAppointmentSlotAdvance.Email + "\n" + " - " + "Nội dung: " + createAppointmentSlotAdvance.Description;
+                            item.PatientName = createAppointmentSlotAdvance.Title;
 
 
                             item.PatientId = "d2cdd687-3f3d-d71b-258a-06906cb82f44";
@@ -435,8 +451,12 @@ namespace WebLearning.Application.BookingCalender.Services
                     Start = createAppointmentSlotAdvance.Start,
                     End = createAppointmentSlotAdvance.End,
                     Status = "waiting",
+                    TypedSubmit = "Create",
                     CodeId = code,
+                    OldCodeId = code,
                     RoomId = createAppointmentSlotAdvance.Room,
+                    Title = createAppointmentSlotAdvance.Title,
+                    Editor = createAppointmentSlotAdvance.Email,
                 };
 
                 HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(historySubmit);
@@ -483,7 +503,7 @@ namespace WebLearning.Application.BookingCalender.Services
                     {
                         listSlot.ForEach(item =>
                         {
-                            item.PatientName = " - " + "Người đặt: " + createAppointmentSlotAdvance.Email + "\n" + " - " + "Nội dung: " + createAppointmentSlotAdvance.Description;
+                            item.PatientName = createAppointmentSlotAdvance.Title;
 
 
                             item.PatientId = "d2cdd687-3f3d-d71b-258a-06906cb82f44";
@@ -516,7 +536,11 @@ namespace WebLearning.Application.BookingCalender.Services
                     End = createAppointmentSlotAdvance.End,
                     Status = "waiting",
                     CodeId = code,
+                    OldCodeId = code,
+                    TypedSubmit = "Create",
                     RoomId = createAppointmentSlotAdvance.Room,
+                    Title = createAppointmentSlotAdvance.Title,
+                    Editor = createAppointmentSlotAdvance.Email,
                 };
                 HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(historySubmit);
 
@@ -557,14 +581,14 @@ namespace WebLearning.Application.BookingCalender.Services
                         });
 
                     }
-                    return result;
+                    return result;  
 
                 }
                 else
                 {
                     final.ForEach(item =>
                     {
-                        item.PatientName = " - " + "Người đặt: " + createAppointmentSlotAdvance.Email + "\n" + " - " + "Nội dung: " + createAppointmentSlotAdvance.Description;
+                        item.PatientName = createAppointmentSlotAdvance.Title;
 
                         item.PatientId = "d2cdd687-3f3d-d71b-258a-06906cb82f44";
 
@@ -588,8 +612,12 @@ namespace WebLearning.Application.BookingCalender.Services
                         Start = createAppointmentSlotAdvance.Start,
                         End = createAppointmentSlotAdvance.End,
                         Status = "waiting",
+                        TypedSubmit = "Create",
                         CodeId = code,
+                        OldCodeId = code,
                         RoomId = createAppointmentSlotAdvance.Room,
+                        Title = createAppointmentSlotAdvance.Title,
+                        Editor = createAppointmentSlotAdvance.Email,
                     };
                     HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(historySubmit);
 
@@ -708,6 +736,45 @@ namespace WebLearning.Application.BookingCalender.Services
             return rs;
         }
 
+        public async Task<Result> DeleteAppointmentBooked(Guid codeId)
+        {
+            Result rs = new();
+
+            try
+            {
+                using var transaction = _context.Database.BeginTransaction();
+
+                var history = await _context.HistoryAddSlots.SingleOrDefaultAsync(X => X.CodeId.Equals(codeId));
+                _context.HistoryAddSlots.Remove(history);
+
+                var slot = await _context.Appointments.Where(x => x.CodeId.Equals(codeId)).ToListAsync();
+                foreach (var item in slot)
+                {
+                    item.PatientName = "";
+                    item.PatientId = "";
+                    item.Status = "free";
+                    item.Description = "";
+                    item.Email = "";
+                    item.Note = "";
+                    item.CodeId = Guid.Empty;
+                }
+                _context.UpdateRange(slot);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                rs.message = "Success";
+
+                return rs;
+
+            }
+            catch (Exception ex)
+            {
+                rs.message = ex.Message;
+
+                return rs;
+            }
+        }
+
         public async Task<Result> DeleteSingleAppointment(int id)
         {
             Result rs = new();
@@ -730,7 +797,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
         public async Task<IEnumerable<AppointmentSlotDto>> GetAppointments([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor)
         {
-            if (doctor == null)
+            if (doctor == 0)
             {
                 var ap = await _context.Appointments.Where(e => !((e.End <= start) || (e.Start >= end))).Include(e => e.Room).ToListAsync();
 
@@ -748,7 +815,138 @@ namespace WebLearning.Application.BookingCalender.Services
             }
 
         }
+        public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentsEvents([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor)
+        {
+            List<AppointmentSlotDto> appointmentSlotDtos = new();
 
+            if (doctor == 0 || doctor == null)
+            {
+                var ap = await _context.Appointments.Where(e => !((e.End <= start) || (e.Start >= end)) && e.Status == "free").Include(e => e.Room).ToListAsync();
+
+                var apDto = _mapper.Map<List<AppointmentSlotDto>>(ap);
+
+                appointmentSlotDtos.AddRange(apDto);
+
+                var apBusy = await _context.Appointments.Where(e => !((e.End <= start) || (e.Start >= end)) && e.Status != "free").Include(e => e.Room).ToListAsync();
+                foreach ( var item in apBusy)
+                {
+                    var itemBusy = await  _context.Appointments.Where(e => e.CodeId.Equals(item.CodeId)).Include(e => e.Room).OrderBy(x => x.Start).ToListAsync();
+                    var itemBusyDto = _mapper.Map<List<AppointmentSlotDto>>(itemBusy);
+
+                    for (int i = 0 ; i < itemBusy.Count; i++)
+                    {
+                        if(i+1 < itemBusy.Count)
+                        {
+                            if (itemBusy[i].End == itemBusy[i + 1].Start)
+                            {
+                                var s = itemBusyDto[i].Start;
+                                var e = itemBusyDto[i + 1].End;
+                                AppointmentSlotDto appointmentSlotDto = new()
+                                {
+                                    Id = itemBusyDto[i].Id,
+                                    Start = itemBusyDto[i].Start,
+                                    End = itemBusyDto[i + 1].End,
+                                    Room = itemBusyDto[i].Room,
+
+
+                                    PatientName = itemBusyDto[i].PatientName,
+
+                                    PatientId = itemBusyDto[i].PatientId,
+
+                                    Description = itemBusyDto[i].Description,
+
+                                    Note = itemBusyDto[i].Note,
+
+                                    Email = itemBusyDto[i].Email,
+
+                                    Status = itemBusyDto[i].Status,
+
+                                    Title = itemBusyDto[i].Title,
+
+                                    CodeId = itemBusy[i].CodeId,
+
+
+                                };
+                                appointmentSlotDtos.Add(appointmentSlotDto);
+                            }
+
+                        }
+                        else
+                        {
+                            break;
+                        }
+
+                    }
+
+                }
+                return appointmentSlotDtos;
+            }
+            else
+            {
+                var ap = await _context.Appointments.Where(e => e.Room.Id == doctor && !((e.End <= start) || (e.Start >= end)) && e.Status == "free").Include(e => e.Room).ToListAsync();
+
+                var apDto = _mapper.Map<List<AppointmentSlotDto>>(ap);
+
+                appointmentSlotDtos.AddRange(apDto);
+
+                var apBusy = await _context.Appointments.Where(e => e.Room.Id == doctor &&  !((e.End <= start) || (e.Start >= end)) && e.Status != "free").Include(e => e.Room).ToListAsync();
+                foreach (var item in apBusy)
+                {
+                    var itemBusy = await _context.Appointments.Where(e => e.CodeId.Equals(item.CodeId)).Include(e => e.Room).OrderBy(x => x.Start).ToListAsync();
+                    var itemBusyDto = _mapper.Map<List<AppointmentSlotDto>>(itemBusy);
+
+                    for (int i = 0; i < itemBusy.Count; i++)
+                    {
+                        if (i + 1 < itemBusy.Count)
+                        {
+                            if (itemBusy[i].End == itemBusy[i + 1].Start)
+                            {
+                                var s = itemBusyDto[i].Start;
+                                var e = itemBusyDto[i + 1].End;
+                                AppointmentSlotDto appointmentSlotDto = new()
+                                {
+                                    Id = itemBusyDto[i].Id,
+                                    Start = itemBusyDto[i].Start,
+                                    End = itemBusyDto[i + 1].End,
+                                    Room = itemBusyDto[i].Room,
+
+
+                                    PatientName = itemBusyDto[i].PatientName,
+
+                                    PatientId = itemBusyDto[i].PatientId,
+
+                                    Description = itemBusyDto[i].Description,
+
+                                    Note = itemBusyDto[i].Note,
+
+                                    Email = itemBusyDto[i].Email,
+
+                                    Status = itemBusyDto[i].Status,
+
+                                    Title = itemBusyDto[i].Title,
+
+                                    CodeId = itemBusy[i].CodeId,
+
+
+                                };
+                                appointmentSlotDtos.Add(appointmentSlotDto);
+                            }
+
+                        }
+                        else
+                        {
+                            break;
+                        }
+
+                    }
+
+                }
+                return appointmentSlotDtos;
+            }
+
+
+
+        }
         public async Task<Result> MailReplyAccepted(Guid fromId, Guid toId)
         {
             Result result = new();
@@ -775,369 +973,188 @@ namespace WebLearning.Application.BookingCalender.Services
 
             var baseAddress = _configuration.GetValue<string>("BaseAddress");
 
-
-            //var body = "Nội dung cuộc họp: " + history.Description + "<br/>" +
-            //            "Ghi chú: " + history.Note + "<br/>" +
-            //            "Họ tên người đặt: " + infouser.Name + "<br/>" +
-            //            "Email: " + infouser.Email + "<br/>" +
-            //            "Bộ phận: " + infouser.Department + "<br/>" +
-            //            "Phòng: " + room.Name + "<br/>" +
-            //            "Thời gian bắt đầu: " + history.Start + "<br/>" +
-            //            "Thời gian kết thúc: " + history.End + "<br/>" +
-            //            "Trang thái: " + "<span style='background-color:#5cb85c;display: inline;padding: .3em .7em .4em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;'>" +
-            //                        "Xác nhận" +
-            //                        "</span>" + "<br/><br/>" +
-            //            "<div>" +
-            //                "<a style='padding: 6px 12px;background-color: #5bc0de;border-radius:30px;text-decoration: none;color:#fff;' " +
-            //                "href = " + baseAddress + fromId + "/" + toId + "&trang-thai=1" + " >Duyệt</a>" + "<br/><br/>" +
-            //             "</div>" + "</div></div>";
-
-            //var message = new Message(new string[] { $"{emailAdmin}" }, "XÁC NHẬN DỜI LỊCH", $"{body}");
             var message = Extension.ConfirmMoveSlotMesseageAccepted(baseAddress, emailAdmin, accountDto, roomDto.Name,
             historyDto.Description, historyDto.Note, historyDto.Start,
             historyDto.End,fromId,toId);
+
             _emailSender.ReplyEmail(message, accountDto.Email, accountDto.accountDetailDto.FullName, emailAdmin);
             return result;
         }
 
-        public Task<Result> MailReplyRejected(Guid fromId, Guid toId)
+        public async Task<Result> MailReplyRejected(Guid fromId, Guid toId)
         {
-            throw new NotImplementedException();
+            Result result = new();
+
+            var history = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(toId));
+
+            if (history == null)
+            {
+                result.message = "NotFound";
+
+                return result;
+            }
+            var room = await _context.Rooms.SingleOrDefaultAsync(x => x.Id == history.RoomId);
+
+            var infouser = await _context.Accounts.Include(x => x.AccountDetail).SingleOrDefaultAsync(x => x.Email.Contains(history.Email));
+
+            var accountDto = _mapper.Map<AccountDto>(infouser);
+
+            var roomDto = _mapper.Map<RoomDto>(room);
+
+            var historyDto = _mapper.Map<HistoryAddSlotDto>(history);
+
+            var emailAdmin = _configuration.GetValue<string>("EmailConfiguration:To");
+
+            var baseAddress = _configuration.GetValue<string>("BaseAddress");
+
+            var message = Extension.ConfirmMoveSlotMesseageRejected(baseAddress, emailAdmin, accountDto, roomDto.Name,
+            historyDto.Description, historyDto.Note, historyDto.Start,
+            historyDto.End, fromId, toId);
+
+            _emailSender.ReplyEmail(message, accountDto.Email, accountDto.accountDetailDto.FullName, emailAdmin);
+            return result;
         }
 
         public async Task<Result> PutAppointment(int id, AppointmentSlotUpdate update, string email)
         {
             Result result = new();
+
             var appointmentSlot = await _context.Appointments.Include(x => x.Room).SingleOrDefaultAsync(x => x.Id == id);
             if (appointmentSlot.CodeId == Guid.Empty)
             {
                 result.message = $"Mã CodeId (Id:{appointmentSlot.Id}) bị lỗi. Liên hệ IT để được xử lí!";
                 return result;
             }
-            var histortyAdd = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(appointmentSlot.CodeId));
+            var historyAdd = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(appointmentSlot.CodeId));
+
+            if (update.Status != historyAdd.Status  && update.CustomAdd > 0)
+            {
+                result.message = "Vui lòng chọn lại thao tác!\nChỉ được chọn 1 trong 2: Cập nhật trạng thái hoặc dời lịch";
+                return result;
+            }
             var accountDb = await _context.Accounts.Include(x => x.AccountDetail).SingleOrDefaultAsync(x => x.Email.Contains(appointmentSlot.Email));
+
             var adminDb = await _context.Accounts.Include(x => x.AccountDetail).SingleOrDefaultAsync(x => x.Email.Contains(email));
 
-            var account = _mapper.Map<AccountDto>(accountDb);
-
-            var admin = _mapper.Map<AccountDto>(adminDb);
-
-            var apDto = _mapper.Map<AppointmentSlotDto>(appointmentSlot);
-
-
-            int rs = DateTime.Compare(update.Start, update.End);
-            if (rs > 0)
-            {
-                result.message = "Thời gian bắt đầu phải lớn hơn thòi gian kết thúc";
-                return result;
-            }
-
-            if (appointmentSlot == null)
-            {
-                result.message = "Không tìm thấy lịch trống";
-                return result;
-            }
-
-            if (update.CustomAdd > 0)
+            if(accountDb.Email == email)
             {
                 var slot = await _context.Appointments.Where(x => x.Room.Id == update.Resource).ToListAsync();
 
+                var account = _mapper.Map<AccountDto>(accountDb);
+
+                var admin = _mapper.Map<AccountDto>(adminDb);
+
+                var apDto = _mapper.Map<AppointmentSlotDto>(appointmentSlot);
+
                 var newRoom = await _context.Rooms.SingleOrDefaultAsync(x => x.Id == update.Resource);
 
-                var oldRoom = await _context.Rooms.SingleOrDefaultAsync(x => x.Id == histortyAdd.RoomId);
+                var oldRoom = await _context.Rooms.SingleOrDefaultAsync(x => x.Id == historyAdd.RoomId);
 
                 var newRoomDto = _mapper.Map<RoomDto>(newRoom);
 
                 var oldRoomDto = _mapper.Map<RoomDto>(oldRoom);
 
-                var checkExist = await _context.Appointments.Where(x => x.CodeId.Equals(apDto.CodeId) ).OrderByDescending(x => x.Start).ToListAsync();
+                var checkExist = await _context.Appointments.Where(x => x.CodeId.Equals(apDto.CodeId)).OrderByDescending(x => x.Start).ToListAsync();
 
+                int rs = DateTime.Compare(update.Start, update.End);
 
+                if (rs > 0)
+                {
+                    result.message = "Thời gian bắt đầu phải lớn hơn thòi gian kết thúc";
+                    return result;
+                }
+
+                if (appointmentSlot == null)
+                {
+                    result.message = "Không tìm thấy lịch trống";
+                    return result;
+                }
+
+                if (update.CustomAdd == 0)
+                {
+                    result =  await UpdateStatusSlot(result, update, apDto, newRoomDto, oldRoomDto, email, slot, account, admin, checkExist, historyAdd);
+
+                }
                 if (update.CustomAdd == 1)
                 {
-                    using var transaction = _context.Database.BeginTransaction();
 
-                    try
-                    {
-                        var dateForWeek = Extension.DaysWeakly(update.Start, update.End, update.CustomAdd);
-
-
-                        Guid codeId = Guid.NewGuid();
-
-                        CreateHistoryAddSlotDto createHistoryAddSlotDto = new()
-                        {
-                            CodeId = codeId,
-                            OldCodeId = appointmentSlot.CodeId,
-                            TypedSubmit = "Edit",
-                            Email = appointmentSlot.Email,
-                            Description = appointmentSlot.Description,
-                            Note = appointmentSlot.Note,
-                            Status = "waiting",
-                            RoomId = newRoom.Id,
-                            Start = update.Start,
-                            End = update.End,
-                        };
-                        HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(createHistoryAddSlotDto);
-
-
-                        _context.HistoryAddSlots.Add(historyAddSlot);
-                        await _context.SaveChangesAsync();
-
-                        foreach (var date in dateForWeek)
-                        {
-                            var listSlot = Extension.SortList(date.Start, date.End, slot);
-
-                            var existConfirmed = listSlot.Where(x => x.Status != "free").ToList();
-
-                            if (existConfirmed != null && existConfirmed.Count > 0 && existConfirmed[0].CodeId.Equals(apDto.CodeId) == false)
-                            {
-                                result.message = "Khoảng thời gian bạn chọn đã được đặt";
-                                return result;
-                            }
-
-                            else
-                            {
-                                listSlot.ForEach(item =>
-                                {
-                                    item.PatientName = " - " + "Người đặt: " + account.Email + "\n" + " - " + "Nội dung: " + update.Description;
-
-
-                                    item.PatientId = "d2cdd687-3f3d-d71b-258a-06906cb82f44";
-
-                                    item.Status = "waiting";
-
-                                    item.Email = account.Email;
-
-                                    item.Description = update.Description;
-
-                                    item.Note = update.Note;
-
-                                    item.CodeId = codeId;
-
-                                    _context.Appointments.Update(item);
-
-                                });
-
-                                await _context.SaveChangesAsync();
-
-
-                            }
-
-                            foreach (var exist in checkExist.ToList())
-                            {
-
-                                if (exist.Start >= date.Start && exist.End == date.End && exist.Resource == update.Resource)
-                                {
-                                    checkExist.Remove(exist);
-                                }
-                            }
-
-
-                        }
-
-
-
-
-                        var baseAddress = _configuration.GetValue<string>("BaseAddressChangeTime");
-
-                        var message = Extension.MoveSlotMesseageWeeklyInMonth(baseAddress, email, account, oldRoomDto, newRoomDto, update.Description, update.Note, appointmentSlot.CodeId, codeId, histortyAdd.Start, histortyAdd.End, historyAddSlot.Start, historyAddSlot.End);
-
-                        _emailSender.ReplyEmail(message, email, admin.accountDetailDto.FullName, account.Email);
-
-                        if(checkExist.Count > 0)
-                        {
-                            checkExist.ForEach(ce =>
-                            {
-
-                                ce.PatientName = "";
-                                ce.PatientId = "";
-                                ce.Status = "free";
-                                ce.Email = "";
-                                ce.Description = "";
-                                ce.Note = "";
-                                ce.CodeId = Guid.Empty;
-                                _context.Appointments.Update(ce);
-
-
-                            });
-                        }
-
-                        await _context.SaveChangesAsync();
-
-                        await transaction.CommitAsync();
-
-
-                        result.message = "Cập nhật thành công!";
-                        return result;
-                    }
-                    catch (Exception ex)
-                    {
-                        result.message = ex.Message;
-                        return result;
-
-                    }
+                    result = await CreateAppoinmentTypeFirst(result, update, apDto, newRoomDto, oldRoomDto, email, slot, account, admin, checkExist, historyAdd);
 
                 }
                 if (update.CustomAdd == 2)
                 {
-                    int checkToDateAndFromDate = DateTime.Compare(update.Start, update.End);
-                    if (checkToDateAndFromDate >= 0 || update.Start.TimeOfDay == update.End.TimeOfDay)
-                    {
-                        result.message = "Thời gian không hợp lệ!";
-                        return result;
-                    }
+                    result = await CreateAppoinmentTypeSecond(result, update, apDto, newRoomDto, oldRoomDto, email, slot, account, admin, checkExist, historyAdd);
 
-                    var dateForWeek = Extension.DaysWeakly(update.Start, update.End, update.CustomAdd);
-                    using var transaction = _context.Database.BeginTransaction();
-
-                    try
-                    {
-                        Guid codeId = Guid.NewGuid();
-
-                        CreateHistoryAddSlotDto createHistoryAddSlotDto = new()
-                        {
-                            CodeId = codeId,
-                            Email = appointmentSlot.Email,
-                            Description = appointmentSlot.Description,
-                            Note = appointmentSlot.Note,
-                            Status = "waiting",
-                            RoomId = newRoom.Id,
-                            Start = update.Start,
-                            End = update.End,
-                            OldCodeId = appointmentSlot.CodeId,
-                            TypedSubmit = "Edit",
-                        };
-                        HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(createHistoryAddSlotDto);
-
-                        _context.HistoryAddSlots.Add(historyAddSlot);
-
-                        await _context.SaveChangesAsync();
-
-                        foreach (var date in dateForWeek)
-                        {
-
-                            var listSlot = Extension.SortList(date.Start, date.End, slot);
-                            var exist = listSlot.Where(x => x.Status != "free").ToList();
-
-                            if (exist != null && exist.Count > 0 && exist[0].CodeId.Equals(apDto.CodeId) == false)
-                            {
-                                result.message = "Khoảng thời gian bạn chọn đã được đặt";
-                                return result;
-                            }
-                            else
-                            {
-                                listSlot.ForEach(item =>
-                                {
-                                    item.PatientName = " - " + "Người đặt: " + account.Email + "\n" + " - " + "Nội dung: " + update.Description;
-
-
-                                    item.PatientId = "d2cdd687-3f3d-d71b-258a-06906cb82f44";
-
-                                    item.Status = "waiting";
-
-                                    item.Email = account.Email;
-
-                                    item.Description = update.Description;
-
-                                    item.Note = update.Note;
-
-                                    item.CodeId = codeId;
-
-                                    _context.Appointments.Update(item);
-
-                                });
-
-                                await _context.SaveChangesAsync();
-
-                            }
-                            foreach (var e in checkExist.ToList())
-                            {
-
-                                if (e.Start >= date.Start && e.End == date.End && e.Resource == update.Resource)
-                                {
-                                    checkExist.Remove(e);
-                                }
-                            }
-                        }
-
-                        var baseAddress = _configuration.GetValue<string>("BaseAddressChangeTime");
-
-                        var message = Extension.MoveSlotMesseageWeeklyInMultiMonth(baseAddress, email, account, oldRoomDto, newRoomDto, update.Description, update.Note, appointmentSlot.CodeId, codeId, histortyAdd.Start, histortyAdd.End, historyAddSlot.Start, historyAddSlot.End);
-
-
-                        _emailSender.ReplyEmail(message, email, admin.accountDetailDto.FullName, account.Email);
-
-                        if(checkExist.Count > 0)
-                        {
-                            checkExist.ForEach(ce =>
-                            {
-                                ce.PatientName = "";
-                                ce.PatientId = "";
-                                ce.Status = "free";
-                                ce.Email = "";
-                                ce.Description = "";
-                                ce.Note = "";
-                                ce.CodeId = Guid.Empty;
-                                _context.Appointments.Update(ce);
-
-
-                            });
-                        }
-
-                        await _context.SaveChangesAsync();
-
-                        await transaction.CommitAsync();
-
-                        result.message = "Cập nhật thành công!";
-                        return result;
-                    }
-                    catch (Exception ex)
-                    {
-                        result.message = ex.Message;
-                        return result;
-                    }
                 }
                 else if (update.CustomAdd == 3)
                 {
-                    using var transaction = _context.Database.BeginTransaction();
-                    try
+                    result = await CreateAppoinmentTypeThird(result, update, apDto, newRoomDto, oldRoomDto, email, slot, account, admin, checkExist, historyAdd);
+
+                }
+                return result;
+
+            }
+            else
+            {
+                result.message = "Bạn không có quyền sửa";
+                return result;
+            }
+
+        }
+
+
+        public async Task<Result> CreateAppoinmentTypeFirst(Result result,AppointmentSlotUpdate update,AppointmentSlotDto appointmentSlotDto, RoomDto newRoomDto,RoomDto oldRoomDto,
+                                                            string email,List<AppointmentSlot> slot,AccountDto account,AccountDto admin,
+                                                            List<AppointmentSlot> checkExist, HistoryAddSlot historyAdd)
+        {
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
+            {
+                var dateForWeek = Extension.DaysWeakly(update.Start, update.End, update.CustomAdd);
+
+
+                Guid codeId = Guid.NewGuid();
+
+                CreateHistoryAddSlotDto createHistoryAddSlotDto = new()
+                {
+                    CodeId = codeId,
+                    OldCodeId = appointmentSlotDto.CodeId,
+                    TypedSubmit = "Edit",
+                    Email = appointmentSlotDto.Email,
+                    Description = update.Description,
+                    Note = update.Note,
+                    Status = "waiting",
+                    RoomId = newRoomDto.Id,
+                    Start = update.Start,
+                    End = update.End,
+                    Editor = email,
+                    Title = update.Name,
+                };
+                HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(createHistoryAddSlotDto);
+
+
+                _context.HistoryAddSlots.Add(historyAddSlot);
+
+                await _context.SaveChangesAsync();
+
+                foreach (var date in dateForWeek)
+                {
+                    var listSlot = Extension.SortList(date.Start, date.End, slot);
+
+                    var existConfirmed = listSlot.Where(x => x.Status != "free").ToList();
+
+                    if (existConfirmed != null && existConfirmed.Count > 0 && existConfirmed[0].CodeId.Equals(appointmentSlotDto.CodeId) == false)
                     {
+                        result.message = "Khoảng thời gian bạn chọn đã được đặt";
+                        return result;
+                    }
 
-                        var final = Extension.SortList(update.Start, update.End, slot);
-
-                        var exist = final.Where(x => x.Status != "free").ToList();
-
-                        if (exist != null && exist.Count > 0 && exist[0].CodeId.Equals(appointmentSlot.CodeId) == false)
+                    else
+                    {
+                        listSlot.ForEach(item =>
                         {
-                            result.message = "Khoảng thời gian bạn chọn đã được đặt";
-                            return result;
-                        }
-                        update.Name = appointmentSlot.PatientName;
-
-                        Guid codeId = Guid.NewGuid();
-
-                        CreateHistoryAddSlotDto createHistoryAddSlotDto = new()
-                        {
-                            CodeId = codeId,
-                            Email = appointmentSlot.Email,
-                            Description = appointmentSlot.Description,
-                            Note = appointmentSlot.Note,
-                            Status = "waiting",
-                            RoomId = newRoomDto.Id,
-                            Start = update.Start,
-                            End = update.End,
-                            OldCodeId = appointmentSlot.CodeId,
-                            TypedSubmit = "Edit",
-                        };
-                        HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(createHistoryAddSlotDto);
-
-                        _context.HistoryAddSlots.Add(historyAddSlot);
-
-                        await _context.SaveChangesAsync();
-
-                        final.ForEach(item =>
-                        {
-                            item.PatientName = " - " + "Người đặt: " + account.Email + "\n" + " - " + "Nội dung: " + update.Description;
+                            item.PatientName = update.Name;
 
 
                             item.PatientId = "d2cdd687-3f3d-d71b-258a-06906cb82f44";
@@ -1159,99 +1176,393 @@ namespace WebLearning.Application.BookingCalender.Services
                         await _context.SaveChangesAsync();
 
 
-
-                        var baseAddress = _configuration.GetValue<string>("BaseAddressChangeTime");
-
-                        var message = Extension.MoveSlotMesseage(baseAddress, email, account, oldRoomDto, newRoomDto, update.Description, update.Note, appointmentSlot.CodeId, codeId, histortyAdd.Start, histortyAdd.End, historyAddSlot.Start, historyAddSlot.End);
-
-                        _emailSender.ReplyEmail(message, email, admin.accountDetailDto.FullName, account.Email);
-
-                        checkExist.ForEach(ce =>
-                        {
-                            ce.PatientName = "";
-                            ce.PatientId = "";
-                            ce.Status = "free";
-                            ce.Email = "";
-                            ce.Description = "";
-                            ce.Note = "";
-                            ce.CodeId = Guid.Empty;
-                            _context.Appointments.Update(ce);
-
-
-                        });
-                        await _context.SaveChangesAsync();
-
-                        await transaction.CommitAsync();
-
-
-                        result.message = "Cập nhật thành công!";
-                        return result;
                     }
-                    catch (Exception ex)
+
+                    foreach (var exist in checkExist.ToList())
                     {
-                        result.message = ex.Message;
-                        return result;
+
+                        if (exist.Start >= date.Start && exist.End == date.End && exist.Resource == update.Resource)
+                        {
+                            checkExist.Remove(exist);
+                        }
                     }
+
 
                 }
-            }
-            else if (update.CustomAdd == 0)
-            {
-                try
+
+                if (admin.AuthorizeRole.ToString() == "AdminRole" || admin.AuthorizeRole.ToString() == "ManagerRole")
                 {
-                    using var transaction = _context.Database.BeginTransaction();
+                     var baseAddress = _configuration.GetValue<string>("BaseAddressChangeTime");
 
-                    var checkExist = await _context.Appointments.Where(x => x.CodeId.Equals(appointmentSlot.CodeId)).OrderByDescending(x => x.Start).ToListAsync();
+                    var message = Extension.MoveSlotMesseageWeeklyInMonth(baseAddress, email, account, oldRoomDto, newRoomDto, update.Description, update.Note, appointmentSlotDto.CodeId, codeId, historyAdd.Start, historyAdd.End, historyAddSlot.Start, historyAddSlot.End);
 
-                    var history = await _context.HistoryAddSlots.Where(x => x.CodeId.Equals(appointmentSlot.CodeId)).OrderByDescending(x => x.Start).ToListAsync();
-
-                    var historyOld = await _context.HistoryAddSlots.FirstOrDefaultAsync(x => x.CodeId.Equals(history[0].OldCodeId) == true && x.OldCodeId.Equals(history[0].OldCodeId) == true && x.TypedSubmit != "Create");
-
-                    if(historyOld != null)
-                    {
-                        _context.HistoryAddSlots.Remove(historyOld);
-
-                        await _context.SaveChangesAsync();
-                    }
+                    _emailSender.ReplyEmail(message, email, admin.accountDetailDto.FullName, account.Email);
+                }
 
 
+                if (checkExist.Count > 0)
+                {
                     checkExist.ForEach(ce =>
                     {
-                        ce.Status = update.Status;
 
+                        ce.PatientName = "";
+                        ce.PatientId = "";
+                        ce.Status = "free";
+                        ce.Email = "";
+                        ce.Description = "";
+                        ce.Note = "";
+                        ce.CodeId = Guid.Empty;
                         _context.Appointments.Update(ce);
+
+
                     });
-                    await _context.SaveChangesAsync();
-
-                    history.ForEach(ht =>
-                    {
-                        ht.Status = update.Status;
-
-                        _context.HistoryAddSlots.Update(ht);
-                    });
-
-
-                    await _context.SaveChangesAsync();
-
-                    await transaction.CommitAsync();
-
-                    if (update.Status == "confirmed")
-                    {
-                        var message = Extension.ConfirmSlotMesseageAccepted(email, account, appointmentSlot.DoctorName, appointmentSlot.Description, appointmentSlot.Note, checkExist[checkExist.Count - 1].Start, checkExist[0].End);
-
-                        _emailSender.ReplyEmail(message, email, admin.accountDetailDto.FullName, account.Email);
-                    }
-
                 }
-                catch (Exception ex)
+
+                await _context.SaveChangesAsync();
+
+                //Người dùng chỉnh sửa xóa lịch vừa đặt
+
+                if (admin.AuthorizeRole.ToString() != "AdminRole" && admin.AuthorizeRole.ToString() != "ManagerRole")
                 {
-                    result.message = ex.Message;
-                    return result;
+                    var historyPrevious = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(appointmentSlotDto.CodeId));
+
+                    _context.HistoryAddSlots.Remove(historyPrevious);
+
+                    await _context.SaveChangesAsync();
+
                 }
+                await transaction.CommitAsync();
+
+
+                result.message = "Cập nhật thành công!";
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.message = ex.Message;
+                return result;
+
+            }
+        }
+        public async Task<Result> CreateAppoinmentTypeSecond(Result result, AppointmentSlotUpdate update, AppointmentSlotDto apDto, RoomDto newRoomDto, RoomDto oldRoomDto,
+                                                    string email, List<AppointmentSlot> slot, AccountDto account, AccountDto admin,
+                                                    List<AppointmentSlot> checkExist, HistoryAddSlot historyAdd)
+        {
+            int checkToDateAndFromDate = DateTime.Compare(update.Start, update.End);
+            if (checkToDateAndFromDate >= 0 || update.Start.TimeOfDay == update.End.TimeOfDay)
+            {
+                result.message = "Thời gian không hợp lệ!";
+                return result;
             }
 
-            result.message = "Cập nhật thành công!";
-            return result;
+            var dateForWeek = Extension.DaysWeakly(update.Start, update.End, update.CustomAdd);
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
+            {
+                Guid codeId = Guid.NewGuid();
+
+                CreateHistoryAddSlotDto createHistoryAddSlotDto = new()
+                {
+                    CodeId = codeId,
+                    Email = apDto.Email,
+                    Description = update.Description,
+                    Note = update.Note,
+                    Status = "waiting",
+                    RoomId = newRoomDto.Id,
+                    Start = update.Start,
+                    End = update.End,
+                    OldCodeId = apDto.CodeId,
+                    TypedSubmit = "Edit",
+                    Editor = email,
+                    Title = update.Name,
+                };
+                HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(createHistoryAddSlotDto);
+
+                _context.HistoryAddSlots.Add(historyAddSlot);
+
+                await _context.SaveChangesAsync();
+
+                foreach (var date in dateForWeek)
+                {
+
+                    var listSlot = Extension.SortList(date.Start, date.End, slot);
+                    var exist = listSlot.Where(x => x.Status != "free").ToList();
+
+                    if (exist != null && exist.Count > 0 && exist[0].CodeId.Equals(apDto.CodeId) == false)
+                    {
+                        result.message = "Khoảng thời gian bạn chọn đã được đặt";
+                        return result;
+                    }
+                    else
+                    {
+                        listSlot.ForEach(item =>
+                        {
+                            item.PatientName = update.Name;
+
+
+                            item.PatientId = "d2cdd687-3f3d-d71b-258a-06906cb82f44";
+
+                            item.Status = "waiting";
+
+                            item.Email = account.Email;
+
+                            item.Description = update.Description;
+
+                            item.Note = update.Note;
+
+                            item.CodeId = codeId;
+
+                            _context.Appointments.Update(item);
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                    }
+                    foreach (var e in checkExist.ToList())
+                    {
+
+                        if (e.Start >= date.Start && e.End == date.End && e.Resource == update.Resource)
+                        {
+                            checkExist.Remove(e);
+                        }
+                    }
+                }
+                if (admin.AuthorizeRole.ToString() == "AdminRole" || admin.AuthorizeRole.ToString() == "ManagerRole")
+                {
+                    var baseAddress = _configuration.GetValue<string>("BaseAddressChangeTime");
+
+                    var message = Extension.MoveSlotMesseageWeeklyInMultiMonth(baseAddress, email, account, oldRoomDto, newRoomDto, update.Description, update.Note, apDto.CodeId, codeId, historyAdd.Start, historyAdd.End, historyAddSlot.Start, historyAddSlot.End);
+
+
+                    _emailSender.ReplyEmail(message, email, admin.accountDetailDto.FullName, account.Email);
+                }
+
+
+                if (checkExist.Count > 0)
+                {
+                    checkExist.ForEach(ce =>
+                    {
+                        ce.PatientName = "";
+                        ce.PatientId = "";
+                        ce.Status = "free";
+                        ce.Email = "";
+                        ce.Description = "";
+                        ce.Note = "";
+                        ce.CodeId = Guid.Empty;
+                        _context.Appointments.Update(ce);
+
+
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+
+                //Người dùng chỉnh sửa xóa lịch vừa đặt
+
+                if (admin.AuthorizeRole.ToString() != "AdminRole" && admin.AuthorizeRole.ToString() != "ManagerRole")
+                {
+                    var historyPrevious = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(apDto.CodeId));
+
+                    _context.HistoryAddSlots.Remove(historyPrevious);
+
+                    await _context.SaveChangesAsync();
+
+                }
+                await transaction.CommitAsync();
+
+                result.message = "Cập nhật thành công!";
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.message = ex.Message;
+                return result;
+            }
+        }
+        public async Task<Result> CreateAppoinmentTypeThird(Result result, AppointmentSlotUpdate update, AppointmentSlotDto apDto, RoomDto newRoomDto, RoomDto oldRoomDto,
+                                            string email, List<AppointmentSlot> slot, AccountDto account, AccountDto admin,
+                                            List<AppointmentSlot> checkExist, HistoryAddSlot historyAdd)
+        {
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+
+                var final = Extension.SortList(update.Start, update.End, slot);
+
+                var exist = final.Where(x => x.Status != "free").ToList();
+
+                if (exist != null && exist.Count > 0)
+                {
+                    result.message = "Khoảng thời gian bạn chọn đã được đặt";
+                    return result;
+                }
+
+                apDto.PatientName = update.Name;
+
+                Guid codeId = Guid.NewGuid();
+
+
+
+                final.ForEach(item =>
+                {
+                    item.PatientName = apDto.PatientName;
+
+
+                    item.PatientId = "d2cdd687-3f3d-d71b-258a-06906cb82f44";
+
+                    item.Status = "waiting";
+
+                    item.Email = account.Email;
+
+                    item.Description = update.Description;
+
+                    item.Note = update.Note;
+
+                    item.CodeId = codeId;
+
+                    _context.Appointments.Update(item);
+
+                });
+
+                await _context.SaveChangesAsync();
+                CreateHistoryAddSlotDto createHistoryAddSlotDto = new()
+                {
+                    CodeId = codeId,
+                    Email = apDto.Email,
+                    Description = update.Description,
+                    Note = update.Note,
+                    Status = "waiting",
+                    RoomId = newRoomDto.Id,
+                    Start = update.Start,
+                    End = update.End,
+                    OldCodeId = apDto.CodeId,
+                    TypedSubmit = "Edit",
+                    Editor = email,
+                    Title = update.Name,
+                };
+
+                HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(createHistoryAddSlotDto);
+
+                _context.HistoryAddSlots.Add(historyAddSlot);
+
+                await _context.SaveChangesAsync();
+
+                if (admin.AuthorizeRole.ToString() == "AdminRole" || admin.AuthorizeRole.ToString() == "ManagerRole")
+                {
+                    var baseAddress = _configuration.GetValue<string>("BaseAddressChangeTime");
+
+                    var message = Extension.MoveSlotMesseage(baseAddress, email, account, oldRoomDto, newRoomDto, update.Description, update.Note, apDto.CodeId, codeId, historyAdd.Start, historyAdd.End, historyAddSlot.Start, historyAddSlot.End);
+
+                    _emailSender.ReplyEmail(message, email, admin.accountDetailDto.FullName, account.Email);
+                }
+
+
+                checkExist.ForEach(ce =>
+                {
+                    ce.PatientName = "";
+                    ce.PatientId = "";
+                    ce.Status = "free";
+                    ce.Email = "";
+                    ce.Description = "";
+                    ce.Note = "";
+                    ce.CodeId = Guid.Empty;
+                    _context.Appointments.Update(ce);
+
+
+                });
+                await _context.SaveChangesAsync();
+
+                //Người dùng chỉnh sửa xóa lịch vừa đặt
+                if(admin.AuthorizeRole.ToString() != "AdminRole" && admin.AuthorizeRole.ToString() != "ManagerRole")
+                {
+                    var historyPrevious = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(apDto.CodeId));
+
+                     _context.HistoryAddSlots.Remove(historyPrevious);
+
+                    await _context.SaveChangesAsync();
+
+                }
+                await transaction.CommitAsync();
+
+
+                result.message = "Cập nhật thành công!";
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.message = ex.Message;
+                return result;
+            }
+        }
+
+        public async Task<Result> UpdateStatusSlot(Result result, AppointmentSlotUpdate update, AppointmentSlotDto apDto, RoomDto newRoomDto, RoomDto oldRoomDto,
+                                    string email, List<AppointmentSlot> slot, AccountDto account, AccountDto admin,
+                                    List<AppointmentSlot> checkExist, HistoryAddSlot historyAdd)
+        {
+            try
+            {
+
+
+                if (update.Status == "waiting")
+                {
+                    result = await CreateAppoinmentTypeThird(result, update, apDto, newRoomDto, oldRoomDto, email, slot, account, admin, checkExist, historyAdd);
+                    return result;
+
+                }
+                using var transaction = _context.Database.BeginTransaction();
+
+                var checkExistType3 = await _context.Appointments.Where(x => x.CodeId.Equals(apDto.CodeId)).OrderByDescending(x => x.Start).ToListAsync();
+
+                var history = await _context.HistoryAddSlots.Where(x => x.CodeId.Equals(apDto.CodeId)).OrderByDescending(x => x.Start).ToListAsync();
+
+                var historyOld = await _context.HistoryAddSlots.FirstOrDefaultAsync(x => x.CodeId.Equals(history[0].OldCodeId) == true && x.OldCodeId.Equals(history[0].OldCodeId) == true && x.TypedSubmit != "Create");
+
+                if (historyOld != null)
+                {
+                    _context.HistoryAddSlots.Remove(historyOld);
+
+                    await _context.SaveChangesAsync();
+                }
+
+
+                checkExistType3.ForEach(ce =>
+                {
+                    ce.Status = update.Status;
+
+                    _context.Appointments.Update(ce);
+                });
+                await _context.SaveChangesAsync();
+
+                history.ForEach(ht =>
+                {
+                    ht.Status = update.Status;
+
+                    _context.HistoryAddSlots.Update(ht);
+                });
+
+
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                if (update.Status == "confirmed")
+                {
+                    var message = Extension.ConfirmSlotMesseageAccepted(email, account, apDto.DoctorName, apDto.Description, apDto.Note, checkExist[checkExist.Count - 1].Start, checkExist[0].End);
+
+                    _emailSender.ReplyEmail(message, email, admin.accountDetailDto.FullName, account.Email);
+                }
+                result.message = "Cập nhật thành công!";
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.message = ex.Message;
+                return result;
+            }
+        
         }
     }
 }

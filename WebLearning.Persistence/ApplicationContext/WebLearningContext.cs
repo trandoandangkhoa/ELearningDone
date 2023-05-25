@@ -16,7 +16,7 @@ namespace WebLearning.Persistence.ApplicationContext
             public WebLearningContext CreateDbContext(string[] args)
             {
                 var optionsBuilder = new DbContextOptionsBuilder<WebLearningContext>();
-                optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=WebLearning;User ID=sa;Password=12345",
+                optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=VXHAPP;User ID=sa;Password=12345",
                     o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
 
                 return new WebLearningContext(optionsBuilder.Options);

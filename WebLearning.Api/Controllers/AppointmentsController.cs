@@ -7,6 +7,8 @@ using System.Text;
 using WebLearning.Application.BookingCalender;
 using WebLearning.Application.BookingCalender.Services;
 using WebLearning.Application.Email;
+using WebLearning.Application.Helper;
+using WebLearning.Contract.Dtos;
 using WebLearning.Contract.Dtos.BookingCalender;
 using WebLearning.Contract.Dtos.BookingCalender.HistoryAddSlot;
 using WebLearning.Domain.Entites;
@@ -35,10 +37,18 @@ namespace WebLearning.Api.Controllers
         /// <summary>
         /// Danh sách tất cả thời gian có thể đặt của mỗi phòng
         /// </summary>
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.StaffRole, AuthorizeRole.ManagerRole, AuthorizeRole.TeacherRole)]
         [HttpGet]
         public async Task<IEnumerable<AppointmentSlotDto>> GetAppointments([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor)
         {
             return await _appointmentService.GetAppointments(start, end, doctor);
+
+        }
+        [HttpGet("event")]
+
+        public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentsEvent([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor)
+        {
+            return await _appointmentService.GetAppointmentsEvents(start, end, doctor);
 
         }
         /// <summary>
@@ -163,6 +173,17 @@ namespace WebLearning.Api.Controllers
             return StatusCode(StatusCodes.Status200OK, rs);
         }
         /// <summary>
+        /// Xóa lịch đặt phòng
+        /// </summary>
+        // DELETE: api/Appointments/5
+        [HttpDelete("booked/{codeId}")]
+        public async Task<IActionResult> DeleteAppointmentBooked(Guid codeId)
+        {
+            var rs = await _appointmentService.DeleteAppointmentBooked(codeId);
+
+            return StatusCode(StatusCodes.Status200OK, rs);
+        }
+        /// <summary>
         /// Lấy thông tin lịch sử đặt phòng theo từng User
         /// </summary>
         [HttpGet("booked/successed/email")]
@@ -206,6 +227,8 @@ namespace WebLearning.Api.Controllers
         [HttpGet("mailreplied/rejected/{fromId}/{toId}")]
         public async Task<IActionResult> MoveCalenderRejected(Guid fromId, Guid toId)
         {
+            var a = await _appointmentService.MailReplyRejected(fromId, toId);
+
             return StatusCode(StatusCodes.Status200OK);
         }
     }

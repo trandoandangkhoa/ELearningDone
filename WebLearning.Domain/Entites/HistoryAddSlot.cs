@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +16,7 @@ namespace WebLearning.Domain.Entites
 
         public Guid OldCodeId { get; set; }
 
-        public string Email { get; set; }
+        public string Title { get; set; }
 
         public string Description { get; set; }
 
@@ -27,12 +26,14 @@ namespace WebLearning.Domain.Entites
 
         public DateTime End { get; set; }
 
+        public string Email { get; set; }
+
+        public string Editor { get; set; }
+
         public string TypedSubmit { get; set; }
 
         public string Status { get; set; }
 
         public Room Room { get; set; }
-
-
     }
 }

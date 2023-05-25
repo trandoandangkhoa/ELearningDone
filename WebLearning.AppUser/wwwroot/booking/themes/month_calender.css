@@ -5,7 +5,7 @@ Theme Designer Version: 2021.09.25.67272
 */
 .month_calender_main 
 {
-    border: 1px solid #ffffff;
+    border: 1px solid #c6c6c6;
 }
 .month_calender_main, .month_calender_main td 
 {
@@ -25,23 +25,21 @@ Theme Designer Version: 2021.09.25.67272
     bottom: 0px;
     margin: 0px;
     overflow: hidden;
-    background-color: #ffffff;
-    background: linear-gradient(to bottom, #ffffff 0%, #fafafa);
+    background-color: #c6c6c6;
+    background: linear-gradient(to bottom, #c6c6c6 0%, #fafafa);
     padding: 2px;
     border: 1px solid #cccccc;
     display: flex;
     align-items: center;
 }
 .month_calender_timeheadergroup,
-.month_calender_timeheadercol
-{
-    color: #ffffff;
+.month_calender_timeheadercol {
+    color: #c6c6c6;
     background: #bf040a;
 }
 .month_calender_rowheader,
-.month_calender_corner
-{
-    color: #ffffff;
+.month_calender_corner {
+    color: #c6c6c6;
     background: #bf040a;
 }
 .month_calender_rowheader_inner {
@@ -67,21 +65,21 @@ Theme Designer Version: 2021.09.25.67272
     right: 0px;
     top: 0px;
     bottom: 0px;
-    border-right: 1px solid #ffffff;
+    border-right: 1px solid #c6c6c6;
     padding: 7px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 .month_calender_timeheadergroup_inner {
-    border-bottom: 1px solid #ffffff;
+    border-bottom: 1px solid #c6c6c6;
 }
 .month_calender_divider,
 .month_calender_splitter,
 .month_calender_divider_horizontal,
 .month_calender_resourcedivider 
 {
-    background-color: #ffffff;
+    background-color: #c6c6c6;
 }
 .month_calender_matrix_vertical_line,
 .month_calender_matrix_horizontal_line 
@@ -100,7 +98,7 @@ Theme Designer Version: 2021.09.25.67272
 {
     padding: 10px;
     opacity: 0.9;
-    color: #ffffff;
+    color: #c6c6c6;
     background: #ffa216;
 }
 .month_calender_shadow_inner 
@@ -170,7 +168,7 @@ Theme Designer Version: 2021.09.25.67272
     padding: 2px;
     border: 1px solid #ccc;
     background: #fff;
-    background: linear-gradient(to bottom, #ffffff 0%, #eeeeee);
+    background: linear-gradient(to bottom, #c6c6c6 0%, #eeeeee);
     display: flex;
     align-items: center;
 }
@@ -179,7 +177,7 @@ Theme Designer Version: 2021.09.25.67272
     padding: 2px;
     border: 1px solid #ccc;
     background: #fff;
-    background: linear-gradient(to bottom, #ffffff 0%, #eeeeee);
+    background: linear-gradient(to bottom, #c6c6c6 0%, #eeeeee);
     display: flex;
     align-items: center;
 }
@@ -207,7 +205,7 @@ Theme Designer Version: 2021.09.25.67272
 .month_calender_shadow_overlap .month_calender_shadow_inner { background-color: red; }
 .month_calender_overlay { background-color: gray; opacity: 0.5; }
 .month_calender_main .month_calender_event_group { box-sizing: border-box; font-size:12px; color:#666; padding:2px; overflow:hidden; border:1px solid #ccc; background-color: #fff; display: flex; align-items: center; white-space: nowrap; }
-.month_calender_header_icon { box-sizing: border-box; border: 1px solid #ffffff; background-color: #bf040a; color: #ffffff; }
+.month_calender_header_icon { box-sizing: border-box; border: 1px solid #c6c6c6; background-color: #bf040a; color: #c6c6c6; }
 .month_calender_header_icon:hover { background-color: #bb040a; }
 .month_calender_header_icon_hide:before { content: '\00AB'; }
 .month_calender_header_icon_show:before { content: '\00BB'; }

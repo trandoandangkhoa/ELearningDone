@@ -1,6 +1,18 @@
-﻿<div></div>
+﻿@inject IConfiguration Configuration
+@section metatags{
+    <meta name="keywords" content="VXH, ELearning, Booking, ESign, Ticket" />
+    <meta name="author" content="Magentech">
+    <meta name="robots" content="index, follow" />
+    <meta name="description" content="VXH APP là một website tích hợp đào tạo trực tiếp cho sale cũng như một số chức năng khác dành cho nhân viên tại công ty">
+    <meta property="og:site_name" content="VXH APP" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VXH APP" />
+    <meta property="og:image" content="@Configuration["CurrentAddress"]/build/images/LogoVXH.png" />
+    <meta property="og:description" content="VXH APP là một website tích hợp đào tạo trực tiếp cho sale cũng như một số chức năng khác dành cho nhân viên tại công ty" />
+    <meta property="og:url" content="@Configuration["CurrentAddress"]/" />
+}
 <div class="col-md-4 col-sm-4 col-xs-12">
-    <div class="x_panel tile fixed_height_320">
+    <div class="x_panel tile fixed_height_320" style="overflow-y:scroll">
         <div class="x_title">
             <h2><i class="fa fa-desktop"></i>  E-Learning</h2>
             <ul class="nav navbar-right panel_toolbox">
@@ -13,20 +25,20 @@
         <div class="x_content">
             <div class="dashboard-widget-content">
                 <ul class="quick-list">
-                    <li style="font-size:14px">
-                        <i class="fa fa-dashboard"></i><a href="#">Trang chủ</a>
+                    <li style="font-size:13px">
+                        <i class="fa fa-dashboard"></i><a href="/elearning.html">Trang chủ</a>
 
                     </li>
-                    <li style="font-size:14px">
-                        <i class="fa fa-book"></i><a href="#">Danh sách khóa học</a>
+                    <li style="font-size:13px">
+                        <i class="fa fa-book"></i><a href="/khoa-hoc.html">Danh sách khóa học</a>
 
                     </li>
-                    <li style="font-size:14px">
-                        <i class="fa fa-question-circle"></i><a href="#">Kiểm tra định kì</a>
+                    <li style="font-size:13px">
+                        <i class="fa fa-question-circle"></i><a href="/kiem-tra-dinh-ki.html">Kiểm tra định kì</a>
 
                     </li>
-                    <li style="font-size:14px">
-                        <i class="fa fa-bar-chart"></i><a href="#">Tiến độ học tập</a>
+                    <li style="font-size:13px">
+                        <i class="fa fa-bar-chart"></i><a href="/tai-khoan-cua-toi.html">Tiến độ học tập</a>
                     </li>
                 </ul>
 
@@ -40,84 +52,65 @@
         </div>
     </div>
 </div>
-<div class="col-md-4 col-sm-4 col-xs-12">
-    <div class="x_panel tile fixed_height_320">
-        <div class="x_title">
-            <h2><i class="fa fa-tasks"></i> Booking</h2>
-            <ul class="nav navbar-right panel_toolbox">
-                <li>
-                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                </li>
-            </ul>
-            <div class="clearfix"></div>
-        </div>
-        <div class="x_content">
-            <div class="dashboard-widget-content">
-                <ul class="quick-list">
-                    <li style="font-size:14px">
-                        <i class="fa fa-calendar"></i><a href="#">Đặt lịch họp</a>
-
+@if (User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "StaffRole"
+                   || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "ManagerRole"
+                   || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole"
+                  )
+{
+    <div class="col-md-4 col-sm-4 col-xs-12">
+        <div class="x_panel tile fixed_height_320" style="">
+            <div class="x_title">
+                <h2><i class="fa fa-tasks"></i> Booking</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li>
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                     </li>
-                    <li style="font-size:14px">
-                        <i class="fa fa-building"></i><a href="#">Quản lý phòng</a>
-
-                    </li>
-                    <li style="font-size:14px">
-                        <i class="fa fa-gears"></i><a href="#">Cài đặt phòng</a>
-
-                    </li>
-
                 </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div class="dashboard-widget-content">
+                    <ul class="quick-list">
+                        @if (User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "StaffRole"
+                        || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "ManagerRole"
+                        || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole")
+                        {
+                            <li style="font-size:14px">
+                                <i class="fa fa-calendar"></i><a href="/dat-lich.html">Đặt lịch họp</a>
 
-                <div class="sidebar-widget">
-                    <br />
-                    <img src="~/build/images/booking.png" width="50%" height="50%" />
-                    <div class="clearfix"></div>
-                    <br />
+                            </li>
+
+                        }
+
+                        @if (User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "ManagerRole"
+                        || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole")
+                        {
+                            <li style="font-size:14px">
+                                <i class="fa fa-building"></i><a href="/manager.html">Quản lý phòng</a>
+
+                            </li>
+                        }
+                        @if(User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole")
+                        {
+                            <li style="font-size:14px">
+                                <i class="fa fa-gears"></i><a href="/admin.html">Cài đặt phòng</a>
+
+                            </li>
+                        }
+
+
+                    </ul>
+
+                    <div class="sidebar-widget">
+                        <br />
+                        <img src="~/build/images/booking.png" width="50%" height="50%" />
+                        <div class="clearfix"></div>
+                        <br />
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div class="col-md-4 col-sm-4 col-xs-12">
-    <div class="x_panel tile fixed_height_320">
-        <div class="x_title">
-            <h2><i class="fa fa-edit"></i> E-Sign</h2>
-            <ul class="nav navbar-right panel_toolbox">
-                <li>
-                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                </li>
-            </ul>
-            <div class="clearfix"></div>
-        </div>
-        <div class="x_content">
-            <div class="dashboard-widget-content">
-                <ul class="quick-list">
-                    <li style="font-size:14px">
-                        <i class="fa fa-dashboard"></i><a href="#">Trang chủ</a>
 
-                    </li>
-                    <li style="font-size:14px">
-                        <i class="fa fa-book"></i><a href="#">Danh sách khóa học</a>
-
-                    </li>
-                    <li style="font-size:14px">
-                        <i class="fa fa-question-circle"></i><a href="#">Kiểm tra định kì</a>
-
-                    </li>
-                    <li style="font-size:14px">
-                        <i class="fa fa-bar-chart"></i><a href="#">Tiến độ học tập</a>
-                    </li>
-                </ul>
-
-                <div class="sidebar-widget">
-                    <br />
-                    <img src="~/build/images/esign.png" width="50%" height="50%" />
-                    <div class="clearfix"></div>
-                    <br />
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+}
 

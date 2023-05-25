@@ -18,7 +18,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddSession(options =>
 {
 
-    options.IdleTimeout = TimeSpan.FromDays(1);
+    options.IdleTimeout = TimeSpan.FromDays(2);
 });
 builder.Services.AddResponseCaching();
 
@@ -67,6 +67,8 @@ builder.Services.AddScoped<IReportScoreMonthlyService, ReportScoreMonthlyService
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddScoped<IBookingService, BookingService>();
+
+builder.Services.AddScoped<IRoomService, RoomService>();
 
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; });
 

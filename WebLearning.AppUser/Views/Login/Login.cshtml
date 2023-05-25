@@ -1,5 +1,5 @@
 ﻿@using WebLearning.Contract.Dtos.Login
-
+@inject IConfiguration Configuration;
 @model LoginDto
 @{
     Layout = null;
@@ -27,6 +27,18 @@
 
     <!-- Custom Theme Style -->
     <link href="~/build/css/custom.min.css" rel="stylesheet">
+    @section metatags{
+        <meta name="keywords" content="VXH, ELearning, Booking, ESign, Ticket" />
+        <meta name="author" content="Magentech">
+        <meta name="robots" content="index, follow" />
+        <meta name="description" content="VXH APP là một website tích hợp đào tạo trực tiếp cho sale cũng như một số chức năng khác dành cho nhân viên tại công ty">
+        <meta property="og:site_name" content="VXH APP" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Đăng nhập" />
+        <meta property="og:image" content="@Configuration["CurrentAddress"]/build/images/LogoVXH.png" />
+        <meta property="og:description" content="VXH APP là một website tích hợp đào tạo trực tiếp cho sale cũng như một số chức năng khác dành cho nhân viên tại công ty" />
+        <meta property="og:url" content="@Configuration["CurrentAddress"]/dang-nhap.html" />
+    }
   </head>
 
   <body class="login" style="background-color:#2a3f54;color:white">
@@ -36,35 +48,35 @@
 
       <div class="login_wrapper">
         <div class="animate form login_form">
-        <form asp-action="LoginAccount" asp-controller="Login">
-        <section class="login_content">
+          <form asp-action="LoginAccount" asp-controller="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+            <section class="login_content">
 
-            <h1>Đăng nhập</h1>
-            <div style="margin:10px">
-                <input type="text" class="form-control" placeholder="Username" asp-for="UserName" required="" />
-            </div>
-            <div style="margin:10px">
-                <input type="password" class="form-control" placeholder="Password" asp-for="Password" required="" />
-            </div>
-            <div class="clearfix" style="margin:10px">
-                <input type="submit" class="btn btn-primary btn-default" value="Đăng nhập" />
-
-            </div>
-
-            <div class="clearfix"></div>
-
-            <div class="separator">
-                <br />
-
-                <div>
-                                <img src="~/build/images/LogoVXH.png" width="100%" height="100%" />
-                    <h4>VAN XUAN FCMG INVESTMENT CO.LTD </h4>
-@*                    <p>Van Xuan FMCG Investment CO.LTD </p>
-*@
+                <h1>Đăng nhập</h1>
+                <div style="margin:10px">
+                    <input type="text" class="form-control" placeholder="Username" asp-for="UserName" required="" />
                 </div>
-            </div>
-        </section>
-        </form>
+                <div style="margin:10px">
+                    <input type="password" class="form-control" placeholder="Password" asp-for="Password" required="" />
+                </div>
+                <div class="clearfix" style="margin:10px">
+                    <input type="submit" class="btn btn-primary btn-default" value="Đăng nhập" />
+
+                </div>
+
+                <div class="clearfix"></div>
+
+                <div class="separator">
+                    <br />
+
+                    <div>
+                                    <img src="~/build/images/LogoVXH.png" width="100%" height="100%" />
+                        <h4>VAN XUAN FCMG INVESTMENT CO.LTD </h4>
+    @*                    <p>Van Xuan FMCG Investment CO.LTD </p>
+    *@
+                    </div>
+                </div>
+            </section>
+            </form>
 
         </div>
 

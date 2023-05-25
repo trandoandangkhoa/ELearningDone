@@ -2,7 +2,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebLearning.Application.Helper;
+using WebLearning.Application.Services;
+using WebLearning.Contract.Dtos;
 using WebLearning.Contract.Dtos.BookingCalender;
+using WebLearning.Contract.Dtos.BookingCalender.Room;
 using WebLearning.Domain.Entites;
 using WebLearning.Persistence.ApplicationContext;
 
@@ -12,87 +16,53 @@ namespace WebLearning.Api.Controllers
     [ApiController]
     public class RoomsController : ApiBase
     {
-        private readonly WebLearningContext _context;
+        private readonly IRoomService _roomService;
 
-        public RoomsController(WebLearningContext context)
+        public RoomsController(IRoomService roomService)
         {
-            _context = context;
+            _roomService = roomService;
         }
 
         // GET: api/Doctors
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.StaffRole, AuthorizeRole.ManagerRole, AuthorizeRole.TeacherRole)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
+        public async Task<IEnumerable<RoomDto>> GetRooms()
         {
-            return await _context.Rooms.ToListAsync();
+            return await _roomService.GetRoom();
 
         }
-        //public Object FromLocation()
-        //{
-        //    return (_context.Rooms.Select(x => new
-        //    {
-        //        Id = x.Id,
-        //        Name = x.Name,
-        //    }).ToList().Where(x => x.Name != null));
-        //}
-        [HttpGet("usergetrooms")]
-        public async Task<ActionResult<IEnumerable<Room>>> UserGetRooms()
-        {
-            return await _context.Rooms.ToListAsync();
 
-        }
-        [HttpGet("managergetrooms")]
-        public async Task<ActionResult<IEnumerable<Room>>> ManagerGetRooms()
-        {
-            return await _context.Rooms.ToListAsync();
-
-        }
-        // GET: api/Doctors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Room>> GetDoctor(int id)
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.StaffRole, AuthorizeRole.ManagerRole, AuthorizeRole.TeacherRole)]
+        public async Task<ActionResult<RoomDto>> GetDoctor(int id)
         {
-            var doctor = await _context.Rooms.FindAsync(id);
+            var room = await _roomService.GetRoomByid(id);
 
-            if (doctor == null)
+            if (room == null)
             {
                 return NotFound();
             }
 
-            return doctor;
+            return room;
         }
 
         // PUT: api/Doctors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDoctor(int id, Room doctor)
+        public async Task<IActionResult> PutDoctor(int id, UpdateRoomDto updateRoomDto)
         {
             Result rs = new();
-            if (id != doctor.Id)
-            {
-                rs.message = "Không tìm thấy mã phòng";
-                return Ok(rs);
-            }
-
-            _context.Entry(doctor).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _roomService.UpdateRoom(updateRoomDto,id);
                 rs.message = "Cập nhật thành công";
                 return Ok(rs);
 
             }
             catch (Exception ex)
             {
-                if (!DoctorExists(id))
-                {
-                    rs.message = "Không tìm thấy phòng";
-                    return Ok(rs);
-                }
-                else
-                {
-                    rs.message = ex.Message;
-                    return Ok(rs);
-                }
+                rs.message = ex.Message;
+                return Ok(rs);
             }
 
         }
@@ -100,11 +70,10 @@ namespace WebLearning.Api.Controllers
         // POST: api/Doctors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Room>> PostDoctor(Room doctor)
+        public async Task<ActionResult> PostDoctor(CreateRoomDto createRoomDto)
         {
             Result rs = new();
-            _context.Rooms.Add(doctor);
-            await _context.SaveChangesAsync();
+            await _roomService.InsertRoom(createRoomDto);
 
             rs.message = "Tạo mới phòng thành công!";
             return Ok(rs);
@@ -114,23 +83,16 @@ namespace WebLearning.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDoctor(int id)
         {
+            try{
+                var doctor = _roomService.DeleteRoom(id);
+                return Ok();
 
-            var doctor = await _context.Rooms.FindAsync(id);
-            if (doctor == null)
+            }
+            catch(Exception e)
             {
-                return NotFound();
+                return BadRequest(e.Message);
             }
 
-            _context.Rooms.Remove(doctor);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool DoctorExists(int id)
-        {
-
-            return _context.Rooms.Any(e => e.Id == id);
         }
 
     }

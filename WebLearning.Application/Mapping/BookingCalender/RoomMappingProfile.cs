@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WebLearning.Contract.Dtos.BookingCalender;
+using WebLearning.Contract.Dtos.BookingCalender.Room;
 using WebLearning.Domain.Entites;
 
 namespace WebLearning.Application.Mapping.BookingCalender
@@ -14,6 +14,11 @@ namespace WebLearning.Application.Mapping.BookingCalender
         public RoomMappingProfile() { 
 
             CreateMap<Room,RoomDto>();
+
+            CreateMap<CreateRoomDto, Room>();
+
+            CreateMap<UpdateRoomDto, Room>();
+
         }
     }
 }

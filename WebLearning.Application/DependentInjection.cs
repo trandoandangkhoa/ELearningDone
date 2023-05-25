@@ -105,6 +105,8 @@ namespace WebLearning.Application
 
             services.AddScoped<IRoleService, RoleService>();
 
+            services.AddScoped<IRoomService, RoomService>();
+
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IImportExcelService, ImportExcelService>();
 

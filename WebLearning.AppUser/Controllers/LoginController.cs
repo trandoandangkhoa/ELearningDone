@@ -33,9 +33,9 @@ namespace WebLearning.AppUser.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("/dang-nhap.html")]
-        public IActionResult Login(LoginDto loginDto)
+        public IActionResult Login(LoginDto loginDto, string returnUrl = null)
         {
-
+            ViewData["ReturnUrl"] = returnUrl;
             return View(loginDto);
         }
         [HttpGet]
@@ -46,7 +46,7 @@ namespace WebLearning.AppUser.Controllers
         }
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> LoginAccount(LoginDto loginDto)
+        public async Task<IActionResult> LoginAccount(LoginDto loginDto, string returnUrl = null)
         {
             var provider = new EphemeralDataProtectionProvider();
             var protector = provider.CreateProtector(loginDto.Password);
@@ -84,6 +84,8 @@ namespace WebLearning.AppUser.Controllers
                 new Claim(ClaimTypes.GivenName,loginDto.UserName),
                 new Claim(ClaimTypes.Name,loginDto.UserName),
                 new Claim("Avatar", _url),
+                new Claim("Role", account.AuthorizeRole.ToString()),
+
                 new Claim("FullName",account.accountDetailDto.FullName),
             };
             var identity = new ClaimsIdentity(claim, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -98,9 +100,18 @@ namespace WebLearning.AppUser.Controllers
 
             _notyf.Success("Đăng nhập thành công!");
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToLocal(returnUrl);
+        }
+        private IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+            else
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+
         }
         [HttpPost]
+        [Route("/dang-xuat.html")]
         [AllowAnonymous]
         public async Task<IActionResult> LogOutAccount(LoginDto loginDto)
         {
@@ -113,45 +124,7 @@ namespace WebLearning.AppUser.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [Route("/tai-khoan-cua-toi.html")]
-        public async Task<IActionResult> Dashboard(UserAllInformationDto userAllInformationDto)
-        {
-            var token = HttpContext.Session.GetString("Token");
 
-            if (token == null)
-            {
-                return Redirect("/dang-nhap.html");
-            }
-
-            var account = await _accountService.GetAccountByEmail(User.Identity.Name);
-
-            userAllInformationDto.AccountDto = account.AccountDto;
-
-            userAllInformationDto.OwnCourseDtos = account.OwnCourseDtos;
-
-            userAllInformationDto.CourseDtos = account.CourseDtos.ToList();
-
-            userAllInformationDto.LessionDtos = account.LessionDtos.ToList();
-
-            userAllInformationDto.QuizlessionDtos = account.QuizlessionDtos.ToList();
-
-            userAllInformationDto.QuizCourseDtos = account.QuizCourseDtos.ToList();
-
-            userAllInformationDto.QuizMonthlyDtos = account.QuizMonthlyDtos.ToList();
-
-            if (account.ReportScoreCourseDtos == null && account.ReportScoreLessionDtos == null && account.ReportScoreMonthlyDtos == null)
-            {
-                return View(userAllInformationDto);
-            }
-            else
-            {
-                userAllInformationDto.ReportScoreLessionDtos = account.ReportScoreLessionDtos.ToList();
-                userAllInformationDto.ReportScoreCourseDtos = account.ReportScoreCourseDtos.ToList();
-                userAllInformationDto.ReportScoreMonthlyDtos = account.ReportScoreMonthlyDtos.ToList();
-            }
-
-            return View(userAllInformationDto);
-        }
         [HttpGet]
         [Route("/upload-anh-dai-dien.html")]
         public IActionResult UploadAvatar()
