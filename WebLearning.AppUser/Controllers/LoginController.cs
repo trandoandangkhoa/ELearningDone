@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using WebLearning.ApiIntegration.Services;
-using WebLearning.Contract.Dtos.Account;
 using WebLearning.Contract.Dtos.Avatar;
 using WebLearning.Contract.Dtos.Login;
 
@@ -57,7 +56,7 @@ namespace WebLearning.AppUser.Controllers
 
             if (token == "Tài khoản không đúng")
             {
-                _notyf.Error("Đăng nhập không thành công!");
+                TempData["Error"] = "Tài khoản không đúng! ";
 
                 return Redirect("/dang-nhap.html");
             }

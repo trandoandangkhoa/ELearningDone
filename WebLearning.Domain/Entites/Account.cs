@@ -22,7 +22,7 @@ namespace WebLearning.Domain.Entites
         public virtual Role Role { get; set; }
         public AuthorizeRoles AuthorizeRole { get; set; }
         public Avatar Avatar { get; set; }
-       
+
 
     }
 }

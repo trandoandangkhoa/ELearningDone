@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using WebLearning.Application.BookingCalender;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebLearning.Application.Email;
-using WebLearning.Domain.Entites;
 
 namespace WebLearning.Api.Controllers
 {

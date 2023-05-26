@@ -73,7 +73,7 @@ namespace WebLearning.Application.Services
             {
                 if (answer.Count != 0)
                 {
-                    if(correctAnswer.Count > 0)
+                    if (correctAnswer.Count > 0)
                     {
                         var diffDb = answerLessions.Where(x => !correctAnswerLessions.Contains(x)).ToList();
 

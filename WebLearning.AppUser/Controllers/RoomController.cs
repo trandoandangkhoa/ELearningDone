@@ -9,7 +9,7 @@ namespace WebLearning.AppUser.Controllers
     {
         private readonly IRoomService _roomService;
         private readonly INotyfService _notyf;
-        public RoomController(IRoomService roomService, INotyfService notyf) 
+        public RoomController(IRoomService roomService, INotyfService notyf)
         {
             _roomService = roomService;
             _notyf = notyf;
@@ -29,7 +29,7 @@ namespace WebLearning.AppUser.Controllers
             if (a == null) { _notyf.Error("Thêm không thành công"); return Redirect("/admin.html"); };
 
             _notyf.Success("Thêm thành công");
-            
+
             return Redirect("/admin.html");
         }
     }

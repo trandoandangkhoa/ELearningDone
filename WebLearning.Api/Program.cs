@@ -4,28 +4,13 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using WebLearning.Application;
-using WebLearning.Application.Mapping.AccountMappinng;
-using WebLearning.Application.Mapping.AnswerMapping;
-using WebLearning.Application.Mapping.AvatarMapping;
-using WebLearning.Application.Mapping.CorrectAnswerMappingProfile;
-using WebLearning.Application.Mapping.CourseMapping;
-using WebLearning.Application.Mapping.CourseRoleMapping;
-using WebLearning.Application.Mapping.HistorySubmitMapping;
-using WebLearning.Application.Mapping.LessionMapping;
-using WebLearning.Application.Mapping.LoginMapping;
-using WebLearning.Application.Mapping.NotificationMapping;
-using WebLearning.Application.Mapping.OptionMapping;
-using WebLearning.Application.Mapping.QuestionMapping;
-using WebLearning.Application.Mapping.QuizMapping;
-using WebLearning.Application.Mapping.ReportScoreMapping;
-using WebLearning.Application.Mapping.RoleMapping;
 using WebLearning.Application.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 var urlAdmin = builder.Configuration["UrlAdmin"];
-var urlUser = builder.Configuration["UrlUser"]; 
+var urlUser = builder.Configuration["UrlUser"];
 var urlBooking = builder.Configuration["UrlBooking"];
 
 builder.Services.AddCors(options =>
@@ -33,7 +18,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "AllowOrigin",
         builder =>
         {
-            builder.WithOrigins(urlAdmin, urlUser,urlBooking)
+            builder.WithOrigins(urlAdmin, urlUser, urlBooking)
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
         });

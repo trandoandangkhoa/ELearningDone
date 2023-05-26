@@ -16,97 +16,116 @@
     <meta property="og:description" content="VXH APP là một website tích hợp đào tạo trực tiếp cho sale cũng như một số chức năng khác dành cho nhân viên tại công ty" />
     <meta property="og:url" content="@Configuration["CurrentAddress"]/" />
 }
-<input type="text" id="baseAddress" value="@Configuration["BaseAddress"]" hidden/>
-<input type="text" id="email" value="@User.Identity.Name" hidden />
 <div class="row">
-    <div class="col-md-3 mt-sm-20">
-        <div id="nav"></div>
+    <div class="col-md-12">
+        <div class="x_panel" style="min-height:750px">
+            <div class="col-md-4">
+                <div class="x_title" style="min-height:39.8px;border:none">
+                </div>
+
+                <div class="x_content">
+                    <div class="fc-toolbar fc-header-toolbar" style="min-height:23.11px">
+                    </div>
+                    <div class="fc-clear"></div>
+
+                    <div>
+                        <div id="nav" style="margin:auto"></div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="x_title">
+                    <h2>Lịch sự kiện <small>Chi tiết</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            Phòng:
+                            <select id="doctor" name="doctor"></select>
+
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content" id="month-container" style="height:auto;margin:auto">
+                    <div class="fc-toolbar fc-header-toolbar">
+                        <div class="fc-left">
+                            <span class="toolbar-item"><label for="business-only"><input type="checkbox" id="business-only"> <strong>Giờ làm việc</strong></label></span>
+                        </div>
+                        <div class="fc-right">
+                            <div class="fc-button-group">
+
+                                <label for='scale-hours'><input type="radio" value="hours" name="scale" id='scale-hours' switch-wrap d-flex justify-content-between checked><strong>Theo giờ</strong> </label>
+                                <label for='scale-shifts'><input type="radio" value="shifts" name="scale" id='scale-shifts'> <strong>Theo ca</strong></label>
+                            </div>
+                        </div>
+                        <div class="fc-center">
+                        </div>
+                        <div class="fc-clear"></div>
+                    </div>
+                    <div id="scheduler"></div><br />
+                    <table>
+                        <tr>
+                            <th>
+                            </th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                Xóa lịch trống tháng này:
+                            </td>
+                            <td>
+                                <button id="clear" class="btn btn-danger" style="margin-left:10px">Xóa</button>
+                            </td>
+                        </tr>
+                        <tr style="margin-top:5px">
+                            <td>
+                                Tạo lịch trống cho 6 tháng:
+                            </td>
+                            <td>
+                                <button id="autoadd" class="btn btn-success" style="margin-left:10px">Tạo mới</button>
+                            </td>
+                        </tr>
+                        <tr>
+
+                            <form asp-action="CreateRoom" asp-controller="Room" method="post" enctype="multipart/form-data">
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" asp-for="@Model.Name" placeholder="Tên phòng:" />
+                                </div>
+
+                            </td>
+                            <td>
+                                <input type="submit" class="btn btn-success" value="Tạo mới" style="margin-left:10px" />
+
+                            </td>
+                            </form>
+
+                        </tr>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
 
     </div>
+</div>
+<div class="row">
     <div class="col-md-9 mt-sm-20">
-
-        <div id="month-container" style="height:auto;margin:auto">
-            <span class="toolbar-item"><label for="business-only"><input type="checkbox" id="business-only"> <strong>Giờ làm việc</strong></label></span>
-            <label for='scale-hours'><input type="radio" value="hours" name="scale" id='scale-hours' switch-wrap d-flex justify-content-between checked><strong>Theo giờ</strong> </label>
-            <label for='scale-shifts'><input type="radio" value="shifts" name="scale" id='scale-shifts'> <strong>Theo ca</strong></label>
-
-            <div id="scheduler"></div>
-        </div>
         <div style="margin-top:5px">
-            <table>
-                <tr>
-                    <th>
-                    </th>
-                    <th></th>
-                </tr>
-                <tr>
-                    <td>
-                        Xóa lịch trống tháng này:
-                    </td>
-                    <td>
-                        <button id="clear" class="btn btn-danger" style="margin-left:10px">Xóa</button>
-                    </td>
-                </tr>
-                <tr style="margin-top:5px">
-                    <td>
-                        Tạo lịch trống cho 6 tháng:
-                    </td>
-                    <td>
-                        <button id="autoadd" class="btn btn-success" style="margin-left:10px">Tạo mới</button>
-                    </td>
-                </tr>
-                <tr>
-
-                    <form asp-action="CreateRoom" asp-controller="Room" method="post" enctype="multipart/form-data">
-                        <td>
-                            <div class="form-group">
-                            <input type="text" class="form-control" asp-for="@Model.Name" placeholder="Tên phòng:" />
-                            </div>
-
-                        </td>
-                        <td >
-                        <input type="submit" class="btn btn-success" value="Tạo mới" style="margin-left:10px" />
-
-                        </td>
-                    </form>
-
-                </tr>
-            </table>
         </div>
     </div>
 </div>
 <form>
 </form>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="/booking/js/connection.js"></script>
 
 <script>
-    function uploadFiles(inputId) {
-        var input = document.getElementById(inputId); //get file input id
-        var files = input.files; //get files
-        var formData = new FormData(); //create form
-
-        for (var i = 0; i != files.length; i++) {
-            formData.append("formFile", files[i]); //loop through all files and append
-        }
-
-        $.ajax(
-            {
-                url: "/import.html",
-                data: formData, // send it as formData
-                processData: false,
-                contentType: false,
-                type: "POST", //type is post as we will need to post files
-                success: function (data) {
-                    scheduler.message(data.message);
-                }
-            }
-        );
-    }
-</script>
-
-<script>
-    var ba = document.getElementById("baseAddress").value;
-    var em = document.getElementById("email").value;
     const app = {
 
         elements: {
@@ -124,9 +143,9 @@
                 to = from.addMonths(1);
             }
 
-            const { data } = await DayPilot.Http.get(`${window.location.origin}/lich-theo-thang/` + `${from}/${to}`);
+            const { data } = await DayPilot.Http.get(`${window.location.origin}/lich-theo-thang-admin/` + `${from}/${to}`);
 
-            
+
 
             const options = {
                 events: data
@@ -308,15 +327,28 @@
         },
         onBeforeEventRender: (args) => {
             if (args.e.text == null) {
-                args.data.bubbleHtml = "Tiêu đề: Chưa có" + "<br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm");
-
+                if (args.e.status == "free") {
+                    args.e.bubbleHtml = "Tiêu đề: Chưa có <br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm") +
+                        "<br>Trạng thái: <span style = 'background-color:#bebebe;display: inline;padding: .3em .7em .4em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
+                        "Trống</span><br>";
+                }
             } else {
-                args.data.bubbleHtml = "Tiêu đề: " + args.e.text + "<br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm");
-
+                if (args.e.status == "waiting") {
+                    args.e.bubbleHtml = "Tiêu đề: " + args.e.text +
+                        "<br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm") +
+                        "<br>Trạng thái: <span style = 'background-color:#f0ad4e;display: inline;padding: .3em .7em .4em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
+                        "Chờ xác nhận...</span><br>";
+                }
+                if (args.e.status == "confirmed") {
+                    args.e.bubbleHtml = "Tiêu đề: " + args.e.text +
+                        "<br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm") +
+                        "<br>Trạng thái: <span style = 'background-color:#5cb85c;display: inline;padding: .3em .7em .4em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
+                        "Đặt thành công</span><br>";
+                }
             }
             switch (args.data.status) {
                 case "free":
-                    args.data.backColor = "#3d85c6";
+                    args.data.backColor = "#bebebe";
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
@@ -366,51 +398,26 @@
             }
 
         },
-        //rowClickHanding: "Delete",
-        //onRowDelete: async (args) => {
-        //    if (args.canceled) {
-        //        return;
-        //    }
-        //},
-        //onRowDeleted: async (args) => {
-        //    if (args.canceled) {
-        //        return;
-        //    }
-        //    console.log("Delete");
 
-        //},
-
-        //rowCreateHandling: "Enabled",
-
-        //onRowCreate: async (args) => {
-        //    const params = {
-        //        name: args.text
-        //        //value: args.newText
-        //    };
-        //    const check = await DayPilot.Modal.confirm("Bạn có muốn thêm mới?", { okText: "Xác nhận", cancelText: "Không" });
-        //    if (check.result == "OK") {
-        //        const { data: result } = await DayPilot.Http.delete(`${ba}/api/Rooms/`, params);
-        //        scheduler.message(result.message);
-        //        scheduler.update();
-        //        setTimeout(function () {
-        //            window.location.reload();
-        //        }, 2500);
-
-        //    } else {
-        //        scheduler.message("Hủy thao tác thành công!");
-        //    }
-
-
-        //},
 
 
         onEventDeleted: async (args) => {
             const params = {
                 id: args.e.id(),
             };
-            const { data: result } = await DayPilot.Http.delete(`${ba}/api/Appointments/${params.id}`);
+            const check = await DayPilot.Modal.confirm("Bạn có muốn xóa?", { okText: "Xác nhận", cancelText: "không" });
+            if (check.result == "OK") {
 
-            scheduler.message(result.message);
+                const { data: result } = await DayPilot.Http.delete(`${ba}/api/Appointments/${params.id}`);
+
+                scheduler.message(result.message);
+
+            } else {
+                scheduler.message("Hủy thao tác thành công!");
+
+            }
+            app.loadEvents();
+
         },
         onTimeRangeSelected: async (args) => {
             const dp = scheduler;
@@ -424,11 +431,20 @@
             };
 
             dp.clearSelection();
+            const check = await DayPilot.Modal.confirm("Bạn có muốn thêm mới?", { okText: "Xác nhận", cancelText: "không" });
+            if (check.result == "OK") {
 
-            const { data } = await DayPilot.Http.post(`${ba}/api/Appointments/create`, params);
+                const { data } = await DayPilot.Http.post(`${ba}/api/Appointments/create`, params);
 
-            scheduler.message(data.message);
+                scheduler.message(data.message);
+
+            } else {
+                dp.message("Hủy thao tác thành công!");
+
+            }
             app.loadEvents();
+
+
             //dp.message(data.message);
         }
 
@@ -443,5 +459,4 @@
     scheduler.init();
 
     app.init();
-
 </script>

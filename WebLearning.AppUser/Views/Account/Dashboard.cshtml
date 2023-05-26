@@ -313,7 +313,7 @@
                                             <table class="table table-striped projects">
                                                 <thead>
                                                     <tr>
-                                                        <th style="width:27.5%">Nội dung</th>
+                                                        <th style="width:27.5%">Tiêu đề</th>
                                                         <th style="width:27.5%">Ghi chú</th>
                                                         <th> Loại</th>
                                                         <th style="width:5%">Phòng</th>
@@ -333,10 +333,10 @@
 
                                                                 <tr>
                                                                     <td style="width:27.5%">
-                                                                        <a>@hs.Description</a>
+                                                                        <a>@Html.Raw(hs.Title)</a>
                                                                     </td>
                                                                     <td style="width:27.5%">
-                                                                        <a>@hs.Note</a>
+                                                                        <a>@Html.Raw(hs.Note)</a>
                                                                     </td>
                                                                     <td>
                                                                         @if (hs.TypedSubmit == "Create")

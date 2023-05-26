@@ -5,7 +5,6 @@ using WebLearning.ApiIntegration.Services;
 using WebLearning.Contract.Dtos.AnswerCourse;
 using WebLearning.Contract.Dtos.HistorySubmit;
 using WebLearning.Contract.Dtos.ReportScore;
-using WebLearning.Domain.Entites;
 
 namespace WebLearning.AppUser.Controllers
 {

@@ -166,7 +166,7 @@ namespace WebLearning.Api.Controllers
                 {
                     return NotFound($"User with Id = {quizCourseId} not found");
                 }
-                await _quizCourseService.ResetQuizCourse(quizCourseId,accountName);
+                await _quizCourseService.ResetQuizCourse(quizCourseId, accountName);
                 return StatusCode(StatusCodes.Status200OK);
             }
             catch (Exception e)

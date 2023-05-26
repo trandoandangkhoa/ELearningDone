@@ -25,7 +25,7 @@ namespace WebLearning.AppUser.Controllers.Components
         public async Task<IViewComponentResult> InvokeAsync()
         {
             var listNotification = await _notificationService.GetAllNotificationResponsesByUser(User.Identity.Name);
-            
+
             NotificationItemViewModel notificationItemViewModels = new();
 
             CreateNotificationResponseDto createNotificationResponseDto = new();

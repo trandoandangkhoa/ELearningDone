@@ -1,15 +1,9 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Globalization;
-using System.Numerics;
 using WebLearning.ApiIntegration.Services;
-using WebLearning.Application.Helper;
-using WebLearning.Contract.Dtos;
 using WebLearning.Contract.Dtos.BookingCalender;
 using WebLearning.Contract.Dtos.BookingCalender.HistoryAddSlot;
-using WebLearning.Domain.Entites;
 
 namespace WebLearning.AppUser.Controllers
 {
@@ -20,31 +14,41 @@ namespace WebLearning.AppUser.Controllers
 
         private readonly INotyfService _notyf;
         private readonly IConfiguration _configuration;
-        public BookingController(ILogger<BookingController> logger, INotyfService notyf, IBookingService bookingService, IConfiguration configuration)
+        private readonly IAccountService _accountService;
+        public BookingController(ILogger<BookingController> logger, INotyfService notyf, IBookingService bookingService, IConfiguration configuration, IAccountService accountService)
 
         {
             _logger = logger;
             _notyf = notyf;
             _bookingService = bookingService;
             _configuration = configuration;
+            _accountService = accountService;
         }
         [HttpGet]
         [Route("dat-lich.html")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            CreateAppointmentSlotAdvance createAppointmentSlotAdvance = new();
-            return View(createAppointmentSlotAdvance);
+            var a = await _accountService.GetAccountByEmail(User.Identity.Name);
+
+            if (a.AccountDto.AuthorizeRole.ToString() != "ManagerRole" && a.AccountDto.AuthorizeRole.ToString() != "AdminRole"
+                && a.AccountDto.AuthorizeRole.ToString() != "TeacherRole" && a.AccountDto.AuthorizeRole.ToString() != "StaffRole") { return Redirect("/khong-tim-thay-trang.html"); }
+            return View();
         }
         [Route("admin.html")]
 
-        public IActionResult Admin()
+        public  async Task<IActionResult> Admin()
         {
+            var a = await _accountService.GetAccountByEmail(User.Identity.Name);
+            if(a.AccountDto.AuthorizeRole.ToString() != "AdminRole") { return Redirect("/khong-tim-thay-trang.html"); }
             return View();
         }
         [Route("manager.html")]
 
-        public IActionResult Manager()
+        public async Task<IActionResult> Manager()
         {
+            var a = await _accountService.GetAccountByEmail(User.Identity.Name);
+            if (a.AccountDto.AuthorizeRole.ToString() != "ManagerRole" && a.AccountDto.AuthorizeRole.ToString() != "AdminRole"
+                && a.AccountDto.AuthorizeRole.ToString() != "TeacherRole") { return Redirect("/khong-tim-thay-trang.html"); }
             return View();
         }
 
@@ -60,6 +64,7 @@ namespace WebLearning.AppUser.Controllers
         }
         public string Name()
         {
+            if(User.Identity.Name == null) { return "null"; }
             return User.Identity.Name.ToString();
         }
         [HttpPost]
@@ -78,7 +83,7 @@ namespace WebLearning.AppUser.Controllers
                     TempData["Note"] = createAppointmentSlotAdvance.Note;
 
                 }
-                if(createAppointmentSlotAdvance.Description != null)
+                if (createAppointmentSlotAdvance.Description != null)
                 {
                     TempData["Description"] = createAppointmentSlotAdvance.Description;
 
@@ -138,16 +143,16 @@ namespace WebLearning.AppUser.Controllers
             }
             var a = await _bookingService.CreateAppointmentSlotAdvance(createAppointmentSlotAdvance);
 
-            foreach(var item in a)
+            foreach (var item in a)
             {
-                if(item.message == "Success")
+                if (item.message == "Success")
                 {
                     _notyf.Success("Đặt lịch thành công");
 
                 }
                 else
                 {
-                    _notyf.Error(item.message,600);
+                    _notyf.Error(item.message, 600);
 
                 }
             }
@@ -162,7 +167,7 @@ namespace WebLearning.AppUser.Controllers
         {
             if (User.Identity.Name == null) return Redirect("/dang-nhap.html");
 
-            var result = await _bookingService.ConfirmedBookingAccepted(updateHistoryAddSlotDto,fromId,toId,User.Identity.Name);
+            var result = await _bookingService.ConfirmedBookingAccepted(updateHistoryAddSlotDto, fromId, toId, User.Identity.Name);
 
             return View("Views/Confirm/Success.cshtml");
         }
@@ -194,10 +199,10 @@ namespace WebLearning.AppUser.Controllers
 
 
         [Route("lich-theo-ngay-va-tuan/{start}/{end}/{doctor}")]
-        public async Task<IEnumerable<AppointmentSlotDto>> GetAppointment(DateTime start, DateTime end,int doctor)
+        public async Task<IEnumerable<AppointmentSlotDto>> GetAppointment(DateTime start, DateTime end, int doctor)
         {
 
-            var a = await _bookingService.GetAppointmentSlots(start,end,doctor);
+            var a = await _bookingService.GetAppointmentSlots(start, end, doctor);
 
             return a;
         }
@@ -208,12 +213,36 @@ namespace WebLearning.AppUser.Controllers
 
             return a;
         }
+        [Route("lich-theo-ngay-va-tuan-manager/{start}/{end}/{doctor}")]
+        public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentManager(DateTime start, DateTime end, int doctor)
+        {
+
+            var a = await _bookingService.GetAppointmentSlotsManager(start, end, doctor);
+            
+            return a;
+        }
+        [Route("lich-theo-thang-manager/{start}/{end}")]
+
+        public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentMonthManager(DateTime start, DateTime end, int doctor)
+        {
+            var a = await _bookingService.GetAppointmentSlotsManager(start, end, doctor);
+
+            return a;
+        }
+        [Route("lich-theo-thang-admin/{start}/{end}")]
+        public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentMonthAdmin(DateTime start, DateTime end, int doctor)
+        
+        {
+            var a = await _bookingService.GetAppointmentSlotsAdmin(start, end, doctor);
+
+            return a;
+        }
         [Route("xoa-lich/{CodeId}")]
         public async Task<IActionResult> Delete(Guid codeId)
         {
             var rs = await _bookingService.DeleteAppointmentBooked(codeId);
 
-            if(rs.message == "Success")
+            if (rs.message == "Success")
             {
                 _notyf.Success("Xóa lịch thành công!");
 

@@ -431,8 +431,8 @@ namespace WebLearning.App.Controllers
                 string LessionId = null;
                 if (TempData.ContainsKey("AliasLession") && TempData.ContainsKey("LessionId"))
                 {
-                     AliasLession = TempData["AliasLession"].ToString();
-                     LessionId = TempData["LessionId"].ToString();
+                    AliasLession = TempData["AliasLession"].ToString();
+                    LessionId = TempData["LessionId"].ToString();
                 }
 
                 if (fThumb == null && updateLessionVideoDto.LinkVideo == null)

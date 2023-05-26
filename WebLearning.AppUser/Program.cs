@@ -63,7 +63,7 @@ builder.Services.AddScoped<IReportScoreLessionService, ReportScoreLessionService
 builder.Services.AddScoped<IReportScoreCourseService, ReportScoreCourseService>();
 
 builder.Services.AddScoped<IReportScoreMonthlyService, ReportScoreMonthlyService>();
-    
+
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddScoped<IBookingService, BookingService>();

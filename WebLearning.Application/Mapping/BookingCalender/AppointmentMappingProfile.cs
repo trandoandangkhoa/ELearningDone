@@ -1,11 +1,5 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WebLearning.Contract.Dtos.Account;
 using WebLearning.Contract.Dtos.BookingCalender;
 using WebLearning.Domain.Entites;
 
@@ -13,13 +7,13 @@ namespace WebLearning.Application.Mapping.BookingCalender
 {
     public class AppointmentMappingProfile : Profile
     {
-        public AppointmentMappingProfile() 
+        public AppointmentMappingProfile()
         {
             CreateMap<AppointmentSlot, AppointmentSlotDto>().ForSourceMember(dest => dest.Room, opt => opt.DoNotValidate()).IgnoreNoMap();
 
 
         }
-        
+
     }
     public class NoMapAttribute : System.Attribute
     {

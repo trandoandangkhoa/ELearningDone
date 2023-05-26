@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -43,172 +45,8 @@
     <link rel="stylesheet" href="~/booking/themes/modal_flat.css" type="text/css">
     <link rel="stylesheet" href="~/booking/themes/modal_rounded.css" type="text/css">
 
-    <style>
-        .boxed-btn-home {
-            background: #bf040a;
-            color: #fff;
-            display: inline-block;
-            padding: 18px 44px;
-            font-family: "Raleway",sans-serif;
-            font-size: 25px;
-            font-weight: bold;
-            border: 0;
-            border: 1px solid #bf040a;
-            letter-spacing: 3px;
-            text-align: center;
-            color: #fff !important;
-            text-transform: uppercase;
-            cursor: pointer;
-        }
+    <link href="~/booking/css/customcalender.css" rel="stylesheet" />
 
-        .boxed-btn-home:hover {
-            background: #fff;
-            color: #bf040a !important;
-            border: 1px solid #bf040a
-        }
-
-        .boxed-btn-home:focus {
-            outline: none
-        }
-
-        .boxed-btn-home.large-width {
-            width: 220px
-        }
-
-        .boxed-btn {
-            background: #bf040a;
-            color: #fff;
-            display: inline-block;
-            padding: 18px 44px;
-            font-family: "Raleway",sans-serif;
-            font-size: 14px;
-            font-weight: 400;
-            border: 0;
-            border: 1px solid #bf040a;
-            letter-spacing: 3px;
-            text-align: center;
-            color: #fff !important;
-            text-transform: uppercase;
-            cursor: pointer;
-        }
-
-        .boxed-btn:hover {
-            background: #fff;
-            color: #bf040a !important;
-            border: 1px solid #bf040a
-        }
-
-        .boxed-btn:focus {
-            outline: none
-        }
-
-        .boxed-btn.large-width {
-            width: 220px
-        }
-
-        .label {
-            display: inline;
-            padding: .2em .6em .3em;
-            font-size: 75%;
-            font-weight: 700;
-            line-height: 1;
-            color: #fff;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: baseline;
-            border-radius: .25em;
-        }
-        .red_calendar_corner{
-            background-color: #c5040a;
-            font-size: 16pt;
-            text-align: right;
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            bottom: 0px;
-            right: 0px;
-            border-right: 1px solid #ffffff;
-            border-bottom: 1px solid #ffffff;
-            color: #ffffff;
-        }
-        .red_calendar_corner :not(class){
-            display: none
-        }
-
-        .red_calendar_colheader_inner {
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .month_calender_rowheader{
-            color:#d9d9d9;
-        }
-        .month_calender_corner :not(class){
-            display:none;
-        }
-
-        .month_calender_rowheader :not(class,div) {
-            background-color: #c5040a;
-        }
-    </style>
-    <style>
-        /* width */
-        ::-webkit-scrollbar {
-            height: 7px; /* height of horizontal scrollbar ← You're missing this */
-            width: 4px;
-
-        }
-
-        /* Track */
-        ::-webkit-scrollbar-track {
-            box-shadow: inset 0 0 5px grey;
-            border-radius: 10px;
-        }
-
-        /* Handle */
-        ::-webkit-scrollbar-thumb {
-            background: #bf040a;
-            border-radius: 10px;
-        }
-        .nav.side-menu>li.active, .nav.side-menu>li.current-page{
-            border-right: 5px solid #5a0004;
-        } 
-        .nav.side-menu>li.active>a {
-        text-shadow: rgb(0 0 0 / 25%) 0 -1px 0;
-                background: #5a0004;
-        box-shadow: rgb(0 0 0 / 25%) 0 1px 0, inset rgb(255 255 255 / 16%) 0 1px 0;
-        }
-        .nav-md ul.nav.child_menu li:before {
-            background: #5a0004;
-           
-        }
-
-        .nav-sm ul.nav.child_menu {
-            left: 100%;
-            position: absolute;
-            top: 0;
-            width: 100px;
-            z-index: 4000;
-            background: #3E5367;
-            display: none;
-        }
-        .nav-sm ul.nav.child_menu li {
-            padding: 0 10px;
-            width: 100px;
-            background: #5a0004;
-        }
-
-        .nav-sm ul.nav.child_menu li a {
-            text-align: center!important;
-        }
-        .nav-md ul.nav.child_menu li:before {
-            background: #5a0004;
-        }
-
-        .nav-sm .nav.child_menu li.active, .nav-sm .nav.side-menu li.active-sm {
-            border-right: 5px solid #5a0004;
-        }
-
-    </style>
 
     @await RenderSectionAsync("Styles", required: false)
     @await RenderSectionAsync("metatags", required: false)
@@ -226,10 +64,6 @@
                 <div class="left_col scroll-view" style="background-color:#790001">
                     <div class="navbar nav_title" style="border: 0;margin:auto;background-color:#790001">
                         <a href="/" class="site_title" style="text-align:center;margin:auto;padding-left:0px">
-@*                            <i style="border:none;margin:auto">
-                                <img src="~/build/images/LogoVXH.png" width="50%" height="50%" style="margin:auto" />
-
-                            </i>*@
                             <img src="~/build/images/LogoVXH.png" width="35%" height="58%" style="margin:auto" />
 
                         </a>
@@ -259,7 +93,7 @@
                             }
                         </div>
                         <div class="profile_info">
-                            @if (User.Identity.IsAuthenticated)
+                            @if (User.Identity.IsAuthenticated && HttpContextAccessor.HttpContext.Session.GetString("Token") != null)
                             {
                                 <span>Welcome</span>
                                 <h2>@User.Claims.Where(x => x.Type == "FullName").Select(x => x.Value).FirstOrDefault()</h2>
@@ -430,6 +264,7 @@
     <script src="~/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
     <!-- bootstrap-datetimepicker -->
     <script src="~/vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+
     <script>
         $('#myDatepicker').datetimepicker();
 

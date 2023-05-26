@@ -11,18 +11,17 @@
                 <div style="margin:10px">
 @*                    <input type="text" value="@item.Email" id="Email" hidden />
         *@                    
-                    <a style="width:40%" class="percentage" id="PatientName" hidden /><strong>Tiều đề: </strong> 
                     @if(item.TypedSubmit == "Edit")
                     {
-                        <strong>Dời lịch</strong>
+                        <strong style="font-size:16px">Dời lịch</strong>
                     }
                     else
                     {
-                        <strong>Tạo mới</strong>
+                    <strong style="font-size:16px">Tạo mới</strong>
                     }
                     <br />
-                    <a style="width:40%" class="percentage" id="PatientName" hidden /><strong>Nội dung: </strong> @Html.Raw(item.Description)<br />
-                <a style="width:40%" class="percentage" id="PatientName" hidden /><strong>Chi chú: </strong>@Html.Raw(@item.Note) <br />
+                    <a style="width:40%" class="percentage" id="PatientName" hidden /><strong>Tiêu đề: </strong> @Html.Raw(item.Title)<br />
+                <a style="width:40%" class="percentage" id="PatientName" hidden /><strong>Ghi chú: </strong>@Html.Raw(@item.Note) <br />
                     <a style="width:25%" class="percentage" id="PatientName" hidden /><strong>Phòng: </strong> @item.RoomId<br />
 
                     <a style="width:25%" class="country" id="fromDate" hidden /><strong>Ngày bắt đầu: </strong>@item.Start<br />

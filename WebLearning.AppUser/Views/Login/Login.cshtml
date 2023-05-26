@@ -64,7 +64,10 @@
                 </div>
 
                 <div class="clearfix"></div>
-
+                        @if (TempData["Error"] != null)
+                        {
+                            <strong style="color:red;font-weight:bold;text-shadow:none;font-weight:bold">@TempData["Error"]</strong>
+                        }
                 <div class="separator">
                     <br />
 

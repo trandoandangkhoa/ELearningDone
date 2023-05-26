@@ -1,10 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using WebLearning.Application.Helper;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebLearning.Application.Services;
-using WebLearning.Contract.Dtos.Role;
-using WebLearning.Contract.Dtos;
-using Microsoft.Extensions.Configuration;
 
 namespace WebLearning.Api.Controllers
 {
@@ -26,9 +21,9 @@ namespace WebLearning.Api.Controllers
         public async Task<IActionResult> GetUrlAddress(string role)
 
         {
-            var urlAddress =  await _bookingsService.GetUrlBooking(role);
-            if(urlAddress == null) { return StatusCode(StatusCodes.Status400BadRequest); }
-            return StatusCode(StatusCodes.Status200OK,urlAddress);
+            var urlAddress = await _bookingsService.GetUrlBooking(role);
+            if (urlAddress == null) { return StatusCode(StatusCodes.Status400BadRequest); }
+            return StatusCode(StatusCodes.Status200OK, urlAddress);
 
         }
     }

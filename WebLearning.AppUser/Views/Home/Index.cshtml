@@ -12,7 +12,7 @@
     <meta property="og:url" content="@Configuration["CurrentAddress"]/" />
 }
 <div class="col-md-4 col-sm-4 col-xs-12">
-    <div class="x_panel tile fixed_height_320" style="overflow-y:scroll">
+    <div class="x_panel tile fixed_height_320" >
         <div class="x_title">
             <h2><i class="fa fa-desktop"></i>  E-Learning</h2>
             <ul class="nav navbar-right panel_toolbox">
@@ -24,25 +24,25 @@
         </div>
         <div class="x_content">
             <div class="dashboard-widget-content">
-                <ul class="quick-list">
-                    <li style="font-size:13px">
+                <ul class="quick-list" style="width:65%">
+                    <li style="">
                         <i class="fa fa-dashboard"></i><a href="/elearning.html">Trang chủ</a>
 
                     </li>
-                    <li style="font-size:13px">
+                    <li style="13px">
                         <i class="fa fa-book"></i><a href="/khoa-hoc.html">Danh sách khóa học</a>
 
                     </li>
-                    <li style="font-size:13px">
+                    <li style="">
                         <i class="fa fa-question-circle"></i><a href="/kiem-tra-dinh-ki.html">Kiểm tra định kì</a>
 
                     </li>
-                    <li style="font-size:13px">
+                    <li style="">
                         <i class="fa fa-bar-chart"></i><a href="/tai-khoan-cua-toi.html">Tiến độ học tập</a>
                     </li>
                 </ul>
 
-                <div class="sidebar-widget">
+                <div class="sidebar-widget" style="width:35%">
                     <br />
                     <img src="~/build/images/elearning.png" width="50%" height="50%" />
                     <div class="clearfix"></div>
@@ -70,7 +70,7 @@
             </div>
             <div class="x_content">
                 <div class="dashboard-widget-content">
-                    <ul class="quick-list">
+                    <ul class="quick-list" style="width:65%">
                         @if (User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "StaffRole"
                         || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "ManagerRole"
                         || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole")
@@ -101,7 +101,7 @@
 
                     </ul>
 
-                    <div class="sidebar-widget">
+                    <div class="sidebar-widget" style="width:35%">
                         <br />
                         <img src="~/build/images/booking.png" width="50%" height="50%" />
                         <div class="clearfix"></div>

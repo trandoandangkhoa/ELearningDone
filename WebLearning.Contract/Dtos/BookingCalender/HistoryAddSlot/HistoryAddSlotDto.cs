@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WebLearning.Contract.Dtos.BookingCalender.Room;
+﻿using WebLearning.Contract.Dtos.BookingCalender.Room;
 
 namespace WebLearning.Contract.Dtos.BookingCalender.HistoryAddSlot
 {
@@ -23,7 +18,7 @@ namespace WebLearning.Contract.Dtos.BookingCalender.HistoryAddSlot
         public string Description { get; set; }
 
         public string Note { get; set; }
-        
+
         public DateTime Start { get; set; }
 
         public DateTime End { get; set; }

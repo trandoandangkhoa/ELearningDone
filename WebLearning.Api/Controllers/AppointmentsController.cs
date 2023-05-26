@@ -1,10 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using System.Security.Cryptography;
-using System.Text;
-using WebLearning.Application.BookingCalender;
 using WebLearning.Application.BookingCalender.Services;
 using WebLearning.Application.Email;
 using WebLearning.Application.Helper;
@@ -40,6 +35,20 @@ namespace WebLearning.Api.Controllers
         [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.StaffRole, AuthorizeRole.ManagerRole, AuthorizeRole.TeacherRole)]
         [HttpGet]
         public async Task<IEnumerable<AppointmentSlotDto>> GetAppointments([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor)
+        {
+            return await _appointmentService.GetAppointments(start, end, doctor);
+
+        }
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ManagerRole, AuthorizeRole.TeacherRole)]
+        [HttpGet("manager")]
+        public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentsManager([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor)
+        {
+            return await _appointmentService.GetAppointments(start, end, doctor);
+
+        }
+        [SecurityRole(AuthorizeRole.AdminRole)]
+        [HttpGet("admin")]
+        public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentsAdmin([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor)
         {
             return await _appointmentService.GetAppointments(start, end, doctor);
 
@@ -84,7 +93,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         // PUT: api/Appointments/5
         [HttpPut("{id}/{email}")]
-        public async Task<IActionResult> PutAppointmentSlot(int id, AppointmentSlotUpdate update,string email)
+        public async Task<IActionResult> PutAppointmentSlot(int id, AppointmentSlotUpdate update, string email)
         {
             var result = await _appointmentService.PutAppointment(id, update, email);
 
@@ -96,9 +105,9 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         // PUT: api/Appointments/5
         [HttpPut("{id}/request/name")]
-        public async Task<IActionResult> PutAppointmentSlotRequest(int id, AppointmentSlotRequest slotRequest,string name)
+        public async Task<IActionResult> PutAppointmentSlotRequest(int id, AppointmentSlotRequest slotRequest, string name)
         {
-            var result = await _appointmentService.CreateAppointment(id,slotRequest, name);
+            var result = await _appointmentService.CreateAppointment(id, slotRequest, name);
 
             return StatusCode(StatusCodes.Status200OK, result);
         }
@@ -141,14 +150,16 @@ namespace WebLearning.Api.Controllers
         [HttpPost("create/advance")]
         public async Task<ActionResult> AddMultiAppointment([FromBody] CreateAppointmentSlotAdvance createAppointmentSlotAdvance)
         {
-            try{
+            try
+            {
                 var a = await _appointmentService.CreateAppointmentSlotAdvance(createAppointmentSlotAdvance);
 
-                return StatusCode(StatusCodes.Status200OK,a);
+                return StatusCode(StatusCodes.Status200OK, a);
 
             }
-            catch (Exception ex) {
-                return StatusCode(StatusCodes.Status400BadRequest,ex.Message);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
 
             }
         }
@@ -198,18 +209,18 @@ namespace WebLearning.Api.Controllers
         /// Xác nhận trạng thái đặt lịch
         /// </summary>
         [HttpPut("confirmed/accepted/{fromId}/{toId}/{email}")]
-        public async Task<ActionResult<Result>> ConfirmedBookingAccepted(UpdateHistoryAddSlotDto updateHistoryAddSlotDto, Guid fromId, Guid toId,string email)
+        public async Task<ActionResult<Result>> ConfirmedBookingAccepted(UpdateHistoryAddSlotDto updateHistoryAddSlotDto, Guid fromId, Guid toId, string email)
         {
             var a = await _appointmentService.ConfirmBookingAccepted(updateHistoryAddSlotDto, fromId, toId, email);
 
-            return StatusCode(StatusCodes.Status200OK,a);
+            return StatusCode(StatusCodes.Status200OK, a);
         }
         [HttpPut("confirmed/rejected/{fromId}/{toId}/{email}")]
         public async Task<ActionResult<Result>> ConfirmedBookingRejected(UpdateHistoryAddSlotDto updateHistoryAddSlotDto, Guid fromId, Guid toId, string email)
         {
             var a = await _appointmentService.ConfirmBookingRejected(updateHistoryAddSlotDto, fromId, toId, email);
 
-            return StatusCode(StatusCodes.Status200OK,a);
+            return StatusCode(StatusCodes.Status200OK, a);
         }
         /// <summary>
         /// Chấp nhận dời lịch
@@ -232,5 +243,5 @@ namespace WebLearning.Api.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
     }
-    
+
 }

@@ -1,14 +1,9 @@
-﻿using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebLearning.Application.Helper;
 using WebLearning.Application.Services;
 using WebLearning.Contract.Dtos;
 using WebLearning.Contract.Dtos.BookingCalender;
 using WebLearning.Contract.Dtos.BookingCalender.Room;
-using WebLearning.Domain.Entites;
-using WebLearning.Persistence.ApplicationContext;
 
 namespace WebLearning.Api.Controllers
 {
@@ -54,7 +49,7 @@ namespace WebLearning.Api.Controllers
             Result rs = new();
             try
             {
-                await _roomService.UpdateRoom(updateRoomDto,id);
+                await _roomService.UpdateRoom(updateRoomDto, id);
                 rs.message = "Cập nhật thành công";
                 return Ok(rs);
 
@@ -69,6 +64,8 @@ namespace WebLearning.Api.Controllers
 
         // POST: api/Doctors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [SecurityRole(AuthorizeRole.AdminRole)]
+
         [HttpPost]
         public async Task<ActionResult> PostDoctor(CreateRoomDto createRoomDto)
         {
@@ -83,12 +80,13 @@ namespace WebLearning.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDoctor(int id)
         {
-            try{
+            try
+            {
                 var doctor = _roomService.DeleteRoom(id);
                 return Ok();
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }

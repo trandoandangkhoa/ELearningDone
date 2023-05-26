@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
-using WebLearning.Application.Helper;
-using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos.BookingCalender.Room;
 using WebLearning.Domain.Entites;
 using WebLearning.Persistence.ApplicationContext;
@@ -39,7 +35,7 @@ namespace WebLearning.Application.Services
 
             _context.Rooms.Remove(room);
 
-             _context.SaveChanges();
+            _context.SaveChanges();
         }
 
 
