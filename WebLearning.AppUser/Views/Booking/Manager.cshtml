@@ -140,7 +140,7 @@
                 <div class="x_content" id="year-container" style="display:none;">
                     <div class="fc-toolbar fc-header-toolbar">
                         <div class="fc-left">
-                            <span><label for="business-only"><input type="checkbox" id="business-only"> Giờ làm việc</label></span>
+                            <span><label for="business-only"><input type="checkbox" id="business-only" switch-wrap d-flex justify-content-between checked> Giờ làm việc</label></span>
                         </div>
                         <div class="fc-right">
                             <div class="fc-button-group">
@@ -154,8 +154,7 @@
                         </div>
                         <div class="fc-clear"></div>
                     </div>
-                    <div id="scheduler"></div><br/>
-                    <div id="schedulerdetail"></div>
+                    <div id="scheduler"></div>
 
 
                 </div>
@@ -258,7 +257,7 @@
 
             let morningShiftStarts = 8;
             let morningShiftEnds = 12;
-            let afternoonShiftStarts = 14;
+            let afternoonShiftStarts = 12;
             let afternoonShiftEnds = 18;
 
             if (!businessOnly) {
@@ -271,10 +270,10 @@
             const timeline = [];
 
             let increaseMorning;  // in hours
-            let increaseAfternoon;  // in hours
-            
-            increaseMorning = morningShiftEnds - morningShiftStarts;
-            increaseAfternoon = afternoonShiftEnds - afternoonShiftStarts;
+            let increaseAfternoon; // in hours
+
+            increaseMorning = 1;  // in hours
+            increaseAfternoon = 1; // in hours
 
 
 
@@ -296,10 +295,9 @@
 
 
             return [
-                { groupBy: "Year" },
-                { groupBy: "Month" },
-                { groupBy: "Day", format: "dddd d" },
-                { groupBy: "Cell", format: "tt" }
+                
+                { groupBy: "Day", format: "dddd, dd/MM/yyyy" },
+                { groupBy: "Cell", format: "h tt" }
             ];
 
 
@@ -533,7 +531,10 @@
 
         timeline: app.getTimeline(),
 
-        rowHeaderWidth: 200,
+        rowHeaderWidth: 100,
+        rowMinHeight: 112,
+        eventHeight: 112,
+        cellWidth: 50,
         timeHeaders: app.getTimeHeaders(),
         useEventBoxes: "Never",
         eventClickHandling: "Disabled",
@@ -620,173 +621,16 @@
         }
 
     }
-    const schedulerdetail = new DayPilot.Scheduler("schedulerdetail", {
-        theme: "month_calender",
-        visible: false, // will be displayed after loading the resources
-        scale: "Manual",
-        timeline: app.getTimeline(),
-        timeHeaders: app.getTimeHeaders(),
-        useEventBoxes: "Never",
-        eventDeleteHandling: "Update",
-        eventClickHandling: "Disabled",
-        eventMoveHandling: "Disabled",
-        eventResizeHandling: "Disabled",
-        rowHeaderColumnsMode: "Legacy",
 
-        allowEventOverlap: false,
-        onBeforeTimeHeaderRender: (args) => {
-            args.header.text = args.header.text.replace(" AM", "a").replace(" PM", "p");  // shorten the hour header
-        },
-        onBeforeEventRender: (args) => {
-            if (args.e.text == null) {
-                if (args.e.status == "free") {
-                    args.e.bubbleHtml = "Tiêu đề: Chưa có <br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm") +
-                        "<br>Trạng thái: <span style = 'background-color:#bebebe;display: inline;padding: .3em .7em .4em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
-                        "Trống</span><br>";
-                }
-            } else {
-                if (args.e.status == "waiting") {
-                    args.e.bubbleHtml = "Tiêu đề: " + args.e.text +
-                        "<br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm") +
-                        "<br>Trạng thái: <span style = 'background-color:#f0ad4e;display: inline;padding: .3em .7em .4em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
-                        "Chờ xác nhận...</span><br>";
-                }
-                if (args.e.status == "confirmed") {
-                    args.e.bubbleHtml = "Tiêu đề: " + args.e.text +
-                        "<br>Ngày bắt đầu: " + args.e.start.toString("dd/MM/yyyy HH:mm") + "<br>Ngày kết thúc: " + args.e.end.toString("dd/MM/yyyy HH:mm") +
-                        "<br>Trạng thái: <span style = 'background-color:#5cb85c;display: inline;padding: .3em .7em .4em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
-                        "Đặt thành công</span><br>";
-                }
-            }
-            switch (args.data.status) {
-                case "free":
-                    args.data.backColor = "#bebebe";
-                    args.data.barHidden = true;
-                    args.data.borderColor = "darker";
-                    args.data.fontColor = "white";
-                    args.data.html = "";
-                    break;
-                case "waiting":
-                    args.data.backColor = "#e69138";  // orange
-                    args.data.barHidden = true;
-                    args.data.borderColor = "darker";
-                    args.data.fontColor = "white";
-                    args.data.html = "";
-                    break;
-                case "confirmed":
-                    args.data.backColor = "#6aa84f";  // green
-                    args.data.barHidden = true;
-                    args.data.borderColor = "darker";
-                    args.data.fontColor = "white";
-                    args.data.html = "";
-                    break;
-            }
-        },
-        rowClickHandling: "Edit",
-        onRowEdit: async (args) => {
-            if (args.canceled) {
-                return;
-            }
-        },
-        onRowEdited: async (args) => {
-            if (args.canceled) {
-                return;
-            }
-            const params = {
-                id: args.row.id,
-                name: args.newText,
-                //value: args.newText
-            };
-            const check = await DayPilot.Modal.confirm("Bạn có muốn chỉnh sửa thông tin?", { okText: "Xác nhận", cancelText: "Không" });
-            if (check.result == "OK") {
-                const { data: result } = await DayPilot.Http.put(`${ba}/api/Rooms/${params.id}`, params);
-                scheduler.message(result.message);
-                setTimeout(function () {
-                    window.location.reload();
-                }, 2500);
-
-            } else {
-                scheduler.message("Hủy thao tác thành công!");
-            }
-
-        },
-        //rowClickHanding: "Delete",
-        //onRowDelete: async (args) => {
-        //    if (args.canceled) {
-        //        return;
-        //    }
-        //},
-        //onRowDeleted: async (args) => {
-        //    if (args.canceled) {
-        //        return;
-        //    }
-        //    console.log("Delete");
-
-        //},
-
-        //rowCreateHandling: "Enabled",
-
-        //onRowCreate: async (args) => {
-        //    const params = {
-        //        name: args.text
-        //        //value: args.newText
-        //    };
-        //    const check = await DayPilot.Modal.confirm("Bạn có muốn thêm mới?", { okText: "Xác nhận", cancelText: "Không" });
-        //    if (check.result == "OK") {
-        //        const { data: result } = await DayPilot.Http.delete(`${ba}/api/Rooms/`, params);
-        //        scheduler.message(result.message);
-        //        scheduler.update();
-        //        setTimeout(function () {
-        //            window.location.reload();
-        //        }, 2500);
-
-        //    } else {
-        //        scheduler.message("Hủy thao tác thành công!");
-        //    }
-
-
-        //},
-
-
-        onEventDeleted: async (args) => {
-            const params = {
-                id: args.e.id(),
-            };
-            const { data: result } = await DayPilot.Http.delete(`${ba}/api/Appointments/${params.id}`);
-
-            scheduler.message(result.message);
-        },
-        onTimeRangeSelected: async (args) => {
-            const dp = scheduler;
-
-
-            const params = {
-                start: args.start.toString(),
-                end: args.end.toString(),
-                resource: args.resource,
-                scale: scale
-            };
-
-            dp.clearSelection();
-
-            const { data } = await DayPilot.Http.post(`${ba}/api/Appointments/create`, params);
-
-            scheduler.message(data.message);
-            app.loadEvents();
-            //dp.message(data.message);
-        }
-
-    });
-    schedulerdetail.init();
 
     const m = new DayPilot.Month("m", {
         maxEvents: 19,
         cellMarginBottom: 20,
-        height: 600,
+        height: 630,
         theme: "m_calendar",
         heightSpec: "Fixed",
         minCellHeight: 10,
-        eventHeight: 15,
+        eventHeight: 25,
         eventMoveHandling: "Disabled",
         eventResizeHandling: "Disabled",
         onBeforeEventRender: (args) => {
@@ -796,21 +640,21 @@
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
-                    //args.data.html = `${args.data.doctorName}<br/>Còn trống`;
+                    args.data.html = `${args.data.start.toString("HH:mm")}-${args.data.end.toString("HH:mm")}`;
                     break;
                 case "waiting":
                     args.data.backColor = "#e69138";  // orange
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
-                    args.data.html = "";
+                    args.data.html = `${args.data.start.toString("HH:mm")}-${args.data.end.toString("HH:mm")}`;
                     break;
                 case "confirmed":
                     args.data.backColor = "#6aa84f";  // green
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
-                    args.data.html = "";
+                    args.data.html = `${args.data.start.toString("HH:mm")}-${args.data.end.toString("HH:mm")}`;
 
                     break;
             }
@@ -1001,7 +845,7 @@
                 focus: "start",
                 focus: "end",
                 focus: "resource",
-                focus: "customAdd"
+                focus: "customAdd",
             };
 
             const modal = await DayPilot.Modal.form(form, data, options);

@@ -38,3 +38,16 @@ $('#Note').summernote({
         ['insert', ['link', 'picture', /*'video'*/]],
         ['view', [/*'fullscreen'*/, 'codeview', 'help']]]
 });
+$('.modal_default_form_item modal_default_form_item_level0 modal_default_form_item_textarea > textarea').summernote({
+    placeholder: 'Ghi chú',
+    tabsize: 2,
+    height: 120,
+    toolbar: [
+        ['style', ['style']],
+        ['font', ['bold', 'underline', 'clear']],
+        ['color', ['color']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['table', ['table']],
+        ['insert', ['link', 'picture', /*'video'*/]],
+        ['view', [/*'fullscreen'*/, 'codeview', 'help']]]
+});

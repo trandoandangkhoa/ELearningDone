@@ -22,6 +22,7 @@ namespace WebLearning.Contract.Dtos.BookingCalender.HistoryAddSlot
         public DateTime Start { get; set; }
 
         public DateTime End { get; set; }
+        public bool SendMail { get; set; }
 
         public string TypedSubmit { get; set; }
 

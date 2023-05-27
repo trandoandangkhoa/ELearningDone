@@ -22,6 +22,7 @@
         public DateTime End { get; set; }
 
         public string TypedSubmit { get; set; }
+        public bool SendMail { get; set; }
 
         public string Status { get; set; }
     }

@@ -137,10 +137,6 @@
                 </div>
                 <div class="x_content" id="month-container" style="display:none;">
                     <div class="fc-toolbar fc-header-toolbar">
-                        <div class="fc-left">
-                            <span class="toolbar-item"><label for="detail-only"><input type="checkbox" id="detail-only">  <span>Xem chi tiết</span></label></span>
-
-                        </div>
                         <div class="fc-right">
                             <div class="fc-button-group">
                                 <button type="button" class="fc-agendaDay-button fc-button fc-state-default" onclick="day()">Ngày</button>
@@ -160,7 +156,7 @@
                 <div class="x_content" id="year-container" style="display:none;">
                     <div class="fc-toolbar fc-header-toolbar">
                         <div class="fc-left">
-                            <span class="toolbar-item"><label for="business-only"><input type="checkbox" id="business-only">  <span>Giờ làm việc</span></label></span>
+                            <span class="toolbar-item"><label for="business-only"><input type="checkbox" id="business-only" checked>  <span>Giờ làm việc</span></label></span>
 
                         </div>
                         <div class="fc-right">
@@ -476,19 +472,21 @@
             let afternoonShiftStarts = 12;
             let afternoonShiftEnds = 18;
 
+            let increaseMorning;  // in hours
+            let increaseAfternoon; // in hours
+
+            increaseMorning = 1;  // in hours
+            increaseAfternoon = 1; // in hours
+
             if (!businessOnly) {
                 morningShiftStarts = 0;
                 morningShiftEnds = 12;
                 afternoonShiftStarts = 12;
                 afternoonShiftEnds = 24;
+
             }
 
             const timeline = [];
-
-            let increaseMorning;  // in hours
-            let increaseAfternoon;  // in hours
-            increaseMorning = morningShiftEnds - morningShiftStarts;
-            increaseAfternoon = afternoonShiftEnds - afternoonShiftStarts;
 
 
             for (let i = 0; i < days; i++) {
@@ -509,11 +507,12 @@
                 //{ groupBy: "Month" },
                 //{ groupBy: "Day", format: "dddd d" },
                 //{ groupBy: "Cell", format: "tt" }
-                { groupBy: "Year" },
-                { groupBy: "Month" },
-                { groupBy: "Day", format: "dddd d" },
-                { groupBy: "Cell", format: "tt" }
+                { groupBy: "Day", format: "dddd, dd/MM/yyyy" },
+                { groupBy: "Hour", format: "h tt" }
+
             ];
+
+
         },
         async init() {
             app.loadResources();
@@ -781,14 +780,16 @@
 
         timeline: app.getTimeline(),
 
-        rowHeaderWidth: 200,
+        rowHeaderWidth: 100,
+        rowMinHeight: 112,
+        eventHeight: 112,
+        cellWidth: 50,
         timeHeaders: app.getTimeHeaders(),
         useEventBoxes: "Never",
         eventClickHandling: "Disabled",
         eventMoveHandling: "Disabled",
         eventResizeHandling: "Disabled",
         allowEventOverlap: false,
-
         onBeforeEventRender: (args) => {
             if (args.e.text == null) {
                 if (args.e.status == "free") {
@@ -915,11 +916,20 @@
                         { name: "Tiêu đề", id: "text", onValidate: validateTextRequired },
 
                         {
-                            name: "Nội dung", id: "description", onValidate: validateTextRequired, type: "textarea",
+                            name: "Nội dung", id:"description", onValidate: validateTextRequired, type: "textarea",
                         },
-
+                        {
+                            html: args.e.data.description,
+                        },
                         { name: "Ghi chú", id: "note", onValidate: validateTextRequired, type: "textarea" },
-
+                        {
+                            type: 'html',
+                            html: args.e.data.note,
+                        },
+                        {
+                            type:'html',
+                            html: `<a href="/cap-nhat/${args.e.data.id}">Cập nhật</a>`
+                        },
                         { name: "Tình trạng", id: "status", disabled: true },
                         {
                             name: "Tạo lịch", id: "customAdd", type: "radio", options: [
@@ -955,7 +965,6 @@
                         focus: "description",
                         focus: "resource",
                         focus: "customAdd",
-                        loadingHtml: "description",
                     };
 
                     const modal = await DayPilot.Modal.form(form, data, options);
@@ -1050,11 +1059,11 @@
     const m = new DayPilot.Month("m", {
         maxEvents: 19,
         cellMarginBottom: 20,
-        height: 600,
+        height: 630,
         theme: "m_calendar",
         heightSpec: "Fixed",
         minCellHeight: 10,
-        eventHeight: 15,
+        eventHeight: 25,
         eventMoveHandling: "Disabled",
         eventResizeHandling: "Disabled",
         onBeforeEventRender: (args) => {
@@ -1065,20 +1074,22 @@
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
                     //args.data.html = `${args.data.doctorName}<br/>Còn trống`;
+                    args.data.html = `${args.data.start.toString("HH:mm")}-${args.data.end.toString("HH:mm")}`;
+
                     break;
                 case "waiting":
                     args.data.backColor = "#e69138";  // orange
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
-                    args.data.html = "";
+                    args.data.html = `${args.data.start.toString("HH:mm")}-${args.data.end.toString("HH:mm")}`;
                     break;
                 case "confirmed":
                     args.data.backColor = "#6aa84f";  // green
                     args.data.barHidden = true;
                     args.data.borderColor = "darker";
                     args.data.fontColor = "white";
-                    args.data.html = "";
+                    args.data.html = `${args.data.start.toString("HH:mm")}-${args.data.end.toString("HH:mm")}`;
 
                     break;
             }

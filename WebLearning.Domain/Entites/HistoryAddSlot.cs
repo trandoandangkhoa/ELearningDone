@@ -28,6 +28,7 @@
 
         public string Status { get; set; }
 
+        public bool SendMail { get; set; }
         public Room Room { get; set; }
     }
 }

@@ -34,6 +34,13 @@ namespace WebLearning.AppUser.Controllers
                 && a.AccountDto.AuthorizeRole.ToString() != "TeacherRole" && a.AccountDto.AuthorizeRole.ToString() != "StaffRole") { return Redirect("/khong-tim-thay-trang.html"); }
             return View();
         }
+        [HttpGet]
+        [Route("cap-nhat/{id}")]
+        public async Task<IActionResult> Update(int id)
+        { 
+
+            return View();
+        }
         [Route("admin.html")]
 
         public  async Task<IActionResult> Admin()
@@ -168,7 +175,12 @@ namespace WebLearning.AppUser.Controllers
             if (User.Identity.Name == null) return Redirect("/dang-nhap.html");
 
             var result = await _bookingService.ConfirmedBookingAccepted(updateHistoryAddSlotDto, fromId, toId, User.Identity.Name);
-
+            if (result.message == "NotFound")
+            {
+                _notyf.Error("Lịch đặt này đã được xác nhận");
+                return View("Views/Confirm/Error.cshtml");
+            }
+            _notyf.Success("Gửi mail xác nhận thành công!");
             return View("Views/Confirm/Success.cshtml");
         }
         [Route("phan-hoi-lich/{fromId}/{toId}/trang-thai={Status}/rejected")]
@@ -177,7 +189,12 @@ namespace WebLearning.AppUser.Controllers
             if (User.Identity.Name == null) return Redirect("/dang-nhap.html");
 
             var result = await _bookingService.ConfirmedBookingRejected(updateHistoryAddSlotDto, fromId, toId, User.Identity.Name);
-
+            if(result.message == "NotFound")
+            {
+                _notyf.Error("Lịch đặt này đã được xác nhận");
+                return View("Views/Confirm/Error.cshtml");
+            }
+            _notyf.Success("Gửi mail xác nhận thành công!");
             return View("Views/Confirm/Success.cshtml");
         }
         [Route("phan-hoi-doi-lich/{fromId}/{toId}/accepted")]
@@ -185,7 +202,12 @@ namespace WebLearning.AppUser.Controllers
         {
 
             var a = await _bookingService.ReplyMoveBookingAccepted(fromId, toId);
-
+            if (a.message == "NotFound")
+            {
+                _notyf.Error("Lịch đặt này đã được xác nhận");
+                return View("Views/Confirm/Error.cshtml");
+            }
+            _notyf.Success("Gửi mail xác nhận thành công!");
             return View("Views/Confirm/Success.cshtml");
         }
         [Route("phan-hoi-doi-lich/{fromId}/{toId}/rejected")]
@@ -193,7 +215,12 @@ namespace WebLearning.AppUser.Controllers
         {
 
             var a = await _bookingService.ReplyMoveBookingRejected(fromId, toId);
-
+            if (a.message == "NotFound")
+            {
+                _notyf.Error("Lịch đặt này đã được xác nhận");
+                return View("Views/Confirm/Error.cshtml");
+            }
+            _notyf.Success("Gửi mail xác nhận thành công!");
             return View("Views/Confirm/Success.cshtml");
         }
 

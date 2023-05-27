@@ -53,13 +53,6 @@ namespace WebLearning.Api.Controllers
             return await _appointmentService.GetAppointments(start, end, doctor);
 
         }
-        [HttpGet("event")]
-
-        public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentsEvent([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor)
-        {
-            return await _appointmentService.GetAppointmentsEvents(start, end, doctor);
-
-        }
         /// <summary>
         /// Danh sách thời gian trống của mỗi phòng
         /// </summary>
@@ -230,7 +223,7 @@ namespace WebLearning.Api.Controllers
         {
             var a = await _appointmentService.MailReplyAccepted(fromId, toId);
 
-            return StatusCode(StatusCodes.Status200OK);
+            return StatusCode(StatusCodes.Status200OK,a);
         }
         /// <summary>
         /// Từ chối dời lịch
@@ -240,7 +233,7 @@ namespace WebLearning.Api.Controllers
         {
             var a = await _appointmentService.MailReplyRejected(fromId, toId);
 
-            return StatusCode(StatusCodes.Status200OK);
+            return StatusCode(StatusCodes.Status200OK,a);
         }
     }
 

@@ -4,6 +4,8 @@
     {
         //public string Title { get; set; }
         //public string Editor { get; set; }
+        public bool SendMail { get; set; }
+
         public int Status { get; set; }
         public string DescStatus { get; set; }
     }

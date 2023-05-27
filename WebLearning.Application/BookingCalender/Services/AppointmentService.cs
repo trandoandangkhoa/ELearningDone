@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using WebLearning.Application.Email;
@@ -20,8 +21,6 @@ namespace WebLearning.Application.BookingCalender.Services
 
         Task<Result> CreateAppointment(int id, AppointmentSlotRequest slotRequest, string name);
         Task<IEnumerable<AppointmentSlotDto>> GetAppointments([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor);
-        Task<IEnumerable<AppointmentSlotDto>> GetAppointmentsEvents([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor);
-
         Task<IEnumerable<AppointmentSlotDto>> AppointmentsFree([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] string patient);
 
         Task<Result> AdminCreateNewSingleAppointment(AppointmentSlotRange range);
@@ -95,7 +94,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
         public async Task<IEnumerable<AppointmentSlotDto>> AppointmentsFree([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] string patient)
         {
-            var ap = await _context.Appointments.Where(e => (e.Status == "free" || (e.Status != "free" && e.PatientId == patient)) && !((e.End <= start) || (e.Start >= end))).Include(e => e.Room).ToListAsync();
+            var ap = await _context.Appointments.Where(e => (e.Status == "free" || (e.Status != "free" && e.PatientId == patient)) && !((e.End <= start) || (e.Start >= end))).Include(e => e.Room).AsNoTracking().ToListAsync();
 
             var apDto = _mapper.Map<List<AppointmentSlotDto>>(ap);
 
@@ -110,7 +109,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
             var historyNow = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(toId));
 
-            if (historyNow == null || historyPrevious == null) { result.message = "NotFound"; return result; }
+            if (historyNow == null || historyPrevious == null || historyNow.SendMail == true) { result.message = "NotFound"; return result; }
 
             var room = await _context.Rooms.SingleOrDefaultAsync(x => x.Id == historyNow.RoomId);
 
@@ -136,6 +135,8 @@ namespace WebLearning.Application.BookingCalender.Services
 
                 await _context.SaveChangesAsync();
 
+                updateHistoryAddSlotDto.SendMail = false;
+
                 updateHistoryAddSlotDto.DescStatus = "confirmed";
 
                 _context.HistoryAddSlots.Update(_mapper.Map(updateHistoryAddSlotDto, historyNow));
@@ -159,6 +160,7 @@ namespace WebLearning.Application.BookingCalender.Services
             {
                 using var transaction = _context.Database.BeginTransaction();
 
+                updateHistoryAddSlotDto.SendMail = false;
                 updateHistoryAddSlotDto.DescStatus = "confirmed";
 
                 _context.HistoryAddSlots.Update(_mapper.Map(updateHistoryAddSlotDto, historyNow));
@@ -216,11 +218,10 @@ namespace WebLearning.Application.BookingCalender.Services
         public async Task<Result> ConfirmBookingRejected(UpdateHistoryAddSlotDto updateHistoryAddSlotDto, Guid fromId, Guid toId, string email)
         {
             Result result = new();
-
             var historyNow = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(toId));
             var historyPrevious = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(fromId));
 
-            if (historyNow != null && historyNow.Status != "confirmed")
+            if (historyNow != null && historyNow.Status != "confirmed" && historyNow.SendMail == false)
             {
                 var room = await _context.Rooms.SingleOrDefaultAsync(x => x.Id == historyNow.RoomId);
 
@@ -243,7 +244,6 @@ namespace WebLearning.Application.BookingCalender.Services
                 _context.HistoryAddSlots.Remove(historyNow);
 
                 await _context.SaveChangesAsync();
-
 
                 var slot = await _context.Appointments.Where(x => x.CodeId.Equals(toId)).ToListAsync();
 
@@ -335,6 +335,7 @@ namespace WebLearning.Application.BookingCalender.Services
                 RoomId = appointmentSlot.Room.Id,
                 Editor = name,
                 Title = appointmentSlot.PatientName,
+                SendMail = false,
             };
             HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(createHistoryAddSlotDto);
 
@@ -444,6 +445,7 @@ namespace WebLearning.Application.BookingCalender.Services
                     RoomId = createAppointmentSlotAdvance.Room,
                     Title = createAppointmentSlotAdvance.Title,
                     Editor = createAppointmentSlotAdvance.Email,
+                    SendMail = false,
                 };
 
                 HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(historySubmit);
@@ -528,6 +530,7 @@ namespace WebLearning.Application.BookingCalender.Services
                     RoomId = createAppointmentSlotAdvance.Room,
                     Title = createAppointmentSlotAdvance.Title,
                     Editor = createAppointmentSlotAdvance.Email,
+                    SendMail = false,
                 };
                 HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(historySubmit);
 
@@ -605,6 +608,7 @@ namespace WebLearning.Application.BookingCalender.Services
                         RoomId = createAppointmentSlotAdvance.Room,
                         Title = createAppointmentSlotAdvance.Title,
                         Editor = createAppointmentSlotAdvance.Email,
+                        SendMail = false,
                     };
                     HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(historySubmit);
 
@@ -786,7 +790,7 @@ namespace WebLearning.Application.BookingCalender.Services
         {
             if (doctor == 0)
             {
-                var ap = await _context.Appointments.Where(e => !((e.End <= start) || (e.Start >= end))).Include(e => e.Room).ToListAsync();
+                var ap = await _context.Appointments.Where(e => !((e.End <= start) || (e.Start >= end))).Include(e => e.Room).AsNoTracking().ToListAsync();
 
                 var apDto = _mapper.Map<List<AppointmentSlotDto>>(ap);
 
@@ -794,144 +798,12 @@ namespace WebLearning.Application.BookingCalender.Services
             }
             else
             {
-                var ap = await _context.Appointments.Where(e => e.Room.Id == doctor && !((e.End <= start) || (e.Start >= end))).Include(e => e.Room).ToListAsync();
+                var ap = await _context.Appointments.Where(e => e.Room.Id == doctor && !((e.End <= start) || (e.Start >= end))).Include(e => e.Room).AsNoTracking().ToListAsync();
 
                 var apDto = _mapper.Map<List<AppointmentSlotDto>>(ap);
 
                 return apDto;
             }
-
-        }
-        public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentsEvents([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor)
-        {
-            List<AppointmentSlotDto> appointmentSlotDtos = new();
-
-            if (doctor == 0 || doctor == null)
-            {
-                var ap = await _context.Appointments.Where(e => !((e.End <= start) || (e.Start >= end)) && e.Status == "free").Include(e => e.Room).ToListAsync();
-
-                var apDto = _mapper.Map<List<AppointmentSlotDto>>(ap);
-
-                appointmentSlotDtos.AddRange(apDto);
-
-                var apBusy = await _context.Appointments.Where(e => !((e.End <= start) || (e.Start >= end)) && e.Status != "free").Include(e => e.Room).ToListAsync();
-                foreach (var item in apBusy)
-                {
-                    var itemBusy = await _context.Appointments.Where(e => e.CodeId.Equals(item.CodeId)).Include(e => e.Room).OrderBy(x => x.Start).ToListAsync();
-                    var itemBusyDto = _mapper.Map<List<AppointmentSlotDto>>(itemBusy);
-
-                    for (int i = 0; i < itemBusy.Count; i++)
-                    {
-                        if (i + 1 < itemBusy.Count)
-                        {
-                            if (itemBusy[i].End == itemBusy[i + 1].Start)
-                            {
-                                var s = itemBusyDto[i].Start;
-                                var e = itemBusyDto[i + 1].End;
-                                AppointmentSlotDto appointmentSlotDto = new()
-                                {
-                                    Id = itemBusyDto[i].Id,
-                                    Start = itemBusyDto[i].Start,
-                                    End = itemBusyDto[i + 1].End,
-                                    Room = itemBusyDto[i].Room,
-
-
-                                    PatientName = itemBusyDto[i].PatientName,
-
-                                    PatientId = itemBusyDto[i].PatientId,
-
-                                    Description = itemBusyDto[i].Description,
-
-                                    Note = itemBusyDto[i].Note,
-
-                                    Email = itemBusyDto[i].Email,
-
-                                    Status = itemBusyDto[i].Status,
-
-                                    Title = itemBusyDto[i].Title,
-
-                                    CodeId = itemBusy[i].CodeId,
-
-
-                                };
-                                appointmentSlotDtos.Add(appointmentSlotDto);
-                            }
-
-                        }
-                        else
-                        {
-                            break;
-                        }
-
-                    }
-
-                }
-                return appointmentSlotDtos;
-            }
-            else
-            {
-                var ap = await _context.Appointments.Where(e => e.Room.Id == doctor && !((e.End <= start) || (e.Start >= end)) && e.Status == "free").Include(e => e.Room).ToListAsync();
-
-                var apDto = _mapper.Map<List<AppointmentSlotDto>>(ap);
-
-                appointmentSlotDtos.AddRange(apDto);
-
-                var apBusy = await _context.Appointments.Where(e => e.Room.Id == doctor && !((e.End <= start) || (e.Start >= end)) && e.Status != "free").Include(e => e.Room).ToListAsync();
-                foreach (var item in apBusy)
-                {
-                    var itemBusy = await _context.Appointments.Where(e => e.CodeId.Equals(item.CodeId)).Include(e => e.Room).OrderBy(x => x.Start).ToListAsync();
-                    var itemBusyDto = _mapper.Map<List<AppointmentSlotDto>>(itemBusy);
-
-                    for (int i = 0; i < itemBusy.Count; i++)
-                    {
-                        if (i + 1 < itemBusy.Count)
-                        {
-                            if (itemBusy[i].End == itemBusy[i + 1].Start)
-                            {
-                                var s = itemBusyDto[i].Start;
-                                var e = itemBusyDto[i + 1].End;
-                                AppointmentSlotDto appointmentSlotDto = new()
-                                {
-                                    Id = itemBusyDto[i].Id,
-                                    Start = itemBusyDto[i].Start,
-                                    End = itemBusyDto[i + 1].End,
-                                    Room = itemBusyDto[i].Room,
-
-
-                                    PatientName = itemBusyDto[i].PatientName,
-
-                                    PatientId = itemBusyDto[i].PatientId,
-
-                                    Description = itemBusyDto[i].Description,
-
-                                    Note = itemBusyDto[i].Note,
-
-                                    Email = itemBusyDto[i].Email,
-
-                                    Status = itemBusyDto[i].Status,
-
-                                    Title = itemBusyDto[i].Title,
-
-                                    CodeId = itemBusy[i].CodeId,
-
-
-                                };
-                                appointmentSlotDtos.Add(appointmentSlotDto);
-                            }
-
-                        }
-                        else
-                        {
-                            break;
-                        }
-
-                    }
-
-                }
-                return appointmentSlotDtos;
-            }
-
-
 
         }
         public async Task<Result> MailReplyAccepted(Guid fromId, Guid toId)
@@ -940,7 +812,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
             var history = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(toId));
 
-            if (history == null)
+            if (history == null || history.SendMail == true)
             {
                 result.message = "NotFound";
 
@@ -960,11 +832,23 @@ namespace WebLearning.Application.BookingCalender.Services
 
             var baseAddress = _configuration.GetValue<string>("BaseAddress");
 
+            UpdateHistoryAddSlotDto updateHistoryAddSlotDto = new();
+
+            updateHistoryAddSlotDto.SendMail = true;
+
+            updateHistoryAddSlotDto.DescStatus = history.Status;
+
+            _context.HistoryAddSlots.Update(_mapper.Map(updateHistoryAddSlotDto, history));
+
+            await _context.SaveChangesAsync();
+
             var message = Extension.ConfirmMoveSlotMesseageAccepted(baseAddress, emailAdmin, accountDto, roomDto.Name,
             historyDto.Description, historyDto.Note, historyDto.Start,
             historyDto.End, fromId, toId,history.Title);
 
             _emailSender.ReplyEmail(message, accountDto.Email, accountDto.accountDetailDto.FullName, emailAdmin);
+
+            result.message = "Success";
             return result;
         }
 
@@ -974,7 +858,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
             var history = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(toId));
 
-            if (history == null)
+            if (history == null || history.SendMail == true)
             {
                 result.message = "NotFound";
 
@@ -993,12 +877,22 @@ namespace WebLearning.Application.BookingCalender.Services
             var emailAdmin = _configuration.GetValue<string>("EmailConfiguration:To");
 
             var baseAddress = _configuration.GetValue<string>("BaseAddress");
+            UpdateHistoryAddSlotDto updateHistoryAddSlotDto = new();
 
+            updateHistoryAddSlotDto.SendMail = true;
+
+            updateHistoryAddSlotDto.DescStatus = history.Status;
+
+            _context.HistoryAddSlots.Update(_mapper.Map(updateHistoryAddSlotDto, history));
+
+            await _context.SaveChangesAsync();
             var message = Extension.ConfirmMoveSlotMesseageRejected(baseAddress, emailAdmin, accountDto, roomDto.Name,
             historyDto.Description, historyDto.Note, historyDto.Start,
             historyDto.End, fromId, toId,historyDto.Title);
 
             _emailSender.ReplyEmail(message, accountDto.Email, accountDto.accountDetailDto.FullName, emailAdmin);
+            result.message = "Success";
+
             return result;
         }
 
@@ -1117,6 +1011,7 @@ namespace WebLearning.Application.BookingCalender.Services
                     End = update.End,
                     Editor = email,
                     Title = update.Name,
+                    SendMail = false,
                 };
                 HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(createHistoryAddSlotDto);
 
@@ -1263,6 +1158,7 @@ namespace WebLearning.Application.BookingCalender.Services
                     TypedSubmit = "Edit",
                     Editor = email,
                     Title = update.Name,
+                    SendMail = false,
                 };
                 HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(createHistoryAddSlotDto);
 
@@ -1428,6 +1324,7 @@ namespace WebLearning.Application.BookingCalender.Services
                     TypedSubmit = "Edit",
                     Editor = email,
                     Title = update.Name,
+                    SendMail = false,
                 };
 
                 HistoryAddSlot historyAddSlot = _mapper.Map<HistoryAddSlot>(createHistoryAddSlotDto);
