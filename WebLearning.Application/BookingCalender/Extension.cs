@@ -303,7 +303,7 @@ namespace WebLearning.Application.BookingCalender
                             "<p style=\"font-weight:bold;font-size:14px\">Phòng: <b style=\"color:red\">" + roomName + "</b></p>\r\n" +
                             "<p style=\"font-weight:bold;font-size:14px\">Thời gian bắt dầu: <b style=\"color:red\">" + fromDate + "</b></p>\r\n" +
                             "<p style=\"font-weight:bold;font-size:14px\">Thời gian kết thúc: <b style=\"color:red\">" + toDate + "</b></p>\r\n" +
-                            "<p style=\"font-weight:bold;font-size:14px\">Trạng thái: <span style = 'background-color:#5cb85c;display: inline;padding: .3em .7em .4em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
+                            "<p style=\"font-weight:bold;font-size:14px\">Trạng thái: <span style = 'background-color:#5cb85c;display: inline;padding: .5em .9em .6em;font-size: 85%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
                                     "Duyệt thành công" +
                                     "</span>" + "<br>\r\n" +
 
@@ -358,7 +358,7 @@ namespace WebLearning.Application.BookingCalender
                             "<p style=\"font-weight:bold;font-size:14px\">Phòng: <b style=\"color:red\">" + roomName + "</b></p>\r\n" +
                             "<p style=\"font-weight:bold;font-size:14px\">Thời gian bắt dầu: <b style=\"color:red\">" + fromDate + "</b></p>\r\n" +
                             "<p style=\"font-weight:bold;font-size:14px\">Thời gian kết thúc: <b style=\"color:red\">" + toDate + "</b></p>\r\n" +
-                            "<p style=\"font-weight:bold;font-size:14px\">Trạng thái: <span style = 'background-color:#5cb85c;display: inline;padding: .3em .7em .4em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
+                            "<p style=\"font-weight:bold;font-size:14px\">Trạng thái: <span style = 'background-color:#5cb85c;display: inline;padding: .5em .9em .6em;font-size: 85%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
                                     "Đồng ý" +
                                     "</span>" + "<br><br/>\r\n" +
                             "<a style=\"font-size:14px;line-height:24px;padding:8px 20px;font-weight:bold;text-decoration:none;margin-bottom:0;display:inline-block;background: #5cb85c;color:#fff;margin-bottom:17px\"" +
@@ -417,7 +417,7 @@ namespace WebLearning.Application.BookingCalender
                             "<p style=\"font-weight:bold;font-size:14px\">Phòng: <b style=\"color:red\">" + roomName + "</b></p>\r\n" +
                             "<p style=\"font-weight:bold;font-size:14px\">Thời gian bắt dầu: <b style=\"color:red\">" + fromDate + "</b></p>\r\n" +
                             "<p style=\"font-weight:bold;font-size:14px\">Thời gian kết thúc: <b style=\"color:red\">" + toDate + "</b></p>\r\n" +
-                            "<p style=\"font-weight:bold;font-size:14px\">Trạng thái: <span style = 'background-color:#d9534f;display: inline;padding: .3em .7em .4em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
+                            "<p style=\"font-weight:bold;font-size:14px\">Trạng thái: <span style = 'background-color:#d9534f;display: inline;padding: .5em .9em .6em;font-size: 85%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
                                     "Từ chối" +
                                     "</span>" + "<br><br/>\r\n" +
                             "<a style=\"font-size:14px;line-height:24px;padding:8px 20px;font-weight:bold;text-decoration:none;margin-bottom:0;display:inline-block;background: #d9534f;color:#fff;margin-bottom:17px;margin-left:10px\"" +
@@ -474,7 +474,7 @@ namespace WebLearning.Application.BookingCalender
                             "<p style=\"font-weight:bold;font-size:14px\">Phòng: <b style=\"color:red\">" + roomName + "</b></p>\r\n" +
                             "<p style=\"font-weight:bold;font-size:14px\">Thời gian bắt dầu: <b style=\"color:red\">" + fromDate + "</b></p>\r\n" +
                             "<p style=\"font-weight:bold;font-size:14px\">Thời gian kết thúc: <b style=\"color:red\">" + toDate + "</b></p>\r\n" +
-                            "<p style=\"font-weight:bold;font-size:14px\">Trạng thái: <span style = 'background-color:#d9534f;display: inline;padding: .3em .7em .4em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
+                            "<p style=\"font-weight:bold;font-size:14px\">Trạng thái: <span style = 'background-color:#d9534f;display: inline;padding: .5em .9em .6em;font-size: 85%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
                                     "Từ chối" +
                                     "</span>" + "<br>\r\n" +
 
@@ -841,7 +841,7 @@ namespace WebLearning.Application.BookingCalender
                 {
                     range.Start = DateTime.Now;
 
-                    range.End = range.Start.AddMonths(3);
+                    range.End = range.Start.AddMonths(4);
                     var slots = Timeline.GenerateSlots(range.Start, range.End, range.Scale);
 
                     freeSlotInMonth.TotalSlotInMonth = slots;
@@ -863,7 +863,7 @@ namespace WebLearning.Application.BookingCalender
                     {
                         range.Start = listSlotBeforeDateStart[0].End;
                     }
-                    range.End = range.Start.AddMonths(3);
+                    range.End = range.Start.AddMonths(4);
                     List<AppointmentSlot> sp = listBusySlotInRoom;
                     var slots = Timeline.GenerateSlots(range.Start, range.End, range.Scale);
                     int compare = DateTime.Compare(range.Start, DateTime.Now);
@@ -884,7 +884,7 @@ namespace WebLearning.Application.BookingCalender
             else
             {
                 range.Start = listSlotFree[0].End;
-                range.End = range.Start.AddMonths(3);
+                range.End = range.Start.AddMonths(4);
                 var slots = Timeline.GenerateSlots(range.Start, range.End, range.Scale);
 
                 freeSlotInMonth.TotalSlotInMonth = slots;

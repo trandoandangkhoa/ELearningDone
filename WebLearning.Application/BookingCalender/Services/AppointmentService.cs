@@ -920,7 +920,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
             var adminDb = await _context.Accounts.Include(x => x.AccountDetail).SingleOrDefaultAsync(x => x.Email.Contains(email));
 
-            if (accountDb.Email == email)
+            if (accountDb.Email == email || adminDb.AuthorizeRole.ToString() == "AdminRole" || adminDb.AuthorizeRole.ToString() == "ManagerRole")
             {
                 var slot = await _context.Appointments.Where(x => x.Room.Id == update.Resource).ToListAsync();
 
