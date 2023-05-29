@@ -1,4 +1,5 @@
-﻿
+﻿@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 <div class="nav_menu">
     <nav>
         <div class="nav toggle">
@@ -7,23 +8,30 @@
         <ul class="nav navbar-nav navbar-right">
             <li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    @if (User.Claims.Where(x => x.Type == "Avatar").Select(x => x.Value).FirstOrDefault() == null || User.Identity.Name == null)
+                    @if (User.Claims.Where(x => x.Type == "Avatar").Select(x => x.Value).FirstOrDefault() == null || HttpContextAccessor.HttpContext.Session.GetString("Token") == null)
                     {
-                        <img src="~/build/images/user.png" alt="Avatar" />@User.Claims.Where(x => x.Type == "FullName").Select(x => x.Value).FirstOrDefault()
-                        <span class=" fa fa-angle-down"></span>
+                        <img src="~/build/images/user.png" alt="Avatar" />
 
                     }
                     else
                     {
-                        <img src="@User.Claims.Where(x => x.Type == "Avatar").Select(x => x.Value).FirstOrDefault()" alt="Avatar" loading="lazy" />@User.Claims.Where(x => x.Type == "FullName").Select(x => x.Value).FirstOrDefault()
-                         <span class=" fa fa-angle-down"></span>
+                        <img src="@User.Claims.Where(x => x.Type == "Avatar").Select(x => x.Value).FirstOrDefault()" alt="Avatar" loading="lazy" />
 
 
+                    }
+                    @if (User.Identity.IsAuthenticated && HttpContextAccessor.HttpContext.Session.GetString("Token") != null)
+                    {
+                        @User.Claims.Where(x => x.Type == "FullName").Select(x => x.Value).FirstOrDefault()
+                        <span class=" fa fa-angle-down"></span>
+                    }else
+                    {
+                        <span>Người dùng</span>
+                        <span class=" fa fa-angle-down"></span>
                     }
 
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
-                    @if (User.Identity.IsAuthenticated)
+                    @if (User.Identity.IsAuthenticated && HttpContextAccessor.HttpContext.Session.GetString("Token") != null)
                     {
                         <li><a href="/tai-khoan-cua-toi.html"> Tài khoản của tôi</a></li>
                         <li>
@@ -44,7 +52,7 @@
                     }
                 </ul>
             </li>
-            @if (User.Identity.IsAuthenticated)
+            @if (User.Identity.IsAuthenticated && HttpContextAccessor.HttpContext.Session.GetString("Token") != null)
             {
                 <li role="presentation" class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">

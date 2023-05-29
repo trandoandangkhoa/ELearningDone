@@ -62,7 +62,7 @@ namespace WebLearning.Application.BookingCalender
             }
             return final;
         }
-        public static Message MoveSlotMesseageWeeklyInMonth(string baseAddress, string emailAdmin, AccountDto accountBooker, RoomDto roomOld, RoomDto roomNew, string desctiption, string note,string title,
+        public static Message MoveSlotMesseageWeeklyInMonth(string baseAddress, string emailAdmin, AccountDto accountBooker, RoomDto roomOld, RoomDto roomNew, string desctiption, string note, string title,
                                                         Guid codeOld, Guid codeNew, DateTime fromDateOld, DateTime toDateOLd, DateTime fromDateNew, DateTime toDateNew)
         {
             string descriptionReplace = desctiption.Replace("\n", "<br>");
@@ -131,7 +131,7 @@ namespace WebLearning.Application.BookingCalender
 
         }
         public static Message MoveSlotMesseageWeeklyInMultiMonth(string baseAddress, string emailAdmin, AccountDto accountBooker, RoomDto roomOld, RoomDto roomNew, string desctiption, string note,
-                                                        Guid codeOld, Guid codeNew, DateTime fromDateOld, DateTime toDateOLd, DateTime fromDateNew, DateTime toDateNew,string title)
+                                                        Guid codeOld, Guid codeNew, DateTime fromDateOld, DateTime toDateOLd, DateTime fromDateNew, DateTime toDateNew, string title)
         {
             string descriptionReplace = desctiption.Replace("\n", "<br>");
             string noteReplace = note.Replace("\n", "<br>");
@@ -199,7 +199,7 @@ namespace WebLearning.Application.BookingCalender
 
         }
         public static Message MoveSlotMesseage(string baseAddress, string emailAdmin, AccountDto accountBooker, RoomDto roomOld, RoomDto roomNew, string desctiption, string note,
-                                                        Guid codeOld, Guid codeNew, DateTime fromDateOld, DateTime toDateOLd, DateTime fromDateNew, DateTime toDateNew,string title)
+                                                        Guid codeOld, Guid codeNew, DateTime fromDateOld, DateTime toDateOLd, DateTime fromDateNew, DateTime toDateNew, string title)
         {
             string descriptionReplace = desctiption.Replace("\n", "<br>");
             string noteReplace = note.Replace("\n", "<br>"); var body = "<div class=\"\">" +
@@ -265,7 +265,7 @@ namespace WebLearning.Application.BookingCalender
         }
 
         public static Message ConfirmSlotMesseageAccepted(string emailAdmin, AccountDto accountBooker, string roomName, string desctiption, string note,
-                                                DateTime fromDate, DateTime toDate,string title)
+                                                DateTime fromDate, DateTime toDate, string title)
         {
             string descriptionReplace = desctiption.Replace("\n", "<br>");
             string noteReplace = note.Replace("\n", "<br>");
@@ -435,7 +435,7 @@ namespace WebLearning.Application.BookingCalender
 
         }
         public static Message ConfirmSlotMesseageRejected(string emailAdmin, AccountDto accountBooker, string roomName, string desctiption, string note,
-                                        DateTime fromDate, DateTime toDate,string title)
+                                        DateTime fromDate, DateTime toDate, string title)
         {
             string descriptionReplace = desctiption.Replace("\n", "<br>");
             string noteReplace = note.Replace("\n", "<br>");
@@ -490,7 +490,7 @@ namespace WebLearning.Application.BookingCalender
 
         }
         public static Message CreateMessageSingleSlot(string baseAddress, string emailAdmin, AccountDto accountBooker, string roomName, string desctiption, string note, AppointmentSlot appointmentSlotDto,
-                                        Guid codeId, DateTime fromDate, DateTime toDate,string title)
+                                        Guid codeId, DateTime fromDate, DateTime toDate, string title)
         {
             string descriptionReplace = desctiption.Replace("\n", "<br>");
             string noteReplace = note.Replace("\n", "<br>");
@@ -608,7 +608,7 @@ namespace WebLearning.Application.BookingCalender
 
         }
         public static Message CreateSlotMesseageWeeklyInMonth(string BaseAddressAddMulti, string emailAdmin, AccountDto accountBooker, RoomDto room, string desctiption, string note,
-                                                            Guid code, DateTime fromDate, DateTime toDate,string title)
+                                                            Guid code, DateTime fromDate, DateTime toDate, string title)
         {
             string descriptionReplace = desctiption.Replace("\n", "<br>");
             string noteReplace = note.Replace("\n", "<br>");

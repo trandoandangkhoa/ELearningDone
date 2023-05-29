@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using WebLearning.Application.Email;
+using WebLearning.Application.Services;
 using WebLearning.Contract.Dtos.Account;
 using WebLearning.Contract.Dtos.BookingCalender;
 using WebLearning.Contract.Dtos.BookingCalender.HistoryAddSlot;
@@ -29,13 +29,14 @@ namespace WebLearning.Application.BookingCalender.Services
         Task<Result> DeleteSingleAppointment(int id);
         Task<Result> DeleteAppointmentBooked(Guid codeId);
 
-
+        Task<AppointmentSlotDto> GetAppointmentSlot(int id);
         Task<List<Result>> CreateAppointmentSlotAdvance(CreateAppointmentSlotAdvance createAppointmentSlotAdvance);
 
         Task<Result> ConfirmBookingAccepted(UpdateHistoryAddSlotDto updateHistoryAddSlotDto, Guid fromId, Guid toId, string email);
         Task<Result> ConfirmBookingRejected(UpdateHistoryAddSlotDto updateHistoryAddSlotDto, Guid fromId, Guid toId, string email);
         Task<Result> MailReplyAccepted(Guid fromId, Guid toId);
         Task<Result> MailReplyRejected(Guid fromId, Guid toId);
+        Task<IEnumerable<HistoryAddSlotExport>> ExportHistoryAllSlotDtos(DateTime fromDate, DateTime toDate, bool confirmed, int room, string email);
 
     }
     public class AppointmentService : IAppointmentService
@@ -44,13 +45,15 @@ namespace WebLearning.Application.BookingCalender.Services
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly IEmailSender _emailSender;
+        private readonly IRoomService _roomService;
 
-        public AppointmentService(WebLearningContext context, IMapper mapper, IConfiguration configuration, IEmailSender emailSender)
+        public AppointmentService(WebLearningContext context, IMapper mapper, IConfiguration configuration, IEmailSender emailSender, IRoomService roomService)
         {
             _context = context;
             _mapper = mapper;
             _configuration = configuration;
             _emailSender = emailSender;
+            _roomService = roomService;
         }
 
         public async Task<Result> AdminCreateNewSingleAppointment(AppointmentSlotRange range)
@@ -206,7 +209,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
                 await transaction.CommitAsync();
             }
-            var message = Extension.ConfirmSlotMesseageAccepted(email, userAccountDto, room.Name, hsNowDto.Description, hsNowDto.Note, hsNowDto.Start, hsNowDto.End,hsNowDto.Title);
+            var message = Extension.ConfirmSlotMesseageAccepted(email, userAccountDto, room.Name, hsNowDto.Description, hsNowDto.Note, hsNowDto.Start, hsNowDto.End, hsNowDto.Title);
 
             _emailSender.ReplyEmail(message, email, adminAccountDto.accountDetailDto.FullName, userAccountDto.Email);
 
@@ -262,7 +265,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
                 await transaction.CommitAsync();
 
-                var message = Extension.ConfirmSlotMesseageRejected(email, userAccountDto, room.Name, hsNowDto.Description, hsNowDto.Note, hsNowDto.Start, hsNowDto.End,hsNowDto.Title);
+                var message = Extension.ConfirmSlotMesseageRejected(email, userAccountDto, room.Name, hsNowDto.Description, hsNowDto.Note, hsNowDto.Start, hsNowDto.End, hsNowDto.Title);
 
                 _emailSender.ReplyEmail(message, email, adminAccountDto.accountDetailDto.FullName, userAccountDto.Email);
 
@@ -315,7 +318,7 @@ namespace WebLearning.Application.BookingCalender.Services
             appointmentSlot.Status = "waiting";
 
             appointmentSlot.CodeId = Guid.NewGuid();
-
+            appointmentSlot.PatientName = slotRequest.Name;
 
             _context.Appointments.Update(appointmentSlot);
 
@@ -348,7 +351,7 @@ namespace WebLearning.Application.BookingCalender.Services
             var emailAdmin = _configuration.GetValue<string>("EmailConfiguration:To");
 
 
-            var message = Extension.CreateMessageSingleSlot(baseAddress, emailAdmin, account, appointmentSlot.DoctorName, slotRequest.Description, slotRequest.Note, appointmentSlot, appointmentSlot.CodeId, appointmentSlot.Start, appointmentSlot.End,appointmentSlot.PatientName);
+            var message = Extension.CreateMessageSingleSlot(baseAddress, emailAdmin, account, appointmentSlot.DoctorName, slotRequest.Description, slotRequest.Note, appointmentSlot, appointmentSlot.CodeId, appointmentSlot.Start, appointmentSlot.End, appointmentSlot.PatientName);
 
             _emailSender.SendEmail(message, account.Email, account.accountDetailDto.FullName);
 
@@ -454,7 +457,7 @@ namespace WebLearning.Application.BookingCalender.Services
                 await _context.SaveChangesAsync();
 
                 var message = Extension.CreateSlotMesseageWeeklyInMonth(BaseAddressAddMulti, emailAdmin, accountDto, roomDto,
-                     createAppointmentSlotAdvance.Description, createAppointmentSlotAdvance.Note, code, createAppointmentSlotAdvance.Start, createAppointmentSlotAdvance.End,createAppointmentSlotAdvance.Title);
+                     createAppointmentSlotAdvance.Description, createAppointmentSlotAdvance.Note, code, createAppointmentSlotAdvance.Start, createAppointmentSlotAdvance.End, createAppointmentSlotAdvance.Title);
 
                 _emailSender.SendEmail(message, account.Email, account.AccountDetail.FullName);
 
@@ -540,7 +543,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
                 var message = Extension.CreateSlotMesseageWeeklyInMultiMonth(BaseAddressAddMulti, emailAdmin, accountDto, roomDto,
                             createAppointmentSlotAdvance.Description, createAppointmentSlotAdvance.Note, code, createAppointmentSlotAdvance.Start,
-                            createAppointmentSlotAdvance.End,createAppointmentSlotAdvance.Title);
+                            createAppointmentSlotAdvance.End, createAppointmentSlotAdvance.Title);
 
                 _emailSender.SendEmail(message, account.Email, account.AccountDetail.FullName);
 
@@ -619,7 +622,7 @@ namespace WebLearning.Application.BookingCalender.Services
                 if (final.Count > 0)
                 {
                     var message = Extension.CreateMessageAdvance(BaseAddressAddMulti, emailAdmin, accountDto, roomDto.Name,
-                        createAppointmentSlotAdvance.Description, createAppointmentSlotAdvance.Note, code, createAppointmentSlotAdvance.Start, createAppointmentSlotAdvance.End,createAppointmentSlotAdvance.Title);
+                        createAppointmentSlotAdvance.Description, createAppointmentSlotAdvance.Note, code, createAppointmentSlotAdvance.Start, createAppointmentSlotAdvance.End, createAppointmentSlotAdvance.Title);
 
                     _emailSender.SendEmail(message, account.Email, account.AccountDetail.FullName);
 
@@ -844,7 +847,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
             var message = Extension.ConfirmMoveSlotMesseageAccepted(baseAddress, emailAdmin, accountDto, roomDto.Name,
             historyDto.Description, historyDto.Note, historyDto.Start,
-            historyDto.End, fromId, toId,history.Title);
+            historyDto.End, fromId, toId, history.Title);
 
             _emailSender.ReplyEmail(message, accountDto.Email, accountDto.accountDetailDto.FullName, emailAdmin);
 
@@ -888,7 +891,7 @@ namespace WebLearning.Application.BookingCalender.Services
             await _context.SaveChangesAsync();
             var message = Extension.ConfirmMoveSlotMesseageRejected(baseAddress, emailAdmin, accountDto, roomDto.Name,
             historyDto.Description, historyDto.Note, historyDto.Start,
-            historyDto.End, fromId, toId,historyDto.Title);
+            historyDto.End, fromId, toId, historyDto.Title);
 
             _emailSender.ReplyEmail(message, accountDto.Email, accountDto.accountDetailDto.FullName, emailAdmin);
             result.message = "Success";
@@ -983,7 +986,6 @@ namespace WebLearning.Application.BookingCalender.Services
 
         }
 
-
         public async Task<Result> CreateAppoinmentTypeFirst(Result result, AppointmentSlotUpdate update, AppointmentSlotDto appointmentSlotDto, RoomDto newRoomDto, RoomDto oldRoomDto,
                                                             string email, List<AppointmentSlot> slot, AccountDto account, AccountDto admin,
                                                             List<AppointmentSlot> checkExist, HistoryAddSlot historyAdd)
@@ -1076,7 +1078,7 @@ namespace WebLearning.Application.BookingCalender.Services
                 {
                     var baseAddress = _configuration.GetValue<string>("BaseAddressChangeTime");
 
-                    var message = Extension.MoveSlotMesseageWeeklyInMonth(baseAddress, email, account, oldRoomDto, newRoomDto,update.Name, update.Description, update.Note, appointmentSlotDto.CodeId, codeId, historyAdd.Start, historyAdd.End, historyAddSlot.Start, historyAddSlot.End);
+                    var message = Extension.MoveSlotMesseageWeeklyInMonth(baseAddress, email, account, oldRoomDto, newRoomDto, update.Name, update.Description, update.Note, appointmentSlotDto.CodeId, codeId, historyAdd.Start, historyAdd.End, historyAddSlot.Start, historyAddSlot.End);
 
                     _emailSender.ReplyEmail(message, email, admin.accountDetailDto.FullName, account.Email);
                 }
@@ -1216,7 +1218,7 @@ namespace WebLearning.Application.BookingCalender.Services
                 {
                     var baseAddress = _configuration.GetValue<string>("BaseAddressChangeTime");
 
-                    var message = Extension.MoveSlotMesseageWeeklyInMultiMonth(baseAddress, email, account, oldRoomDto, newRoomDto, update.Description, update.Note, apDto.CodeId, codeId, historyAdd.Start, historyAdd.End, historyAddSlot.Start, historyAddSlot.End,update.Name);
+                    var message = Extension.MoveSlotMesseageWeeklyInMultiMonth(baseAddress, email, account, oldRoomDto, newRoomDto, update.Description, update.Note, apDto.CodeId, codeId, historyAdd.Start, historyAdd.End, historyAddSlot.Start, historyAddSlot.End, update.Name);
 
 
                     _emailSender.ReplyEmail(message, email, admin.accountDetailDto.FullName, account.Email);
@@ -1337,7 +1339,7 @@ namespace WebLearning.Application.BookingCalender.Services
                 {
                     var baseAddress = _configuration.GetValue<string>("BaseAddressChangeTime");
 
-                    var message = Extension.MoveSlotMesseage(baseAddress, email, account, oldRoomDto, newRoomDto, update.Description, update.Note, apDto.CodeId, codeId, historyAdd.Start, historyAdd.End, historyAddSlot.Start, historyAddSlot.End,update.Name);
+                    var message = Extension.MoveSlotMesseage(baseAddress, email, account, oldRoomDto, newRoomDto, update.Description, update.Note, apDto.CodeId, codeId, historyAdd.Start, historyAdd.End, historyAddSlot.Start, historyAddSlot.End, update.Name);
 
                     _emailSender.ReplyEmail(message, email, admin.accountDetailDto.FullName, account.Email);
                 }
@@ -1434,7 +1436,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
                 if (update.Status == "confirmed")
                 {
-                    var message = Extension.ConfirmSlotMesseageAccepted(email, account, apDto.DoctorName, apDto.Description, apDto.Note, checkExist[checkExist.Count - 1].Start, checkExist[0].End,apDto.PatientName);
+                    var message = Extension.ConfirmSlotMesseageAccepted(email, account, apDto.DoctorName, apDto.Description, apDto.Note, checkExist[checkExist.Count - 1].Start, checkExist[0].End, apDto.PatientName);
 
                     _emailSender.ReplyEmail(message, email, admin.accountDetailDto.FullName, account.Email);
                 }
@@ -1447,6 +1449,90 @@ namespace WebLearning.Application.BookingCalender.Services
                 return result;
             }
 
+        }
+
+        public async Task<AppointmentSlotDto> GetAppointmentSlot(int id)
+        {
+            var appointmentSlot = await _context.Appointments.Include(x => x.Room).SingleOrDefaultAsync(x => x.Id == id);
+
+            if (appointmentSlot == null)
+            {
+                return default;
+            }
+            var appointmentSlotDto = _mapper.Map<AppointmentSlotDto>(appointmentSlot);
+
+            return appointmentSlotDto;
+        }
+
+        public async Task<IEnumerable<HistoryAddSlotExport>> ExportHistoryAllSlotDtos(DateTime fromDate, DateTime toDate, bool confirmed, int room, string email)
+        {
+            List<HistoryAddSlot> report = new();
+            var start = DateTime.Parse(fromDate.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+            var to = DateTime.Parse(toDate.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+            if (fromDate != DateTime.MinValue && toDate != DateTime.MinValue)
+            {
+                report = await _context.HistoryAddSlots.Where(x => x.Start >= start && x.End <= to).AsNoTracking().ToListAsync();
+            }
+            else
+            {
+                if (fromDate == DateTime.MinValue)
+                {
+
+                    report = await _context.HistoryAddSlots.Where(x => x.End <= to).AsNoTracking().ToListAsync();
+                }
+                if (toDate == DateTime.MinValue)
+                {
+                    report = await _context.HistoryAddSlots.Where(x => x.Start >= start).AsNoTracking().ToListAsync();
+                }
+            }
+            if (confirmed == true)
+            {
+                report = report.Where(x => x.Status == "confirmed").ToList();
+            }
+            if (room > 0)
+            {
+                report = report.Where(x => x.RoomId == room).ToList();
+
+            }
+            if (email != null)
+            {
+                report = report.Where(x => x.Email == email).ToList();
+
+            }
+            //if (!string.IsNullOrEmpty(passed.ToString()))
+            //{
+
+            //    report = await _context.ReportUserScoreMonthlies.OrderByDescending(x => x.CompletedDate).Where(x => x.Passed == passed).ToListAsync();
+            //}
+            var reportDto = _mapper.Map<List<HistoryAddSlotDto>>(report);
+
+            var historyExport = new List<HistoryAddSlotExport>();
+            foreach (var reportItem in reportDto)
+            {
+                var nameQuiz = await _roomService.GetRoomByid(reportItem.RoomId);
+
+                historyExport.Add(new HistoryAddSlotExport()
+                {
+                    Id = reportItem.Id,
+                    Title = reportItem.Title,
+                    Room = nameQuiz.Name,
+
+                    Email = reportItem.Email,
+                    Editor = reportItem.Editor,
+                    Description = reportItem.Description,
+
+                    Note = reportItem.Note,
+
+                    Start = reportItem.Start,
+
+                    End = reportItem.End,
+                    SendMail = reportItem.SendMail,
+
+                    TypedSubmit = reportItem.TypedSubmit,
+                    Status = reportItem.Status,
+                });
+            }
+            return historyExport;
         }
     }
 }

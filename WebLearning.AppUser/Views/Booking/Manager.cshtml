@@ -12,6 +12,55 @@
     <meta property="og:description" content="VXH APP là một website tích hợp đào tạo trực tiếp cho sale cũng như một số chức năng khác dành cho nhân viên tại công ty" />
     <meta property="og:url" content="@Configuration["CurrentAddress"]/" />
 }
+<style>
+    .modal_default_form_item textarea {
+        height: 100px;
+    }
+
+    .modal_default_main {
+        top:0;
+        border: 5px solid rgb(204, 204, 204);
+        max-height:90%;
+        overflow-y:scroll;
+    }
+
+    .modal_default_form_item_label {
+        font-weight:bold;
+        font-size:14px;
+        color:#bf040a;
+    }
+    .label-advance{
+        padding: 0.8em 1.2em 0.9em;
+        font-size: 13px;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+/*        vertical-align: baseline;
+*/        border-radius: 0.8em;
+    }
+    .label-edit-advance{
+        background-color: #f0ad4e;
+    }
+
+    .modal_default_ok {
+        padding: 3px;
+        width: 80px;
+        color: #fff;
+        border: none;
+        background-color: #5cb85c;
+        border-radius: 0.25em;
+    }
+
+    .modal_default_cancel {
+        padding: 3px;
+        width: 80px;
+        color: #fff;
+        border: none;
+        background-color: #d9534f;
+        border-radius: 0.25em;
+    }
+</style>
 <div class="row">
     <div class="col-md-12">
         <div class="x_panel" style="min-height:750px">
@@ -158,6 +207,75 @@
 
 
                 </div>
+                    <div class="x_panel">
+                        <div class="x_title">
+                        <h2><i class="fa fa-filter"></i> Bộ lọc <small>Xuất file</small></h2>
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content" >
+                            <form asp-action="Export" asp-controller="Booking" class="form-horizontal form-label-right">
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-2 col-xs-12">Bắt đầu:</label>
+                                    <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <div class="input-group date" id="myDatepicker">
+                                            <input type="text" class="form-control col-md-10" name="fromDate" id="fromDate" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <label class="control-label col-md-2 col-sm-2 col-xs-12">Kết thúc:</label>
+                                    <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <div class="input-group date" id="toDate">
+                                            <input type="text" class="form-control col-md-10" name="toDate" id="toDate" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+  
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-2 col-xs-12">Phòng:</label>
+                                    <div class="col-md-10 col-sm-10 col-xs-12">
+                                        <select class="select2_single form-control" tabindex="-1" id="room" name="Room">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-2 col-xs-12">Trạng thái:</label>
+                                    <div class="col-md-10 col-sm-10 col-xs-12">
+                                        <label>
+                                            <div class="icheckbox_flat-green checked" style="position: relative;">
+                                            <input type="checkbox" class="flat" name="Confirmed" id="Confirmed" value="true" style="position: absolute; opacity: 0;">
+                                                <ins class="iCheck-helper"  style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins>
+                                            </div> Xác nhận
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-2 col-xs-12">Email:</label>
+                                    <div class="col-md-10 col-sm-10 col-xs-12">
+                                        <input class="form-control" name="Email" id="Email" type="text" onfocus="this.placeholder = ''" placeholder='Nhập email người dùng'>
+
+                                    </div>
+                                </div>
+                                <div class="ln_solid"></div>
+                                <div class="form-group">
+                                    <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                                    <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Xuất file</button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+
             </div>
         </div>
 
@@ -440,19 +558,26 @@
         onEventClick: async (args) => {
 
             const form = [
-                { name: "Cập nhật tình trạng phòng" },
-                { name: "Tiêu đề", id: "text", disabled: true },
-                { name: "Nội dung", id: "description", disabled: true, type: "textarea" },
+                { name: "Cập nhật thông tin phòng" },
+                { name: "Tiêu đề:", id: "text", disabled: true },
+                { name: "Nội dung:", id: "description", disabled: true, type: "textarea", },
+                {
+                    type: 'html',
+                    html: `<span style='font-size:14px;font-weight:bold;color:#bf040a'>Nội dung hiển thị: </span><br>${args.e.data.description}`,                },
                 { name: "Ghi chú", id: "note", disabled: true, type: "textarea" },
                 {
-                    name: "Tình trạng", id: "status", type: "select", options: [
+                    type: 'html',
+                    html: `<span style='font-size:14px;font-weight:bold;color:#bf040a'>Nội dung hiển thị: </span><br>${args.e.data.note}`,
+                },
+                {
+                    name: "Tình trạng:", id: "status", type: "select", options: [
                         { name: "Trống", id: "free" },
                         { name: "Chờ", id: "waiting" },
                         { name: "Xác nhận", id: "confirmed" },
                     ]
                 },
                 {
-                    name: "Tạo lịch", id: "customAdd", type: "radio", options: [
+                    name: "Tạo lịch:", id: "customAdd", type: "radio", options: [
                         {
                             name: ' Tạo lịch hàng tuần trong 1 tháng',
                             id: '1',
@@ -467,13 +592,17 @@
                         },
                     ]
                 },
-                { name: "Ngày bắt đầu", id: "start", dateFormat: "dd/MM/yyyy h:mm tt", onValidate: validateDate },
-                { name: "Ngày kết thúc", id: "end", dateFormat: "dd/MM/yyyy h:mm tt", onValidate: validateDate },
-                { name: "Phòng", id: "resource", options: app.rooms, onValidate: validateTextRequired },
+                { name: "Ngày bắt đầu:", id: "start", dateFormat: "dd/MM/yyyy h:mm tt", onValidate: validateDate },
+                { name: "Ngày kết thúc:", id: "end", dateFormat: "dd/MM/yyyy h:mm tt", onValidate: validateDate },
+                { name: "Phòng:", id: "resource", options: app.rooms, onValidate: validateTextRequired },
                 {
                     type: 'html',
                     html: 'Ghi chú: Hội trường: 1, Lầu 2: 2, Lầu 3: 3, ...',
                 },
+                //{
+                //    type: 'html',
+                //    html: `<a class="label-advance label-edit-advance" href="/cap-nhat/${args.e.data.id}">Chỉnh sửa nâng cao</a>`
+                //},
             ];
 
             const data = args.e.data;
@@ -482,7 +611,9 @@
                 focus: "start",
                 focus: "end",
                 focus: "resource",
-                focus: "customAdd"
+                focus: "customAdd",
+                scrollWithPage: false,
+
             };
 
             const modal = await DayPilot.Modal.form(form, data, options);
@@ -803,19 +934,27 @@
         onEventClick: async (args) => {
 
             const form = [
-                { name: "Cập nhật tình trạng phòng" },
-                { name: "Tiêu đề", id: "text", disabled: true },
-                { name: "Nội dung", id: "description", disabled: true, type: "textarea" },
+                { name: "Cập nhật thông tin phòng" },
+                { name: "Tiêu đề:", id: "text", disabled: true },
+                { name: "Nội dung:", id: "description", disabled: true, type: "textarea", },
+                {
+                    type: 'html',
+                    html: `<span style='font-size:14px;font-weight:bold;color:#bf040a'>Nội dung hiển thị: </span><br>${args.e.data.description}`,
+                },
                 { name: "Ghi chú", id: "note", disabled: true, type: "textarea" },
                 {
-                    name: "Tình trạng", id: "status", type: "select", options: [
+                    type: 'html',
+                    html: `<span style='font-size:14px;font-weight:bold;color:#bf040a'>Nội dung hiển thị: </span><br>${args.e.data.note}`,
+                },
+                {
+                    name: "Tình trạng:", id: "status", type: "select", options: [
                         { name: "Trống", id: "free" },
                         { name: "Chờ", id: "waiting" },
                         { name: "Xác nhận", id: "confirmed" },
                     ]
                 },
                 {
-                    name: "Tạo lịch", id: "customAdd", type: "radio", options: [
+                    name: "Tạo lịch:", id: "customAdd", type: "radio", options: [
                         {
                             name: ' Tạo lịch hàng tuần trong 1 tháng',
                             id: '1',
@@ -830,13 +969,17 @@
                         },
                     ]
                 },
-                { name: "Ngày bắt đầu", id: "start", dateFormat: "dd/MM/yyyy h:mm tt", onValidate: validateDate },
-                { name: "Ngày kết thúc", id: "end", dateFormat: "dd/MM/yyyy h:mm tt", onValidate: validateDate },
-                { name: "Phòng", id: "resource", options: app.rooms, onValidate: validateTextRequired },
+                { name: "Ngày bắt đầu:", id: "start", dateFormat: "dd/MM/yyyy h:mm tt", onValidate: validateDate },
+                { name: "Ngày kết thúc:", id: "end", dateFormat: "dd/MM/yyyy h:mm tt", onValidate: validateDate },
+                { name: "Phòng:", id: "resource", options: app.rooms, onValidate: validateTextRequired },
                 {
                     type: 'html',
                     html: 'Ghi chú: Hội trường: 1, Lầu 2: 2, Lầu 3: 3, ...',
                 },
+                //{
+                //    type: 'html',
+                //    html: `<a class="label-advance label-edit-advance" href="/cap-nhat/${args.e.data.id}">Chỉnh sửa nâng cao</a>`
+                //},
             ];
             const data = args.e.data;
 
@@ -846,6 +989,7 @@
                 focus: "end",
                 focus: "resource",
                 focus: "customAdd",
+                scrollWithPage: false,
             };
 
             const modal = await DayPilot.Modal.form(form, data, options);

@@ -4,61 +4,180 @@
     ViewData["Title"] = "Chỉnh sửa lịch đặt";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@*<section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1>Quyền - Chỉnh sửa</h1>
+    <div class="row">
+    <div class="col-md-6 col-xs-12" id="booknow">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Cập nhật phòng họp</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li>
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
             </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Account">Quay lại</a></li>
-                    <li class="breadcrumb-item active">Quyền - Chỉnh sửa</li>
-                </ol>
-            </div>
-        </div>
-    </div><!-- /.container-fluid -->
-</section>
-<!-- Main content -->
-<section class="content">
-    <form asp-controller="Role" asp-action="Edit" method="post" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly"></div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">Thông tin quyền</h3>
-
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
+                <div class="x_content" style="min-height:950px;">
+                    <form asp-action="Update" asp-controller="Booking" method="post" enctype="multipart/form-data" class="form-horizontal form-label-left">
                         <div class="form-group">
-                            <label for="inputName">Tên quyền</label>
-                            <input type="text" id="inputName" class="form-control" value="@Model.RoleName" asp-for="RoleName">
-                            <span asp-validation-for="RoleName" class="text-danger"></span>
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">Email:</label>
+                            <div class="col-md-10 col-sm-10 col-xs-12">
+                            <input class="form-control" name="Email" id="Email" type="text" onfocus="this.placeholder = ''" placeholder=@User.Identity.Name value="@User.Identity.Name" readonly>
+
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="inputName">Mô tả</label>
-                            <input type="text" id="inputName" class="form-control" value="@Model.Description" asp-for="Description">
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">Tiêu đề:</label>
+                            <div class="col-md-10 col-sm-10 col-xs-12">
+                            <textarea id="Title" name="Name" asp-for="@Model.Name">@Model.Name</textarea>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">Nội dung:</label>
+                            <div class="col-md-10 col-sm-10 col-xs-12">
+                            <textarea id="Description" name="Description" asp-for="@Model.Description">@Model.Description</textarea>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">Ghi chú:</label>
+                            <div class="col-md-10 col-sm-10 col-xs-12">
+                            <textarea id="Note" name="Note" asp-for="@Model.Note">@Model.Note</textarea>
+
+                            </div>
+                        </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2 col-sm-2 col-xs-12">Trạng thái:</label>
+                        <div class="col-md-10 col-sm-10 col-xs-12">
+                            @if(Model.Status == "waiting")
+                            {
+                                <input type="text" class="form-control col-md-10" name="Status" id="Status" asp-for="@Model.Status" value="@Model.Status" readonly />
+                                
+
+                            }else if(Model.Status == "confirmed")
+                            {
+                                <input type="text" class="form-control col-md-10" name="Status" id="Status" asp-for="@Model.Status" value="@Model.Status" readonly />
+
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control col-md-10" name="Status" id="Status" asp-for="@Model.Status" value="@Model.Status" readonly />
+
+                            }
+
                         </div>
                     </div>
-                    <!-- /.card-body -->
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">Bắt đầu:</label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <div class="input-group date" id="myDatepicker">
+                                <input type="text" class="form-control col-md-10" name="Start" id="Start" asp-for="@Model.Start" value='@Model.Start'>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">Kết thúc:</label>
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <div class="input-group date" id="toDate">
+                                <input type="text" class="form-control col-md-10" name="End" id="End" asp-for="@Model.End" value="@Model.End" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-sm-2 col-xs-12">Phòng:</label>
+                            <div class="col-md-10 col-sm-10 col-xs-12">
+                            <select class="select2_single form-control" tabindex="-1" name="Resource" asp-for="Resource" asp-items="ViewBag.DanhMuc">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 col-sm-2 col-xs-12 control-label">
+                                Tạo hàng tuần
+                            </label>
+
+                            <div class="col-md-10 col-sm-10 col-xs-12">
+                                <div class="radio">
+                                    <label>
+                                        @if (TempData["CustomAdd"] != null && TempData["CustomAdd"].ToString() == "1")
+                                        {
+
+
+
+                                        <input type="radio" value="1" id="optionsRadios1" name="CustomAdd" checked />
+                                        }
+                                        else
+                                        {
+
+                                        <input type="radio" id="optionsRadios1" name="CustomAdd" asp-for="@Model.CustomAdd" value="1" />
+                                        }
+                                        Trong 1 tháng
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        @if (TempData["CustomAdd"] != null && TempData["CustomAdd"].ToString() == "2")
+                                        {
+
+
+
+                                        <input type="radio" id="optionsRadios2" name="CustomAdd" value="2" checked />
+                                        }
+                                        else
+                                        {
+
+                                        <input type="radio" id="optionsRadios2" name="CustomAdd" asp-for="@Model.CustomAdd" value="2" />
+                                        }
+                                        Trong nhiều tháng
+
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        @if (TempData["CustomAdd"] != null && TempData["CustomAdd"].ToString() == "3")
+                                        {
+
+
+
+                                        <input type="radio" id="optionsRadios2" name="CustomAdd" value="3" checked />
+                                        }
+                                        else
+                                        {
+
+                                        <input type="radio" id="optionsRadios2" name="CustomAdd" asp-for="@Model.CustomAdd" value="3" />
+                                        }
+                                        Khác
+
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                            <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+                        </div>
+
+                    </form>
                 </div>
-                <!-- /.card -->
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <a href="/quyen.html" class="btn btn-secondary">Cancel</a>
-                <input type="submit" value="Chỉnh sửa" class="btn btn-warning float-right">
-            </div>
-        </div>
-    </form>
 
-</section>*@
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+<script type="text/javascript" src="~/booking/js/summernoteonline.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+@*<script type="text/javascript" src="/booking/js/connection.js"></script>
+*@

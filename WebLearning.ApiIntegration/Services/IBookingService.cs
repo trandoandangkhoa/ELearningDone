@@ -16,15 +16,16 @@ namespace WebLearning.ApiIntegration.Services
         Task<IEnumerable<AppointmentSlotDto>> GetAppointmentSlots(DateTime start, DateTime end, int doctor);
         Task<IEnumerable<AppointmentSlotDto>> GetAppointmentSlotsManager(DateTime start, DateTime end, int doctor);
         Task<IEnumerable<AppointmentSlotDto>> GetAppointmentSlotsAdmin(DateTime start, DateTime end, int doctor);
-
+        Task<AppointmentSlotDto> GetAppointmentSlotDto(int id);
         Task<IEnumerable<HistoryAddSlot>> BookSuccessed(string email);
         Task<List<Result>> CreateAppointmentSlotAdvance(CreateAppointmentSlotAdvance createAppointmentSlotAdvance);
         Task<Result> ConfirmedBookingAccepted(UpdateHistoryAddSlotDto updateHistoryAddSlotDto, Guid fromId, Guid toId, string email);
         Task<Result> ConfirmedBookingRejected(UpdateHistoryAddSlotDto updateHistoryAddSlotDto, Guid fromId, Guid toId, string email);
         Task<Result> ReplyMoveBookingAccepted(Guid fromId, Guid toId);
         Task<Result> ReplyMoveBookingRejected(Guid fromId, Guid toId);
-
+        Task<Result> PutAppointment(int id, AppointmentSlotUpdate update, string email);
         Task<Result> DeleteAppointmentBooked(Guid codeId);
+        Task<IEnumerable<HistoryAddSlotExport>> HistoryAddSlotExports(DateTime fromDate, DateTime toDate, bool confirmed, string email, int room);
 
     }
     public class BookingService : IBookingService
@@ -39,6 +40,25 @@ namespace WebLearning.ApiIntegration.Services
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _httpClientFactory = httpClientFactory;
+        }
+
+        public async Task<AppointmentSlotDto> GetAppointmentSlotDto(int id)
+        {
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+
+            var client = _httpClientFactory.CreateClient();
+
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+            var response = await client.GetAsync($"/api/Appointments/{id}");
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<AppointmentSlotDto>(body);
+
+            return result;
         }
 
         public async Task<IEnumerable<HistoryAddSlot>> BookSuccessed(string email)
@@ -162,9 +182,9 @@ namespace WebLearning.ApiIntegration.Services
 
             var body = await response.Content.ReadAsStringAsync();
 
-            var users = JsonConvert.DeserializeObject<IEnumerable<AppointmentSlotDto>>(body);
+            var result = JsonConvert.DeserializeObject<IEnumerable<AppointmentSlotDto>>(body);
 
-            return users;
+            return result;
         }
 
         public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentSlotsAdmin(DateTime start, DateTime end, int doctor)
@@ -182,9 +202,9 @@ namespace WebLearning.ApiIntegration.Services
 
             var body = await response.Content.ReadAsStringAsync();
 
-            var users = JsonConvert.DeserializeObject<IEnumerable<AppointmentSlotDto>>(body);
+            var result = JsonConvert.DeserializeObject<IEnumerable<AppointmentSlotDto>>(body);
 
-            return users;
+            return result;
         }
 
         public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentSlotsManager(DateTime start, DateTime end, int doctor)
@@ -202,9 +222,9 @@ namespace WebLearning.ApiIntegration.Services
 
             var body = await response.Content.ReadAsStringAsync();
 
-            var users = JsonConvert.DeserializeObject<IEnumerable<AppointmentSlotDto>>(body);
+            var result = JsonConvert.DeserializeObject<IEnumerable<AppointmentSlotDto>>(body);
 
-            return users;
+            return result;
         }
 
         public async Task<string> GetUrlBooking(string role)
@@ -262,6 +282,49 @@ namespace WebLearning.ApiIntegration.Services
             var url = JsonConvert.DeserializeObject<Result>(body);
 
             return url;
+        }
+
+        public async Task<Result> PutAppointment(int id, AppointmentSlotUpdate update, string email)
+        {
+            var client = _httpClientFactory.CreateClient();
+
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+            var json = JsonConvert.SerializeObject(update);
+
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PutAsync($"api/Appointments/{id}/{email}", httpContent);
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            var url = JsonConvert.DeserializeObject<Result>(body);
+
+            return url;
+        }
+
+        public async Task<IEnumerable<HistoryAddSlotExport>> HistoryAddSlotExports(DateTime fromDate, DateTime toDate, bool confirmed, string email, int room)
+        {
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+
+            var client = _httpClientFactory.CreateClient();
+
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+
+            var response = await client.GetAsync($"/api/Appointments/exportExcel?fromDate={fromDate}&toDate={toDate}&confirmed={confirmed}&email={email}&room={room}");
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            var users = JsonConvert.DeserializeObject<IEnumerable<HistoryAddSlotExport>>(body);
+
+            return users;
         }
     }
 }

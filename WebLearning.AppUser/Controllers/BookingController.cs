@@ -1,12 +1,15 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using OfficeOpenXml;
 using WebLearning.ApiIntegration.Services;
 using WebLearning.Contract.Dtos.BookingCalender;
 using WebLearning.Contract.Dtos.BookingCalender.HistoryAddSlot;
 
 namespace WebLearning.AppUser.Controllers
 {
+    [Authorize]
     public class BookingController : Controller
     {
         private readonly ILogger<BookingController> _logger;
@@ -15,7 +18,8 @@ namespace WebLearning.AppUser.Controllers
         private readonly INotyfService _notyf;
         private readonly IConfiguration _configuration;
         private readonly IAccountService _accountService;
-        public BookingController(ILogger<BookingController> logger, INotyfService notyf, IBookingService bookingService, IConfiguration configuration, IAccountService accountService)
+        private readonly IRoomService _roomService;
+        public BookingController(ILogger<BookingController> logger, INotyfService notyf, IBookingService bookingService, IConfiguration configuration, IAccountService accountService, IRoomService roomService)
 
         {
             _logger = logger;
@@ -23,11 +27,18 @@ namespace WebLearning.AppUser.Controllers
             _bookingService = bookingService;
             _configuration = configuration;
             _accountService = accountService;
+            _roomService = roomService;
         }
         [HttpGet]
         [Route("dat-lich.html")]
         public async Task<IActionResult> Index()
         {
+            var token = HttpContext.Session.GetString("Token");
+
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
             var a = await _accountService.GetAccountByEmail(User.Identity.Name);
 
             if (a.AccountDto.AuthorizeRole.ToString() != "ManagerRole" && a.AccountDto.AuthorizeRole.ToString() != "AdminRole"
@@ -37,22 +48,103 @@ namespace WebLearning.AppUser.Controllers
         [HttpGet]
         [Route("cap-nhat/{id}")]
         public async Task<IActionResult> Update(int id)
-        { 
+        {
+            var token = HttpContext.Session.GetString("Token");
 
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
+            var rs = await _bookingService.GetAppointmentSlotDto(id);
+            var room = await _roomService.GetAllRooms();
+            ViewData["DanhMuc"] = new SelectList(room, "Id", "Name");
+
+            if (rs != null)
+            {
+                AppointmentSlotUpdate update = new()
+                {
+                    Start = rs.Start,
+                    End = rs.End,
+                    Status = rs.Status,
+                    Description = rs.Description,
+                    Name = rs.PatientName,
+                    Note = rs.Note,
+                    Email = rs.Email,
+                    Resource = rs.Resource,
+                };
+                return View(update);
+            }
             return View();
+        }
+        [HttpPost]
+        [Route("cap-nhat/{id}")]
+        public async Task<IActionResult> Update(int id, AppointmentSlotUpdate appointmentSlotUpdate)
+        {
+            var token = HttpContext.Session.GetString("Token");
+
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
+            if (appointmentSlotUpdate.Resource == 0 || appointmentSlotUpdate.Note == null || appointmentSlotUpdate.Description == null)
+            {
+                _notyf.Error("Vui lòng điền đủ thông tin");
+                return Redirect("dat-lich.html/#booknow");
+            }
+            int compareFromDate = DateTime.Compare(appointmentSlotUpdate.Start, DateTime.Now);
+            int compareDateTo = DateTime.Compare(appointmentSlotUpdate.End, DateTime.Now);
+            int compareBetweenFromAndDateTo = DateTime.Compare(appointmentSlotUpdate.End, appointmentSlotUpdate.Start);
+
+            if (compareFromDate < 0 || compareDateTo < 0 || compareBetweenFromAndDateTo <= 0)
+            {
+                _notyf.Error("Thời gian không hợp lệ");
+                return Redirect("dat-lich.html/#booknow");
+            }
+            if (appointmentSlotUpdate.Start.Hour < 8)
+            {
+
+                _notyf.Warning("Chưa đến thời gian làm việc");
+                return Redirect("dat-lich.html/#booknow");
+            }
+            if (appointmentSlotUpdate.End.Hour >= 17 && appointmentSlotUpdate.End.Minute > 30 || appointmentSlotUpdate.End.Hour >= 18)
+            {
+
+                _notyf.Warning("Hết thời gian làm việc");
+                return Redirect("dat-lich.html/#booknow");
+            }
+            if (appointmentSlotUpdate != null)
+            {
+                var rs = await _bookingService.PutAppointment(id, appointmentSlotUpdate, User.Identity.Name);
+                _notyf.Success(rs.message);
+
+                return Redirect("/dat-lich.html");
+            }
+            return View(appointmentSlotUpdate);
         }
         [Route("admin.html")]
 
-        public  async Task<IActionResult> Admin()
+        public async Task<IActionResult> Admin()
         {
+            var token = HttpContext.Session.GetString("Token");
+
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
             var a = await _accountService.GetAccountByEmail(User.Identity.Name);
-            if(a.AccountDto.AuthorizeRole.ToString() != "AdminRole") { return Redirect("/khong-tim-thay-trang.html"); }
+            if (a.AccountDto.AuthorizeRole.ToString() != "AdminRole") { return Redirect("/khong-tim-thay-trang.html"); }
             return View();
         }
         [Route("manager.html")]
 
         public async Task<IActionResult> Manager()
         {
+            var token = HttpContext.Session.GetString("Token");
+
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
             var a = await _accountService.GetAccountByEmail(User.Identity.Name);
             if (a.AccountDto.AuthorizeRole.ToString() != "ManagerRole" && a.AccountDto.AuthorizeRole.ToString() != "AdminRole"
                 && a.AccountDto.AuthorizeRole.ToString() != "TeacherRole") { return Redirect("/khong-tim-thay-trang.html"); }
@@ -67,17 +159,30 @@ namespace WebLearning.AppUser.Controllers
         }
         public string Address()
         {
+            var token = HttpContext.Session.GetString("Token");
+
+            if (token == null)
+            {
+                return null;
+            }
             return _configuration.GetValue<string>("BaseAddress");
         }
         public string Name()
         {
-            if(User.Identity.Name == null) { return "null"; }
+            var token = HttpContext.Session.GetString("Token");
+
+            if (token == null)
+            {
+                return null;
+            }
+            if (User.Identity.Name == null) { return "null"; }
             return User.Identity.Name.ToString();
         }
         [HttpPost]
         [Route("dat-lich.html")]
         public async Task<ActionResult> Add(CreateAppointmentSlotAdvance createAppointmentSlotAdvance)
         {
+
             if (createAppointmentSlotAdvance.Room == 0 || createAppointmentSlotAdvance.Note == null || createAppointmentSlotAdvance.Description == null)
             {
                 if (createAppointmentSlotAdvance.Title != null)
@@ -167,13 +272,15 @@ namespace WebLearning.AppUser.Controllers
 
 
         }
-
-
         [Route("phan-hoi-lich/{fromId}/{toId}/trang-thai={Status}/accepted")]
         public async Task<IActionResult> Confirm(UpdateHistoryAddSlotDto updateHistoryAddSlotDto, Guid fromId, Guid toId)
         {
-            if (User.Identity.Name == null) return Redirect("/dang-nhap.html");
+            var token = HttpContext.Session.GetString("Token");
 
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
             var result = await _bookingService.ConfirmedBookingAccepted(updateHistoryAddSlotDto, fromId, toId, User.Identity.Name);
             if (result.message == "NotFound")
             {
@@ -186,10 +293,14 @@ namespace WebLearning.AppUser.Controllers
         [Route("phan-hoi-lich/{fromId}/{toId}/trang-thai={Status}/rejected")]
         public async Task<IActionResult> Reject(UpdateHistoryAddSlotDto updateHistoryAddSlotDto, Guid fromId, Guid toId)
         {
-            if (User.Identity.Name == null) return Redirect("/dang-nhap.html");
+            var token = HttpContext.Session.GetString("Token");
 
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
             var result = await _bookingService.ConfirmedBookingRejected(updateHistoryAddSlotDto, fromId, toId, User.Identity.Name);
-            if(result.message == "NotFound")
+            if (result.message == "NotFound")
             {
                 _notyf.Error("Lịch đặt này đã được xác nhận");
                 return View("Views/Confirm/Error.cshtml");
@@ -200,7 +311,12 @@ namespace WebLearning.AppUser.Controllers
         [Route("phan-hoi-doi-lich/{fromId}/{toId}/accepted")]
         public async Task<IActionResult> MoveCalenderAccepted(Guid fromId, Guid toId)
         {
+            var token = HttpContext.Session.GetString("Token");
 
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
             var a = await _bookingService.ReplyMoveBookingAccepted(fromId, toId);
             if (a.message == "NotFound")
             {
@@ -213,7 +329,12 @@ namespace WebLearning.AppUser.Controllers
         [Route("phan-hoi-doi-lich/{fromId}/{toId}/rejected")]
         public async Task<IActionResult> MoveCalenderRejected(Guid fromId, Guid toId)
         {
+            var token = HttpContext.Session.GetString("Token");
 
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
             var a = await _bookingService.ReplyMoveBookingRejected(fromId, toId);
             if (a.message == "NotFound")
             {
@@ -228,7 +349,12 @@ namespace WebLearning.AppUser.Controllers
         [Route("lich-theo-ngay-va-tuan/{start}/{end}/{doctor}")]
         public async Task<IEnumerable<AppointmentSlotDto>> GetAppointment(DateTime start, DateTime end, int doctor)
         {
+            var token = HttpContext.Session.GetString("Token");
 
+            if (token == null)
+            {
+                return null;
+            }
             var a = await _bookingService.GetAppointmentSlots(start, end, doctor);
 
             return a;
@@ -236,6 +362,12 @@ namespace WebLearning.AppUser.Controllers
         [Route("lich-theo-thang/{start}/{end}")]
         public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentMonth(DateTime start, DateTime end, int doctor)
         {
+            var token = HttpContext.Session.GetString("Token");
+
+            if (token == null)
+            {
+                return null;
+            }
             var a = await _bookingService.GetAppointmentSlots(start, end, doctor);
 
             return a;
@@ -243,23 +375,39 @@ namespace WebLearning.AppUser.Controllers
         [Route("lich-theo-ngay-va-tuan-manager/{start}/{end}/{doctor}")]
         public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentManager(DateTime start, DateTime end, int doctor)
         {
+            var token = HttpContext.Session.GetString("Token");
 
+            if (token == null)
+            {
+                return null;
+            }
             var a = await _bookingService.GetAppointmentSlotsManager(start, end, doctor);
-            
+
             return a;
         }
         [Route("lich-theo-thang-manager/{start}/{end}")]
-
         public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentMonthManager(DateTime start, DateTime end, int doctor)
         {
+            var token = HttpContext.Session.GetString("Token");
+
+            if (token == null)
+            {
+                return null;
+            }
             var a = await _bookingService.GetAppointmentSlotsManager(start, end, doctor);
 
             return a;
         }
         [Route("lich-theo-thang-admin/{start}/{end}")]
         public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentMonthAdmin(DateTime start, DateTime end, int doctor)
-        
+
         {
+            var token = HttpContext.Session.GetString("Token");
+
+            if (token == null)
+            {
+                return null;
+            }
             var a = await _bookingService.GetAppointmentSlotsAdmin(start, end, doctor);
 
             return a;
@@ -279,46 +427,90 @@ namespace WebLearning.AppUser.Controllers
 
             return Redirect("./");
         }
-        //[Route("doi-lich/{fromId}/{toId}/rejected")]
-        //public async Task<IActionResult> MoveCalenderRejected(Guid fromId, Guid toId)
-        //{
-        //    var history = await _context.HistoryAddSlots.SingleOrDefaultAsync(x => x.CodeId.Equals(toId));
 
-        //    if (history == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var room = await _context.Rooms.SingleOrDefaultAsync(x => x.Id == history.RoomId);
-        //    var infouser = await _context.Accounts.SingleOrDefaultAsync(x => x.Email.Contains(history.Email));
+        public async Task<IActionResult> Export(DateTime fromDate, DateTime toDate, bool confirmed, string email, int room)
+        {
+            var token = HttpContext.Session.GetString("Token");
 
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
+            var export = await _bookingService.HistoryAddSlotExports(fromDate, toDate, confirmed, email, room);
 
+            var stream = new MemoryStream();
 
-        //    var emailAdmin = _configuration.GetValue<string>("EmailConfiguration:To");
+            using (var package = new ExcelPackage(stream))
+            {
+                var sheet = package.Workbook.Worksheets.Add("Lịch sử đặt phòng");
+                sheet.Cells[1, 1].Value = "Id";
+                sheet.Cells[1, 2].Value = "Tên phòng";
+                sheet.Cells[1, 3].Value = "Email người dùng";
+                sheet.Cells[1, 4].Value = "Tiêu đề";
+                sheet.Cells[1, 5].Value = "Nội dung";
+                sheet.Cells[1, 6].Value = "Ghi chú";
+                sheet.Cells[1, 7].Value = "Bắt đầu";
+                sheet.Cells[1, 8].Value = "Kết thúc";
+                sheet.Cells[1, 9].Value = "Trạng thái";
+                sheet.Cells[1, 10].Value = "Hình thức";
+                sheet.Cells[1, 11].Value = "Gửi email";
+                sheet.Cells[1, 12].Value = "Người sửa gần nhất";
 
-        //    var baseAddress = _configuration.GetValue<string>("BaseAddress");
+                int rowInd = 2;
 
+                foreach (var lo in export)
+                {
+                    sheet.Cells[rowInd, 1].Value = lo.Id;
+                    sheet.Cells[rowInd, 2].Value = lo.Room;
+                    sheet.Cells[rowInd, 3].Value = lo.Email;
+                    sheet.Cells[rowInd, 4].Value = lo.Title;
+                    sheet.Cells[rowInd, 5].Value = lo.Description;
+                    sheet.Cells[rowInd, 6].Value = lo.Note;
+                    sheet.Cells[rowInd, 7].Value = lo.Start.ToString("dd/MM/yyyy HH:mm");
+                    sheet.Cells[rowInd, 8].Value = lo.End.ToString("dd/MM/yyyy HH:mm");
+                    if (lo.Status == "confirmed")
+                    {
+                        sheet.Cells[rowInd, 9].Value = "Đã xác nhận";
 
-        //    var body = "Nội dung cuộc họp: " + history.Description + "<br/>" +
-        //                "Ghi chú: " + history.Note + "<br/>" +
-        //                "Họ tên người đặt: " + infouser.Name + "<br/>" +
-        //                "Email: " + infouser.Email + "<br/>" +
-        //                "Bộ phận: " + infouser.Department + "<br/>" +
-        //                "Phòng: " + room.Name + "<br/>" +
-        //                "Thời gian bắt đầu: " + history.Start + "<br/>" +
-        //                "Thời gian kết thúc: " + history.End + "<br/>" +
-        //                "Trang thái: " + "<span style='background-color:#d9534f;display: inline;padding: .3em .7em .4em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;'>" +
-        //                            "Từ chối" +
-        //                            "</span>" + "<br/><br/>" +
-        //                "<div>" +
-        //                    "<a style='padding: 6px 12px;background-color: #5bc0de;border-radius:30px;text-decoration: none;color:#fff;' " +
-        //                    "href = " + baseAddress + fromId + "/" + toId + "&trang-thai=0" + " >Duyệt</a>" + "<br/><br/>" +
-        //                 "</div>" + "</div></div>";
+                    }
+                    else if (lo.Status == "waiting")
+                    {
+                        sheet.Cells[rowInd, 9].Value = "Chờ xác nhận";
 
-        //    var message = new Message(new string[] { $"{emailAdmin}" }, "XÁC NHẬN DỜI LỊCH", $"{body}");
+                    }
+                    if (lo.TypedSubmit == "Create")
+                    {
+                        sheet.Cells[rowInd, 10].Value = "Tạo mới";
 
-        //    _emailSender.ReplyEmail(message, infouser.Email, infouser.Name, emailAdmin);
+                    }
+                    else if (lo.TypedSubmit == "Edit")
+                    {
+                        sheet.Cells[rowInd, 10].Value = "Chỉnh sửa";
 
-        //    return View("Views/Confirm/Success.cshtml");
-        //}
+                    }
+                    if (lo.SendMail == true)
+                    {
+                        sheet.Cells[rowInd, 11].Value = "Thành công";
+
+                    }
+                    else
+                    {
+                        sheet.Cells[rowInd, 11].Value = "Không thành công";
+
+                    }
+                    sheet.Cells[rowInd, 12].Value = lo.Editor;
+
+                    rowInd++;
+                }
+                package.Save();
+            }
+
+            stream.Position = 0;
+
+            var fileName = $"LichSuDatPhong_{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+
+        }
     }
 }

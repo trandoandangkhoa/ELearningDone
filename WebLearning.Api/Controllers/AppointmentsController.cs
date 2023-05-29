@@ -39,13 +39,21 @@ namespace WebLearning.Api.Controllers
             return await _appointmentService.GetAppointments(start, end, doctor);
 
         }
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ManagerRole, AuthorizeRole.TeacherRole)]
+        // GET: api/Appointments
+        /// <summary>
+        /// Danh sách tất cả thời gian có thể đặt của mỗi phòng (manager)
+        /// </summary>
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ManagerRole)]
         [HttpGet("manager")]
         public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentsManager([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor)
         {
             return await _appointmentService.GetAppointments(start, end, doctor);
 
         }
+        // GET: api/Appointments
+        /// <summary>
+        /// Danh sách tất cả thời gian có thể đặt của mỗi phòng (admin)
+        /// </summary>
         [SecurityRole(AuthorizeRole.AdminRole)]
         [HttpGet("admin")]
         public async Task<IEnumerable<AppointmentSlotDto>> GetAppointmentsAdmin([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] int? doctor)
@@ -66,20 +74,20 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         // GET: api/Appointments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<AppointmentSlot>> GetAppointmentSlot(int id)
+        public async Task<ActionResult<AppointmentSlotDto>> GetAppointmentSlot(int id)
         {
-            var appointmentSlot = await _context.Appointments.Include(x => x.Room).SingleOrDefaultAsync(x => x.Id == id);
-
-            if (appointmentSlot == null)
+            try
             {
-                return NotFound();
+                var a = await _appointmentService.GetAppointmentSlot(id);
+                if (a == null) return NotFound();
+                return Ok(a);
             }
-            int startIndex = appointmentSlot.PatientName.IndexOf("Email");
-            int lastIndex = appointmentSlot.PatientName.IndexOf("Bộ phận");
-            string value = appointmentSlot.PatientName.Substring(startIndex, lastIndex);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
 
-            return appointmentSlot;
         }
         /// <summary>
         /// Cập nhật trạng thái cho từng mốc thời gian cũng như dời lịch
@@ -223,7 +231,7 @@ namespace WebLearning.Api.Controllers
         {
             var a = await _appointmentService.MailReplyAccepted(fromId, toId);
 
-            return StatusCode(StatusCodes.Status200OK,a);
+            return StatusCode(StatusCodes.Status200OK, a);
         }
         /// <summary>
         /// Từ chối dời lịch
@@ -233,7 +241,22 @@ namespace WebLearning.Api.Controllers
         {
             var a = await _appointmentService.MailReplyRejected(fromId, toId);
 
-            return StatusCode(StatusCodes.Status200OK,a);
+            return StatusCode(StatusCodes.Status200OK, a);
+        }
+        /// <summary>
+        /// Xuất excel
+        /// </summary>
+        [HttpGet("exportExcel")]
+        //[SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ManagerRole)]
+        public async Task<IEnumerable<HistoryAddSlotExport>> ExportV2(CancellationToken cancellationToken, DateTime fromDate, DateTime toDate, bool confirmed, string email, int room)
+        {
+            var data = await _appointmentService.ExportHistoryAllSlotDtos(fromDate, toDate, confirmed, room, email);
+
+            if (data != null)
+            {
+                return data;
+            }
+            return default;
         }
     }
 

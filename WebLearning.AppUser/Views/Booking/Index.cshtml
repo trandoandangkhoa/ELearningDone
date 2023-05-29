@@ -25,7 +25,57 @@
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
 
 }
+<style>
+    .modal_default_form_item textarea {
+        height: 100px;
+    }
 
+    .modal_default_main {
+        top: 0;
+        border: 5px solid rgb(204, 204, 204);
+        max-height: 90%;
+        overflow-y: scroll;
+    }
+
+    .modal_default_form_item_label {
+        font-weight: bold;
+        font-size: 14px;
+        color: #bf040a;
+    }
+
+    .label-advance {
+        padding: 0.8em 1.2em 0.9em;
+        font-size: 13px;
+        line-height: 1;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        /*        vertical-align: baseline;
+    */ border-radius: 0.8em;
+    }
+
+    .label-edit-advance {
+        background-color: #f0ad4e;
+    }
+
+    .modal_default_ok {
+        padding: 3px;
+        width: 80px;
+        color: #fff;
+        border: none;
+        background-color: #5cb85c;
+        border-radius: 0.25em;
+    }
+
+    .modal_default_cancel {
+        padding: 3px;
+        width: 80px;
+        color: #fff;
+        border: none;
+        background-color: #d9534f;
+        border-radius: 0.25em;
+    }
+</style>
 <div class="row" >
     <div class="col-md-12">
         <div class="x_panel" style="min-height:750px">
@@ -185,7 +235,7 @@
 <div class="col-md-6 col-xs-12" id="booknow">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Đặt lịch phòng họp</h2>
+                <h2><i class="fa fa-edit"></i> Đặt lịch phòng họp</h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
                         <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
@@ -347,7 +397,7 @@
                     <div class="ln_solid"></div>
                     <div class="form-group">
                         <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
-                            <button type="submit" class="btn btn-success">Submit</button>
+                            <button type="submit" class="btn btn-success">Đặt phòng</button>
                         </div>
                     </div>
 
@@ -358,7 +408,7 @@
 <div class="col-md-6 col-xs-12">
     <div class="x_panel">
         <div class="x_title">
-            <h2>Thông tin đặt phòng<small>Gần đây</small></h2>
+            <h2><i class="fa fa-history"></i> Thông tin đặt phòng<small>Gần đây</small></h2>
             <ul class="nav navbar-right panel_toolbox">
                 <li>
                     <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
@@ -656,11 +706,18 @@
         onEventClick: async (args) => {
             if (args.e.data.status !== "free") {
                 const form = [
-                    { name: "Thông tin phòng" },
+                    { name: "Cập nhật thông tin phòng" },
                     { name: "Tiêu đề", id: "text", onValidate: validateTextRequired },
                     { name: "Nội dung", id: "description", onValidate: validateTextRequired, type: "textarea" },
-                    { name: "Ghi chú", id: "note", onValidate: validateTextRequired, type: "textarea" },
-
+                    {
+                        type: 'html',
+                        html: `<span style='font-size:14px;font-weight:bold;color:#bf040a'>Nội dung hiển thị: </span><br>${args.e.data.description}`,
+                    },
+                    { name: "Ghi chú", id: "note", onValidate: validateTextRequired, type: "textarea",height: 50 },
+                    {
+                        type: 'html',
+                        html: `<span style='font-size:14px;font-weight:bold;color:#bf040a'>Nội dung hiển thị: </span><br>${args.e.data.note}`,
+                    },
                     { name: "Tình trạng", id: "status", disabled: true },
                     {
                         name: "Tạo lịch", id: "customAdd", type: "radio", options: [
@@ -685,6 +742,10 @@
                         type: 'html',
                         html: 'Ghi chú: Hội trường: 1, Lầu 2: 2, Lầu 3: 3, ...',
                     },
+                    {
+                        type: 'html',
+                        html: `<a class="label-advance label-edit-advance" href="/cap-nhat/${args.e.data.id}">Chỉnh sửa nâng cao</a>`
+                    },
                 ];
                 const data = args.e.data;
                 const options = {
@@ -694,7 +755,9 @@
                     focus: "note",
                     focus: "description",
                     focus: "resource",
-                    focus: "customAdd"
+                    focus: "customAdd",
+                    scrollWithPage: false,
+
                 };
 
                 const modal = await DayPilot.Modal.form(form, data, options);
@@ -737,9 +800,10 @@
                 { name: "Ngày bắt đầu", id: "start", dateFormat: "dd/MM/yyyy h:mm tt", disabled: true, onValidate: validateDate },
                 { name: "Ngày kết thúc", id: "end", dateFormat: "dd/MM/yyyy h:mm tt", disabled: true, onValidate: validateDate },
                 { name: "Tiêu đề", id: "name", onValidate: validateTextRequired },
-
-                { name: "Ghi chú", id: "note", onValidate: validateTextRequired, type: "textarea" },
                 { name: "Nội dung họp", id: "description", onValidate: validateTextRequired, type: "textarea" },
+                { name: "Ghi chú", id: "note", onValidate: validateTextRequired, type: "textarea" },
+
+                
             ];
 
             const data = {
@@ -756,6 +820,8 @@
                 focus: "description",
                 focus: "note",
                 focus: "name",
+                scrollWithPage: false,
+
             };
 
             const modal = await DayPilot.Modal.form(form, data, options);
@@ -912,23 +978,17 @@
             if (args.e.data.status !== "free") {
                 if (args.e.data.status !== "free") {
                     const form = [
-                        { name: "Thông tin phòng" },
+                        { name: "Cập nhật thông tin phòng" },
                         { name: "Tiêu đề", id: "text", onValidate: validateTextRequired },
-
-                        {
-                            name: "Nội dung", id:"description", onValidate: validateTextRequired, type: "textarea",
-                        },
-                        {
-                            html: args.e.data.description,
-                        },
-                        { name: "Ghi chú", id: "note", onValidate: validateTextRequired, type: "textarea" },
+                        { name: "Nội dung", id: "description", onValidate: validateTextRequired, type: "textarea" },
                         {
                             type: 'html',
-                            html: args.e.data.note,
+                            html: `<span style='font-size:14px;font-weight:bold;color:#bf040a'>Nội dung hiển thị: </span><br>${args.e.data.description}`,
                         },
+                        { name: "Ghi chú", id: "note", onValidate: validateTextRequired, type: "textarea", height: 50 },
                         {
-                            type:'html',
-                            html: `<a href="/cap-nhat/${args.e.data.id}">Cập nhật</a>`
+                            type: 'html',
+                            html: `<span style='font-size:14px;font-weight:bold;color:#bf040a'>Nội dung hiển thị: </span><br>${args.e.data.note}`,
                         },
                         { name: "Tình trạng", id: "status", disabled: true },
                         {
@@ -954,7 +1014,10 @@
                             type: 'html',
                             html: 'Ghi chú: Hội trường: 1, Lầu 2: 2, Lầu 3: 3, ...',
                         },
-
+                        {
+                            type: 'html',
+                            html: `<a class="label-advance label-edit-advance" href="/cap-nhat/${args.e.data.id}">Chỉnh sửa nâng cao</a>`
+                        },
                     ];
                     const data = args.e.data;
                     const options = {
@@ -965,6 +1028,8 @@
                         focus: "description",
                         focus: "resource",
                         focus: "customAdd",
+                        scrollWithPage: false,
+
                     };
 
                     const modal = await DayPilot.Modal.form(form, data, options);
@@ -983,7 +1048,7 @@
                         resource: modal.result.resource,
                         customAdd: modal.result.customAdd,
                     };
-                    const check = await DayPilot.Modal.confirm("Bạn có muốn thay đổi?", { okText: "Xác nhận", cancelText: "Không" });
+                    const check = await DayPilot.Modal.confirm("Bạn có muốn thay đổi?",{ okText: "Xác nhận", cancelText: "Không"});
                     if (check.result == "OK") {
 
                         var rs = await DayPilot.Http.put(`${ba}/api/Appointments/${params.id}/${em}`, params);
@@ -1011,8 +1076,9 @@
                 { name: "Ngày bắt đầu", id: "start", dateFormat: "dd/MM/yyyy h:mm tt", disabled: true, onValidate: validateDate },
                 { name: "Ngày kết thúc", id: "end", dateFormat: "dd/MM/yyyy h:mm tt", disabled: true, onValidate: validateDate },
                 { name: "Tiêu đề", id: "name", onValidate: validateTextRequired },
+{ name: "Nội dung họp", id: "description", onValidate: validateTextRequired, type: "textarea" },
                 { name: "Ghi chú", id: "note", onValidate: validateTextRequired, type: "textarea" },
-                { name: "Nội dung họp", id: "description", onValidate: validateTextRequired, type: "textarea" },
+                
             ];
 
             const data = {
