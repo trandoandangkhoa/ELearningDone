@@ -45,17 +45,25 @@
     <link rel="stylesheet" href="~/booking/themes/modal_flat.css" type="text/css">
     <link rel="stylesheet" href="~/booking/themes/modal_rounded.css" type="text/css">
 
-    <link href="~/booking/css/customcalender.css" rel="stylesheet" />
-
 
     @await RenderSectionAsync("Styles", required: false)
     @await RenderSectionAsync("metatags", required: false)
     @await RenderSectionAsync("Summernote", required: false)
-
+    <link href="~/booking/css/customcalender.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+          rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"
+            integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
 </head>
 
 <body class="nav-md" >
-    <ejs-scripts></ejs-scripts>
+
 
     <div class="container body">
         <div class="main_container" style="background-color:#790001">

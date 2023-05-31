@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using WebLearning.Application.ELearning.Services;
 using WebLearning.Application.Email;
-using WebLearning.Application.Services;
 using WebLearning.Contract.Dtos.Account;
 using WebLearning.Contract.Dtos.BookingCalender;
 using WebLearning.Contract.Dtos.BookingCalender.HistoryAddSlot;
@@ -138,7 +138,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
                 await _context.SaveChangesAsync();
 
-                updateHistoryAddSlotDto.SendMail = false;
+                updateHistoryAddSlotDto.SendMail = true;
 
                 updateHistoryAddSlotDto.DescStatus = "confirmed";
 
@@ -163,7 +163,7 @@ namespace WebLearning.Application.BookingCalender.Services
             {
                 using var transaction = _context.Database.BeginTransaction();
 
-                updateHistoryAddSlotDto.SendMail = false;
+                updateHistoryAddSlotDto.SendMail = true;
                 updateHistoryAddSlotDto.DescStatus = "confirmed";
 
                 _context.HistoryAddSlots.Update(_mapper.Map(updateHistoryAddSlotDto, historyNow));
@@ -837,7 +837,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
             UpdateHistoryAddSlotDto updateHistoryAddSlotDto = new();
 
-            updateHistoryAddSlotDto.SendMail = true;
+            updateHistoryAddSlotDto.SendMail = false;
 
             updateHistoryAddSlotDto.DescStatus = history.Status;
 
@@ -882,7 +882,7 @@ namespace WebLearning.Application.BookingCalender.Services
             var baseAddress = _configuration.GetValue<string>("BaseAddress");
             UpdateHistoryAddSlotDto updateHistoryAddSlotDto = new();
 
-            updateHistoryAddSlotDto.SendMail = true;
+            updateHistoryAddSlotDto.SendMail = false;
 
             updateHistoryAddSlotDto.DescStatus = history.Status;
 
@@ -1076,6 +1076,7 @@ namespace WebLearning.Application.BookingCalender.Services
 
                 if (admin.AuthorizeRole.ToString() == "AdminRole" || admin.AuthorizeRole.ToString() == "ManagerRole")
                 {
+
                     var baseAddress = _configuration.GetValue<string>("BaseAddressChangeTime");
 
                     var message = Extension.MoveSlotMesseageWeeklyInMonth(baseAddress, email, account, oldRoomDto, newRoomDto, update.Name, update.Description, update.Note, appointmentSlotDto.CodeId, codeId, historyAdd.Start, historyAdd.End, historyAddSlot.Start, historyAddSlot.End);
@@ -1114,6 +1115,13 @@ namespace WebLearning.Application.BookingCalender.Services
 
                     await _context.SaveChangesAsync();
 
+                    var emailAdmin = _configuration.GetValue<string>("EmailConfiguration:To");
+
+                    var baseAddress = _configuration.GetValue<string>("BaseAddress");
+
+                    var message = Extension.UserMoveSlotMesseageWeeklyInMonth(baseAddress, emailAdmin, account, oldRoomDto, newRoomDto, update.Name, update.Description, update.Note, codeId, codeId, historyAdd.Start, historyAdd.End, historyAddSlot.Start, historyAddSlot.End);
+
+                    _emailSender.ReplyEmail(message, account.Email, account.accountDetailDto.FullName, emailAdmin);
                 }
                 await transaction.CommitAsync();
 
@@ -1254,6 +1262,14 @@ namespace WebLearning.Application.BookingCalender.Services
 
                     await _context.SaveChangesAsync();
 
+                    var emailAdmin = _configuration.GetValue<string>("EmailConfiguration:To");
+
+                    var baseAddress = _configuration.GetValue<string>("BaseAddress");
+
+                    var message = Extension.UserMoveSlotMesseageWeeklyInMultiMonth(baseAddress, emailAdmin, account, oldRoomDto, newRoomDto, update.Description, update.Note, codeId, codeId, historyAdd.Start, historyAdd.End, historyAddSlot.Start, historyAddSlot.End, update.Name);
+
+                    _emailSender.ReplyEmail(message, account.Email, account.accountDetailDto.FullName, emailAdmin);
+
                 }
                 await transaction.CommitAsync();
 
@@ -1368,7 +1384,13 @@ namespace WebLearning.Application.BookingCalender.Services
                     _context.HistoryAddSlots.Remove(historyPrevious);
 
                     await _context.SaveChangesAsync();
+                    var emailAdmin = _configuration.GetValue<string>("EmailConfiguration:To");
 
+                    var baseAddress = _configuration.GetValue<string>("BaseAddress");
+
+                    var message = Extension.UserMoveSlotMesseage(baseAddress, emailAdmin, account, oldRoomDto, newRoomDto, update.Description, update.Note, codeId, codeId, historyAdd.Start, historyAdd.End, historyAddSlot.Start, historyAddSlot.End, update.Name);
+
+                    _emailSender.ReplyEmail(message, account.Email, account.accountDetailDto.FullName, emailAdmin);
                 }
                 await transaction.CommitAsync();
 

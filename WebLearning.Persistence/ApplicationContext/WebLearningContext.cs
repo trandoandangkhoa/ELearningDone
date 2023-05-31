@@ -35,6 +35,13 @@ namespace WebLearning.Persistence.ApplicationContext
 
         public DbSet<Avatar> Avatars { get; set; }
 
+        public DbSet<Assests> Assests { get; set; }
+        public DbSet<AssetsCategory> AssetsCategories { get; set; }
+        public DbSet<AssetsSubCategory> AssetsSubCategories { get; set; }
+        public DbSet<AssetsDepartment> AssetsDepartments { get; set; }
+        public DbSet<AssetsStatus> AssetsStatuses { get; set; }
+
+
         public DbSet<Role> Roles { get; set; }
 
         public DbSet<CourseRole> CourseRoles { get; set; }
@@ -117,6 +124,13 @@ namespace WebLearning.Persistence.ApplicationContext
             modelBuilder.Entity<AccountDetail>().ToTable("AccountDetail");
 
             modelBuilder.Entity<Avatar>().ToTable("Avatar");
+
+            modelBuilder.Entity<Assests>().ToTable("Assets");
+            modelBuilder.Entity<AssetsCategory>().ToTable("AssetsCategory");
+            modelBuilder.Entity<AssetsSubCategory>().ToTable("AssetsSubCategory");
+            modelBuilder.Entity<AssetsDepartment>().ToTable("AssetsDepartment");
+            modelBuilder.Entity<AssetsStatus>().ToTable("AssetsStatus").Property(f => f.Id)
+            .ValueGeneratedOnAdd();
 
 
             modelBuilder.Entity<Role>().ToTable("Role");

@@ -34,6 +34,8 @@ builder.Services.AddScoped<ILessionService, LessionService>();
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 
+builder.Services.AddScoped<IAssetCategoryService, AssetCategoryService>();
+
 builder.Services.AddScoped<IQuizLessionService, QuizLessionService>();
 
 builder.Services.AddScoped<IQuizCourseService, QuizCourseService>();

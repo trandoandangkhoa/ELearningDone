@@ -6,10 +6,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using WebLearning.Application.Assets.Services;
 using WebLearning.Application.BookingCalender.Services;
+using WebLearning.Application.ELearning.Services;
 using WebLearning.Application.Email;
 using WebLearning.Application.Mapping.AccountMappinng;
 using WebLearning.Application.Mapping.AnswerMapping;
+using WebLearning.Application.Mapping.AssetMapping;
 using WebLearning.Application.Mapping.AvatarMapping;
 using WebLearning.Application.Mapping.BookingCalender;
 using WebLearning.Application.Mapping.CorrectAnswerMappingProfile;
@@ -24,7 +27,6 @@ using WebLearning.Application.Mapping.QuestionMapping;
 using WebLearning.Application.Mapping.QuizMapping;
 using WebLearning.Application.Mapping.ReportScoreMapping;
 using WebLearning.Application.Mapping.RoleMapping;
-using WebLearning.Application.Services;
 using WebLearning.Application.Validation;
 using WebLearning.Contract.Dtos;
 using WebLearning.Contract.Dtos.Course;
@@ -53,6 +55,12 @@ namespace WebLearning.Application
             services.AddScoped<IAnswerLessionService, AnswerLessionService>();
 
             services.AddScoped<IAnswerMonthlyService, AnswerMonthlyService>();
+
+            services.AddScoped<IAssetService, AssetService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ISubCategoryService, SubCategoryService>();
+            services.AddScoped<IDepartmentService, DepartmentService>();
+            services.AddScoped<IStatusService, StatusService>();
 
             services.AddScoped<ICourseService, CourseService>();
 
@@ -150,6 +158,11 @@ namespace WebLearning.Application
 
             services.AddAutoMapper(typeof(AvatarMappingProfile).Assembly);
 
+            services.AddAutoMapper(typeof(AssetsMappingProfile).Assembly);
+            services.AddAutoMapper(typeof(AssetsCategoryMappingProfile).Assembly);
+            services.AddAutoMapper(typeof(AssetsSubCategoryMappingProfile).Assembly);
+            services.AddAutoMapper(typeof(AssetsDepartmentMappingProfile).Assembly);
+            services.AddAutoMapper(typeof(AssetsStatusMappingProfile).Assembly);
 
             services.AddAutoMapper(typeof(AppointmentMappingProfile).Assembly);
 
