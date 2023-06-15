@@ -68,8 +68,11 @@ namespace WebLearning.Application.ELearning.Services
 
         public async Task<PagedViewModel<RoleDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest)
         {
-            var pageResult = _configuration.GetValue<float>("PageSize:Role");
-            var pageCount = Math.Ceiling(_context.Roles.Count() / (double)pageResult);
+            if (getListPagingRequest.PageSize == 0)
+            {
+                getListPagingRequest.PageSize = Convert.ToInt32(_configuration.GetValue<float>("PageSize:Role"));
+            }
+            var pageResult = getListPagingRequest.PageSize; var pageCount = Math.Ceiling(_context.Roles.Count() / (double)pageResult);
             var query = _context.Roles.AsQueryable();
             if (!string.IsNullOrEmpty(getListPagingRequest.Keyword))
             {
@@ -87,7 +90,7 @@ namespace WebLearning.Application.ELearning.Services
                                         Alias = x.Alias,
                                         Code = x.Code,
                                     })
-                                    .OrderByDescending(x => x.RoleName).ToListAsync();
+                                    .OrderByDescending(x => x.RoleName).AsNoTracking().ToListAsync();
             var roleResponse = new PagedViewModel<RoleDto>
             {
                 Items = data,

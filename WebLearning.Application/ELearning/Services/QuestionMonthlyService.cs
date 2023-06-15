@@ -94,7 +94,11 @@ namespace WebLearning.Application.ELearning.Services
         }
         public async Task<PagedViewModel<QuestionMonthlyDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest)
         {
-            var pageResult = _configuration.GetValue<float>("PageSize:QuestionMonthly");
+            if (getListPagingRequest.PageSize == 0)
+            {
+                getListPagingRequest.PageSize = Convert.ToInt32(_configuration.GetValue<float>("PageSize:QuestionMonthly"));
+            }
+            var pageResult = getListPagingRequest.PageSize;
             var pageCount = Math.Ceiling(_context.QuestionMonthlies.Count() / (double)pageResult);
             var query = _context.QuestionMonthlies.AsNoTracking().AsQueryable();
             if (!string.IsNullOrEmpty(getListPagingRequest.Keyword))

@@ -57,7 +57,7 @@ namespace WebLearning.Api.Controllers
         [HttpGet("{id}")]
 
         //[SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.StudentRole)]
-        public async Task<IActionResult> GetRoleById(Guid id)
+        public async Task<IActionResult> GetRoleById(int id)
         {
             if (await _statusService.GetAssetsStatusById(id) == null)
             {
@@ -101,7 +101,7 @@ namespace WebLearning.Api.Controllers
         [HttpPut("{id}")]
         //[SecurityRole(AuthorizeRole.AdminRole)]
 
-        public async Task<IActionResult> UpdateAccount(Guid id, [FromBody] UpdateAssetsStatusDto updateAssetsStatusDto)
+        public async Task<IActionResult> UpdateAccount(int id, [FromBody] UpdateAssetsStatusDto updateAssetsStatusDto)
         {
             try
             {
@@ -132,7 +132,7 @@ namespace WebLearning.Api.Controllers
         [HttpDelete("{id}")]
         //[SecurityRole(AuthorizeRole.AdminRole)]
 
-        public async Task<IActionResult> DeleteRole(Guid id)
+        public async Task<IActionResult> DeleteRole(int id)
         {
             try
             {

@@ -20,11 +20,11 @@ namespace WebLearning.Application.Assets.Services
     public interface IStatusService
     {
         Task<IEnumerable<AssetsStatusDto>> GetAssetsStatus();
-        Task<AssetsStatusDto> GetAssetsStatusById(Guid id);
+        Task<AssetsStatusDto> GetAssetsStatusById(int id);
         Task InsertAssetsStatus(CreateAssetsStatusDto createAssetsStatusDto);
         Task<AssetsStatusDto> GetName(string name);
-        Task DeleteAssetsStatus(Guid id);
-        Task UpdateAssetsStatus(UpdateAssetsStatusDto updateAssetsStatusDto, Guid id);
+        Task DeleteAssetsStatus(int id);
+        Task UpdateAssetsStatus(UpdateAssetsStatusDto updateAssetsStatusDto, int id);
         Task<PagedViewModel<AssetsStatusDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest);
     }
     public class StatusService : IStatusService
@@ -40,7 +40,7 @@ namespace WebLearning.Application.Assets.Services
             _mapper = mapper;
             _configuration = configuration;
         }
-        public async Task DeleteAssetsStatus(Guid id)
+        public async Task DeleteAssetsStatus(int id)
         {
 
             var asset = await _context.AssetsStatuses.FindAsync(id);
@@ -51,12 +51,12 @@ namespace WebLearning.Application.Assets.Services
 
         public async Task<IEnumerable<AssetsStatusDto>> GetAssetsStatus()
         {
-            var asset = await _context.AssetsStatuses.Include(x => x.Assests).OrderByDescending(x => x.Id).AsNoTracking().ToListAsync();
+            var asset = await _context.AssetsStatuses.OrderByDescending(x => x.Id).AsNoTracking().ToListAsync();
             var assetDto = _mapper.Map<List<AssetsStatusDto>>(asset);
             return assetDto;
         }
 
-        public async Task<AssetsStatusDto> GetAssetsStatusById(Guid id)
+        public async Task<AssetsStatusDto> GetAssetsStatusById(int id)
         {
             var asset = await _context.AssetsStatuses.Include(x => x.Assests).FirstOrDefaultAsync(x => x.Id.Equals(id));
 
@@ -112,7 +112,7 @@ namespace WebLearning.Application.Assets.Services
             return;
         }
 
-        public async Task UpdateAssetsStatus(UpdateAssetsStatusDto updateAssetsStatusDto, Guid id)
+        public async Task UpdateAssetsStatus(UpdateAssetsStatusDto updateAssetsStatusDto, int id)
         {
             var item = await _context.AssetsStatuses.FirstOrDefaultAsync(x => x.Id.Equals(id));
             if (item != null)

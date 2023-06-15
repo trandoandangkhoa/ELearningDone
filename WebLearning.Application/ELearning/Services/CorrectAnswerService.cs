@@ -38,6 +38,15 @@ namespace WebLearning.Application.ELearning.Services
         public async Task<PagedViewModel<CorrectAnswerLessionDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest)
         {
             var pageResult = 10f;
+            if (getListPagingRequest.PageSize == 0)
+            {
+                getListPagingRequest.PageSize = Convert.ToInt32(pageResult);
+            }
+            else
+            {
+                pageResult = getListPagingRequest.PageSize;
+            }
+            
             var pageCount = Math.Ceiling(_context.CorrectAnswerLessions.Count() / (double)pageResult);
             var query = _context.CorrectAnswerLessions.AsQueryable();
             if (!string.IsNullOrEmpty(getListPagingRequest.Keyword))

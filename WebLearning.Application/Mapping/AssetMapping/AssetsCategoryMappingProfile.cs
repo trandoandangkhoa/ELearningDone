@@ -14,9 +14,8 @@ namespace WebLearning.Application.Mapping.AssetMapping
     {
         public AssetsCategoryMappingProfile() 
         {
-            CreateMap<CreateAssetCategoryDto, AssetsCategory>();
-            CreateMap<AssetsCategory, AssetsCategoryDto>().ForPath(dest => dest.AssetsDtos, opt => opt.MapFrom(src => src.Assests))
-                                    .ForPath(dest => dest.AssetsSubCategoryDtos, opt => opt.MapFrom(src => src.SubCategories));
+            CreateMap<CreateAssetsCategoryDto, AssetsCategory>();
+            CreateMap<AssetsCategory, AssetsCategoryDto>().ForPath(dest => dest.AssetsDtos, opt => opt.MapFrom(src => src.Assests));
             CreateMap<UpdateAssetsCategoryDto, AssetsCategory>();
 
         }

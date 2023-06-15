@@ -14,10 +14,10 @@ namespace WebLearning.ApiIntegration.Services
     public interface IAssetCategoryService
     {
         public Task<PagedViewModel<AssetsCategoryDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest);
-        public Task<IEnumerable<AssetsCategoryDto>> GetAllAssetsCategories();
+        public Task<IEnumerable<AssetsCategoryDto>> GetAllAssetsCategory();
 
         public Task<AssetsCategoryDto> GetAssetCategoryById(Guid id);
-        public Task<bool> InsertAssetCategory(CreateAssetCategoryDto createAssetsCategoryDto);
+        public Task<bool> InsertAssetCategory(CreateAssetsCategoryDto createAssetsCategoryDto);
         public Task<bool> DeleteAssetCategory(Guid id);
         public Task<bool> UpdateAssetCategory(UpdateAssetsCategoryDto updateAssetsCategoryDto, Guid Id);
 
@@ -61,7 +61,7 @@ namespace WebLearning.ApiIntegration.Services
             return users;
 
         }
-        public async Task<bool> InsertAssetCategory(CreateAssetCategoryDto createAssetsCategoryDto)
+        public async Task<bool> InsertAssetCategory(CreateAssetsCategoryDto createAssetsCategoryDto)
         {
             var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
 
@@ -132,7 +132,7 @@ namespace WebLearning.ApiIntegration.Services
 
         }
 
-        public async Task<IEnumerable<AssetsCategoryDto>> GetAllAssetsCategories()
+        public async Task<IEnumerable<AssetsCategoryDto>> GetAllAssetsCategory()
         {
             var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
 

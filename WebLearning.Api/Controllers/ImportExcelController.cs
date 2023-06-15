@@ -1,9 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NuGet.ContentModel;
 using OfficeOpenXml;
+using System;
+using System.Globalization;
+using WebLearning.Application.Assets.Services;
 using WebLearning.Application.ELearning.Services;
 using WebLearning.Application.Helper;
 using WebLearning.Contract.Dtos;
 using WebLearning.Contract.Dtos.Account;
+using WebLearning.Contract.Dtos.Assets;
+using WebLearning.Contract.Dtos.Assets.Department;
 using WebLearning.Contract.Dtos.CourseRole;
 using WebLearning.Contract.Dtos.Lession.LessionAdminView;
 using WebLearning.Contract.Dtos.Question;
@@ -13,6 +19,7 @@ using WebLearning.Contract.Dtos.Question.QuestionMonthlyAdminView;
 using WebLearning.Contract.Dtos.Quiz;
 using WebLearning.Contract.Dtos.Role;
 using WebLearning.Contract.Dtos.VideoLession;
+using WebLearning.Domain.Entites;
 
 namespace WebLearning.Api.Controllers
 {
@@ -31,8 +38,14 @@ namespace WebLearning.Api.Controllers
         private readonly IQuizMonthlyService _quizMonthlyService;
         private readonly IQuestionCourseService _questionCourseService;
         private readonly IQuestionMonthlyService _questionMonthlyService;
+        private readonly IAssetService _assetService;
+        private readonly ICategoryService _categoryService;
+        private readonly IDepartmentService _departmentService;
+        private readonly IStatusService _statusService;
         public ImportExcelController(IQuestionLessionService questionLessionService, IRoleService roleService, IAccountService accountService, ICourseRoleService courseRoleService
-, ICourseService courseService, ILessionService lessionService, IQuizLessionService quizLessionService, IQuizCourseService quizCourseService, IQuizMonthlyService quizMonthlyService, IQuestionCourseService questionCourseService, IQuestionMonthlyService questionMonthlyService)
+, ICourseService courseService, ILessionService lessionService, IQuizLessionService quizLessionService, IQuizCourseService quizCourseService, IQuizMonthlyService quizMonthlyService, IQuestionCourseService questionCourseService, IQuestionMonthlyService questionMonthlyService
+            ,IAssetService assetService, IDepartmentService departmentService, IStatusService statusService,ICategoryService categoryService)
+        
         {
             _roleService = roleService;
             _accountService = accountService;
@@ -45,6 +58,10 @@ namespace WebLearning.Api.Controllers
             _questionLessionService = questionLessionService;
             _questionCourseService = questionCourseService;
             _questionMonthlyService = questionMonthlyService;
+            _assetService = assetService;
+            _departmentService = departmentService;
+            _statusService = statusService;
+            _categoryService = categoryService;
         }
 
 
@@ -714,5 +731,194 @@ namespace WebLearning.Api.Controllers
             return importResponse.Msg = "Import Success";
         }
 
+
+        [HttpPost("import/assets")]
+        [Consumes("multipart/form-data")]
+
+        public async Task<string> ImportAsset([FromForm] ImportResponse importResponse, CancellationToken cancellationToken)
+        {
+            if (importResponse.File == null || importResponse.File.Length <= 0)
+            {
+                return importResponse.Msg = "Không tìm thấy File";
+            }
+
+            if (!Path.GetExtension(importResponse.File.FileName).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
+            {
+                return importResponse.Msg = "File không đúng định dạng .xlsx";
+            }
+            var createAssetsDtos = new List<CreateAssetsDto>();
+
+            using (var stream = new MemoryStream())
+            {
+                await importResponse.File.CopyToAsync(stream, cancellationToken);
+
+                using (var package = new ExcelPackage(stream))
+                {
+                    //ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+                    var a = package.Workbook.Worksheets.Count();
+                    for(int i = 0; i< a; i++)
+                    {
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[i];
+                        var rowCount = worksheet.Dimension.Rows;
+
+                        for (int row = 2; row <= rowCount; row++)
+                        {
+                            string customer = "";
+                            string spec = "";
+                            string note = "";
+                            string orNum = "";
+                            string seri = "";
+                            string price = "";
+                            string supplier = "";
+                            int expireDay = 0;
+                            if (worksheet.Cells[row, 3].Value != null) orNum = worksheet.Cells[row, 3].Value.ToString().Trim();
+                            if (worksheet.Cells[row, 4].Value != null) seri = worksheet.Cells[row, 4].Value.ToString().Trim();
+                            if (worksheet.Cells[row, 5].Value != null) price = worksheet.Cells[row, 5].Value.ToString().Trim();
+                            if (worksheet.Cells[row, 6].Value != null) supplier = worksheet.Cells[row, 6].Value.ToString().Trim();
+
+                            if (worksheet.Cells[row, 11].Value != null) customer = worksheet.Cells[row, 11].Value.ToString().Trim();
+                            if (worksheet.Cells[row, 14].Value != null) spec = worksheet.Cells[row, 14].Value.ToString().Trim();
+                            if (worksheet.Cells[row, 15].Value != null) note = worksheet.Cells[row, 15].Value.ToString().Trim();
+                            if (worksheet.Cells[row, 19].Value != null) expireDay= int.Parse(worksheet.Cells[row, 19].Value.ToString().Trim());
+
+                            var catId = await _categoryService.GetCode(worksheet.Cells[row, 7].Value.ToString().Trim());
+                            var depId = await _departmentService.GetCode(worksheet.Cells[row, 10].Value.ToString().Trim());
+
+
+                            if (catId == null ) return importResponse.Msg = $"Dòng {row} trong sheet {worksheet.Name} có mã loại không tồn tại";
+
+                            if (worksheet.Cells[row, 16].Value == null || worksheet.Cells[row, 18].Value == null)
+                            {
+                                if(worksheet.Cells[row, 16].Value == null && worksheet.Cells[row,18].Value != null)
+                                {
+                                    createAssetsDtos.Add(new CreateAssetsDto
+                                    {
+
+                                        //Id = Guid.Parse(worksheet.Cells[row, 1].Value.ToString().Trim()),
+                                        AssetId = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                                        AssetName = worksheet.Cells[row, 2].Value.ToString().Trim(),
+                                        OrderNumber = orNum,
+                                        SeriNumber = seri,
+                                        Price = price,
+                                        Supplier = supplier,
+                                        AssetsCategoryId = catId.Id,
+                                        AssetSubCategory = worksheet.Cells[row, 8].Value.ToString().Trim(),
+                                        Quantity = int.Parse(worksheet.Cells[row, 9].Value.ToString().Trim()),
+                                        AssetsDepartmentId = depId.Id,
+                                        Customer = customer,
+                                        Manager = worksheet.Cells[row, 12].Value.ToString().Trim(),
+                                        AssetsStatusId = int.Parse(worksheet.Cells[row, 13].Value.ToString().Trim()),
+                                        Spec = spec,
+                                        Note = note,
+                                        Active = true,
+                                        DateCreated = DateTime.Now,
+                                        DateChecked = DateTime.ParseExact(worksheet.Cells[row, 17].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                                        DateBuyed = DateTime.ParseExact(worksheet.Cells[row, 18].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                                        ExpireDay = expireDay,
+                                    });
+                                }
+                                else if(worksheet.Cells[row, 16].Value != null && worksheet.Cells[row, 18].Value == null)
+                                {
+                                    createAssetsDtos.Add(new CreateAssetsDto
+                                    {
+
+                                        //Id = Guid.Parse(worksheet.Cells[row, 1].Value.ToString().Trim()),
+                                        AssetId = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                                        AssetName = worksheet.Cells[row, 2].Value.ToString().Trim(),
+                                        OrderNumber = orNum,
+                                        SeriNumber = seri,
+                                        Price = price,
+                                        Supplier = supplier,
+                                        AssetsCategoryId = catId.Id,
+                                        AssetSubCategory = worksheet.Cells[row, 8].Value.ToString().Trim(),
+                                        Quantity = int.Parse(worksheet.Cells[row, 9].Value.ToString().Trim()),
+                                        AssetsDepartmentId = depId.Id,
+                                        Customer = customer,
+                                        Manager = worksheet.Cells[row, 12].Value.ToString().Trim(),
+                                        AssetsStatusId = int.Parse(worksheet.Cells[row, 13].Value.ToString().Trim()),
+                                        Spec = spec,
+                                        Note = note,
+                                        Active = true,
+                                        DateCreated = DateTime.Now,
+                                        DateUsed = DateTime.ParseExact(worksheet.Cells[row, 16].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                                        DateChecked = DateTime.ParseExact(worksheet.Cells[row, 17].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                                        ExpireDay = expireDay,
+                                    });
+                                }
+                                else if (worksheet.Cells[row, 16].Value == null && worksheet.Cells[row, 18].Value == null)
+                                {
+                                    createAssetsDtos.Add(new CreateAssetsDto
+                                    {
+
+                                        //Id = Guid.Parse(worksheet.Cells[row, 1].Value.ToString().Trim()),
+                                        AssetId = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                                        AssetName = worksheet.Cells[row, 2].Value.ToString().Trim(),
+                                        OrderNumber = orNum,
+                                        SeriNumber = seri,
+                                        Price = price,
+                                        Supplier = supplier,
+                                        AssetsCategoryId = catId.Id,
+                                        AssetSubCategory = worksheet.Cells[row, 8].Value.ToString().Trim(),
+                                        Quantity = int.Parse(worksheet.Cells[row, 9].Value.ToString().Trim()),
+                                        AssetsDepartmentId = depId.Id,
+                                        Customer = customer,
+                                        Manager = worksheet.Cells[row, 12].Value.ToString().Trim(),
+                                        AssetsStatusId = int.Parse(worksheet.Cells[row, 13].Value.ToString().Trim()),
+                                        Spec = spec,
+                                        Note = note,
+                                        Active = true,
+                                        DateCreated = DateTime.Now,
+                                        DateChecked = DateTime.ParseExact(worksheet.Cells[row, 17].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                                        ExpireDay = expireDay,
+                                    });
+                                }
+                            }
+                            else
+                            {
+                                createAssetsDtos.Add(new CreateAssetsDto
+                                {
+
+                                    //Id = Guid.Parse(worksheet.Cells[row, 1].Value.ToString().Trim()),
+                                    AssetId = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                                    AssetName = worksheet.Cells[row, 2].Value.ToString().Trim(),
+                                    OrderNumber = orNum,
+                                    SeriNumber = seri,
+                                    Price = price,
+                                    Supplier = supplier,
+                                    AssetsCategoryId = catId.Id,
+                                    AssetSubCategory = worksheet.Cells[row, 8].Value.ToString().Trim(),
+                                    Quantity = int.Parse(worksheet.Cells[row, 9].Value.ToString().Trim()),
+                                    AssetsDepartmentId = depId.Id,
+                                    Customer = customer,
+                                    Manager = worksheet.Cells[row, 12].Value.ToString().Trim(),
+                                    AssetsStatusId = int.Parse(worksheet.Cells[row, 13].Value.ToString().Trim()),
+                                    Spec = spec,
+                                    Note = note,
+                                    Active = true,
+                                    DateCreated = DateTime.Now,
+                                    DateUsed = DateTime.ParseExact(worksheet.Cells[row, 16].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                                    DateChecked = DateTime.ParseExact(worksheet.Cells[row, 17].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                                    DateBuyed = DateTime.ParseExact(worksheet.Cells[row, 18].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                                    ExpireDay = expireDay,
+                                });
+
+                            }
+
+                        }
+
+                    }
+                    foreach (var item in createAssetsDtos)
+                    {
+                        await _assetService.InsertAsset(item);
+                    }
+
+                }
+            }
+            
+
+
+            return importResponse.Msg = "Import Success";
+        }
     }
 }

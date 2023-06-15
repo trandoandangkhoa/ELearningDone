@@ -134,7 +134,11 @@ namespace WebLearning.Application.ELearning.Services
 
         public async Task<PagedViewModel<QuizMonthlyDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest)
         {
-            var pageResult = _configuration.GetValue<float>("PageSize:QuizMonthly");
+            if (getListPagingRequest.PageSize == 0)
+            {
+                getListPagingRequest.PageSize = Convert.ToInt32(_configuration.GetValue<float>("PageSize:QuizMonthly"));
+            }
+            var pageResult = getListPagingRequest.PageSize;
 
             var pageCount = Math.Ceiling(_context.QuizMonthlies.Count() / (double)pageResult);
 

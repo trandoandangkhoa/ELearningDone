@@ -17,20 +17,20 @@ namespace WebLearning.Api.Controllers
             _configuration = configuration;
             _emailSender = emailSender;
         }
-        [HttpPost("MailsWeeklyInMonth")]
-        public async Task<IActionResult> Send(string emailAccount)
-        {
-            //var baseAddress = _configuration.GetValue<string>("BaseAddressChangeTime");
+        //[HttpPost("MailsWeeklyInMonth")]
+        //public async Task<IActionResult> Send(string emailAccount)
+        //{
+        //    //var baseAddress = _configuration.GetValue<string>("BaseAddressChangeTime");
 
-            //var emailAdmin = _configuration.GetValue<string>("EmailConfiguration:From");
+        //    //var emailAdmin = _configuration.GetValue<string>("EmailConfiguration:From");
 
 
 
-            //var message = new Message(new string[] { $"{emailAccount}" }, "THÔNG BÁO DỜI LỊCH", $"{body}");
+        //    //var message = new Message(new string[] { $"{emailAccount}" }, "THÔNG BÁO DỜI LỊCH", $"{body}");
 
-            //_emailSender.ReplyEmail(message, emailAdmin, "sasas", emailAccount);
+        //    //_emailSender.ReplyEmail(message, emailAdmin, "sasas", emailAccount);
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
     }
 }

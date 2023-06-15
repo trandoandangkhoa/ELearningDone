@@ -1,0 +1,436 @@
+﻿@using WebLearning.Application.Ultities
+@using WebLearning.Contract.Dtos.Assets;
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model PagedViewModel<AssetsDto>
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css">
+
+}
+<style>
+    #catList, #subList, #depList, #subList {
+        display: table;
+        clear: both;
+        width:100%;
+        table-layout: fixed;
+    }
+
+    #datatable .nameasset:hover {
+        color: #bf040a;
+        font-size:13px;
+        font-weight:bold;
+    }
+
+    input[type=file] {
+        width: 100%;
+        max-width: 100%;
+        color: #444;
+        background: #fff;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        border: 0.25px solid #555;
+    }
+    input[type=file]::file-selector-button {
+        border: none;
+        background: #bf040a;
+        color: #fff;
+        padding:5px;
+        cursor: pointer;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        transition: background .2s ease-in-out;
+    }
+
+    input[type=file]::file-selector-button:hover {
+                background: #790001;
+    }
+
+    #formGetData >.btn-group{
+        margin-left:5px;
+    }
+    .dropdown-menu{
+        padding:10px;
+    }
+</style>
+@{
+    int i = 0;
+
+}
+<div class="row" id="assetContainer">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><a href="./"><i class="fa fa-home"></i> Trang chủ </a>| Tài sản<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li>
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class=" col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2><i class="fa fa-filter"></i> Bộ lọc <small></small> <a class="collapse-link"><i class="fa fa-chevron-up"></i></a></h2>
+
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+@*                        <form asp-action="Index" method="get" id="form">
+                            
+
+                            <div class="form-group" id="filterContainer">
+                                <div>
+                                    <h2>Loại</h2>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        @foreach (var cat in Model.CheckBox.AssetsCategoryDtos)
+                                        {
+
+                                            i = i + 1;
+                                            <div style="float:left;max-width:50%;inline-size: 200px;overflow-wrap: break-word;margin:auto;display:flex">
+                                                <input type="checkbox" name="assetsCategoryId" class="checkBoxFilter" value="@cat.Id" data-mahh="@i" id="catCheckBox_@cat.Id">
+                                                <div style="margin-left:5px">@cat.Name</div>
+
+                                            </div>
+
+                                        }
+                                    </div>
+                                    <div class="clearfix"></div>
+
+                                </div>
+                               
+                                <div>
+                                    <h2>Bộ phận: </h2>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        @foreach (var dep in Model.CheckBox.AssetsDepartmentDtos)
+                                        {
+                                            i = i +1;
+
+                                            <div style="float:left;max-width:50%;inline-size: 200px;overflow-wrap: break-word;margin:auto;display:flex">
+                                                <input type="checkbox" name="assetsDepartmentId" class="checkBoxFilter" value="@dep.Id" data-mahh="@i" id="depCheckBox_@dep.Id">
+                                                <div style="margin-left:5px">@dep.Name</div>
+
+                                            </div>
+
+                                        }
+
+                                    </div>
+                                    <div class="clearfix"></div>
+
+                                </div>
+                                <div>
+                                    <h2>Trạng thái: </h2>
+                                    <div>
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            @foreach( var stt in Model.CheckBox.AssetsStatusDtos)
+                                            {
+                                                i = i + 1;
+
+                                                <div style="float:left;max-width:50%;inline-size: 200px;overflow-wrap: break-word;margin:auto;display:flex">
+                                                    <input type="checkbox" name="assetsStatusId" class="checkBoxFilter" value="@stt.Id" data-mahh="@i" id="sttCheckBox_@stt.Id">
+                                                    <div style="margin-left:5px">@stt.Name</div>
+
+                                                </div>
+
+                                            }
+                                        </div>
+
+                                    </div>
+                                    <div class="clearfix"></div>
+
+                                </div>
+
+                            </div>
+
+                        </form>*@
+
+
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+
+                <div id="assetList">
+                    <form asp-action="Index" method="get">
+                        <div class="col-md-6 col-sm-6 col-xs-12 form-group pull-right top_search">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Từ khóa..." name="keyword" value="@TempData["Keyword"]">
+
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit">Tìm kiếm!</button>
+                                    <a class="btn btn-default" href="/tai-san.html">Reset</a>
+
+                                </span>
+                            </div>
+                            <strong style="color:red">Có @Model.Items.Count()/@Model.TotalItems kết quả</strong>
+
+                        </div>
+                    </form>
+                        @{
+                            var row = Model.Items.Count() + 1;
+                        }
+                    <div class="table-responsive" style="height:580px;overflow-y:auto">
+
+                        
+                            <table class="table table-striped table-bordered bulk_action" id="tabel">
+                                <thead>
+                                    <tr style="position:sticky;top:0;background-color:whitesmoke">
+                                    <th>
+                                        <input type="checkbox" id="check-all" name="checkAllBoxTable" class="checkAllBoxTable" onclick='checkUncheck(this)' />
+                                    </th>
+                                    <th class="multiaction" colspan="9" align="center">
+                                        <form asp-action="Index" method="get" id="formGetData" class="btn-group">
+                                            <div class="btn-group">
+                                                <label>
+                                                    Hiển thị
+                                                </label>
+                                                <label>
+                                                    <select aria-controls="datatable" asp-for="@Model.PageSize" onchange="this.form.submit()">
+
+                                                        <option value="10">10</option>
+                                                        <option value="25">25</option>
+                                                        <option value="50">50</option>
+                                                        <option value="100">100</option>
+                                                    </select>
+                                                </label> dòng
+                                            </div>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-database"></i> Loại</button>
+                                                <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="col-md-12 col-sm-12 col-xs-12 dropdown-menu" role="menu" style="min-width:430px">
+                                                    @foreach (var cat in Model.CheckBox.AssetsCategoryDtos)
+                                                    {
+                                                        i = i + 1;
+                                                        <li style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14px">
+
+
+                                                            <input type="checkbox" name="assetsCategoryId" class="checkBoxFilter" value="@cat.Id" data-mahh="@i" id="catCheckBox_@cat.Id" onclick="this.form.submit()">
+                                                            <div style="margin-left:5px">@cat.Name</div>
+
+                                                        </li>
+                                                    }
+
+
+                                                </ul>
+                                            </div>
+
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-building"></i> Bộ phận</button>
+                                                <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu col-md-12 col-sm-12 col-xs-12" role="menu" style="min-width:430px">
+                                                    @foreach (var dep in Model.CheckBox.AssetsDepartmentDtos)
+                                                    {
+                                                        i = i + 1;
+                                                        <li style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14px">
+
+
+                                                            <input type="checkbox" name="assetsDepartmentId" class="checkBoxFilter" value="@dep.Id" data-mahh="@i" id="depCheckBox_@dep.Id" onclick="this.form.submit()">
+                                                            <div style="margin-left:5px">@dep.Name</div>
+
+                                                        </li>
+                                                    }
+
+                                                </ul>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-gears"></i> Tình trạng</button>
+                                                <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu col-md-12 col-sm-12 col-xs-12" role="menu" style="min-width:430px">
+                                                    @foreach (var stt in Model.CheckBox.AssetsStatusDtos)
+                                                    {
+                                                        i = i + 1;
+                                                        <li style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14px">
+
+                                                            <input type="checkbox" name="assetsStatusId" class="checkBoxFilter" value="@stt.Id" data-mahh="@i" id="sttCheckBox_@stt.Id" onclick="this.form.submit()">
+                                                            <div style="margin-left:5px">@stt.Name</div>
+
+                                                        </li>
+                                                    }
+
+                                                </ul>
+                                            </div>
+                                            <div class="btn-group" >
+                                                <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-flag"></i> Hoạt động</button>
+                                                <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14px">
+                                                            <input type="checkbox" class="checkBoxFilter" data-mahh="checkBoxFilter" value="true" name="disable" onclick="this.form.submit()" />
+                                                            <div style="margin-left:5px">Không</div>
+
+                                                    </li>
+
+
+                                                </ul>
+                                            </div>  
+                                        </form>
+                                        <div class="btn-group" style="margin:auto">
+                                            <a class="btn btn-xs btn-primary"><i class="fa fa-plus"></i> Thêm mới</a>
+
+                                        </div>
+                                       
+                                        <div class="btn-group" style="margin:auto">
+                                            <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-reorder"></i> Thao tác nhiều</button>
+                                            <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li>
+                                                    <a onclick='moveAll()'><i class="fa fa-paper-plane-o"></i> Điều chuyển tất cả</a>
+                                                </li>
+                                                <li>
+                                                    <a onclick='deleteAll()'><i class="fa fa-trash"></i> Xóa tất cả</a>
+                                                </li>
+                                                <li>
+                                                    <a onclick='updateAll()'><i class="fa fa-edit"></i> Cập nhật tất cả</a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-upload"></i> Nhập dữ liệu</button>
+
+
+                                        </div>
+                                        <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog modal-sm">
+                                                <div class="modal-content">
+                                                    <form asp-action="Import" asp-controller="Import" method="post" enctype="multipart/form-data" id="formUpload">
+
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">×</span>
+                                                            </button>
+                                                            <h4 class="modal-title" id="myModalLabel2">
+                                                                Nhập dữ liệu tài sản
+                                                            </h4>
+                                                        </div>
+
+                                                        <div class="modal-body">
+                                                            <h4>Upload file Excel</h4>
+                                                            <div class="input-group">
+                                                                <input type="file" name="formFile">
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                                                            <button type="submit" class="btn btn-primary">Tải lên</button>
+                                                        </div>
+                                                    </form>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-download"></i> Xuất dữ liệu</button>
+
+
+                                        </div>
+                                    </th>
+
+                                    </tr>
+                                </thead>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Id</th>
+                                        <th>Tên</th>
+                                        <th>Loại</th>
+                                        <th>Model</th>
+                                        <th>Trạng thái</th>
+                                        <th>Người dùng</th>
+                                        <th>Đơn vị sử dụng</th>
+                                        <th>Trạng thái</th>
+                                        <th class="buttonheader">#</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bodyContainer">
+
+                                    @if (Model.Items != null && Model.Items.Count() > 0)
+                                    {
+                                            @foreach (var item in Model.Items)
+                                            {
+                                            string urlDetail = $"/chi-tiet-tai-san/{item.Id}";
+
+                                                string urlEdit = $"/cap-nhat-tai-san/{item.Id}";
+                                                string urlDelete = $"/xoa-tai-san/{item.Id}";
+                                            <tr class="rowContainer" id="rowContainer-@item.Id">
+                                                <td class="a-center">
+                                                    <input type="checkbox" class="checkBoxTable" name="table_records" value="@item.Id" data-mahh="@item.Id">
+                                                </td>
+                                                <td>@item.Id</td>
+                                                <td><a class="nameasset" href="@urlDetail">@item.AssetName</a></td>
+                                                <td>@item.AssetsCategoryDto.Name</td>
+                                                <td>
+                                                        @item.AssetSubCategory
+                                                </td>
+                                                <td>
+                                                    @if (item.Active == true)
+                                                    {
+                                                        <span class="label label-success">Active</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="label label-danger">Disable</span>
+
+                                                    }
+                                                </td>
+                                                <td>@item.Customer</td>
+                                                <td>@item.AssetsDepartmentDto.Name</td>
+                                                <td>@item.AssetsStatusDto.Name</td>
+
+                                                <td class="columnButtonCon">
+                                                    <div class="buttonTable" id="buttonTable-@item.Id">
+                                                        <a href="@urlDetail" class="btn btn-primary btn-xs"><i class="fa fa-folder"></i> Chi tiết </a>
+                                                        <a href="@urlEdit" class="btn btn-success btn-xs" id="moveAssets"><i class="fa fa-paper-plane-o"></i> Điều chuyển</a>
+                                                        <a href="@urlDelete" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Xóa </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            }
+
+                                        }
+                                    else
+                                    {
+                                    <tr><td valign="top" colspan="12" class="dataTables_empty">Không có dữ liệu</td></tr>
+
+                                    }
+ 
+
+                                </tbody>
+
+
+                            </table>
+
+                    </div>
+
+                @await Component.InvokeAsync("Pager" , Model)
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts{
+    <script src="~/src/js/asset.js"></script>
+}
+
+
+

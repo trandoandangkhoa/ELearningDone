@@ -22,15 +22,15 @@ namespace WebLearning.AppUser.Controllers
             return a;
         }
         [HttpPost]
-        public async Task<IActionResult> CreateRoom(CreateRoomDto createRoomDto)
+        public Task<IActionResult> CreateRoom(CreateRoomDto createRoomDto)
         {
             var a = _roomService.InsertRoom(createRoomDto);
 
-            if (a == null) { _notyf.Error("Thêm không thành công"); return Redirect("/admin.html"); };
+            if (a == null) { _notyf.Error("Thêm không thành công"); return Task.FromResult<IActionResult>(Redirect("/admin.html")); };
 
             _notyf.Success("Thêm thành công");
 
-            return Redirect("/admin.html");
+            return Task.FromResult<IActionResult>(Redirect("/admin.html"));
         }
     }
 }

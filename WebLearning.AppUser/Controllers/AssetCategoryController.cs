@@ -52,7 +52,7 @@ namespace WebLearning.AppUser.Controllers
             //{
             //    return Redirect("/dang-nhap.html");
             //}
-            var allCourse = await _assetCategoryService.GetAllAssetsCategories();
+            var allCourse = await _assetCategoryService.GetAllAssetsCategory();
 
             List<SelectListItem> list = new();
 
@@ -83,7 +83,7 @@ namespace WebLearning.AppUser.Controllers
         }
         [HttpPost]
         [Route("/tao-moi-loai-tai-san.html")]
-        public async Task<IActionResult> Create(CreateAssetCategoryDto createAssetCategoryDto)
+        public async Task<IActionResult> Create(CreateAssetsCategoryDto createAssetCategoryDto)
         {
             var token = HttpContext.Session.GetString("Token");
 

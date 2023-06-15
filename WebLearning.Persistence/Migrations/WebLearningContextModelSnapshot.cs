@@ -232,10 +232,16 @@ namespace WebLearning.Persistence.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
                     b.Property<string>("AssetId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AssetName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AssetSubCategory")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("AssetsCategoryId")
@@ -247,17 +253,32 @@ namespace WebLearning.Persistence.Migrations
                     b.Property<int>("AssetsStatusId")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("AssetsSubCategoryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Customer")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateBuyed")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateChecked")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateUsed")
+                    b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateExpired")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateMoved")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateRepaired")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateUsed")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ExpireDay")
+                        .HasColumnType("int");
 
                     b.Property<string>("Manager")
                         .HasColumnType("nvarchar(max)");
@@ -265,10 +286,25 @@ namespace WebLearning.Persistence.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OrderNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Price")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<string>("RepairLocation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SeriNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Spec")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Supplier")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -330,28 +366,6 @@ namespace WebLearning.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AssetsStatus", (string)null);
-                });
-
-            modelBuilder.Entity("WebLearning.Domain.Entites.AssetsSubCategory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AssetsCategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SubCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssetsCategoryId");
-
-                    b.ToTable("AssetsSubCategory", (string)null);
                 });
 
             modelBuilder.Entity("WebLearning.Domain.Entites.Avatar", b =>
@@ -1476,17 +1490,6 @@ namespace WebLearning.Persistence.Migrations
                     b.Navigation("AssetsStatus");
                 });
 
-            modelBuilder.Entity("WebLearning.Domain.Entites.AssetsSubCategory", b =>
-                {
-                    b.HasOne("WebLearning.Domain.Entites.AssetsCategory", "AssetsCategory")
-                        .WithMany("SubCategories")
-                        .HasForeignKey("AssetsCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AssetsCategory");
-                });
-
             modelBuilder.Entity("WebLearning.Domain.Entites.Avatar", b =>
                 {
                     b.HasOne("WebLearning.Domain.Entites.Account", "Account")
@@ -1728,8 +1731,6 @@ namespace WebLearning.Persistence.Migrations
             modelBuilder.Entity("WebLearning.Domain.Entites.AssetsCategory", b =>
                 {
                     b.Navigation("Assests");
-
-                    b.Navigation("SubCategories");
                 });
 
             modelBuilder.Entity("WebLearning.Domain.Entites.AssetsDepartment", b =>

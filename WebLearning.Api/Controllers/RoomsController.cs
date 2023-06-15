@@ -78,17 +78,17 @@ namespace WebLearning.Api.Controllers
 
         // DELETE: api/Doctors/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDoctor(int id)
+        public Task<IActionResult> DeleteDoctor(int id)
         {
             try
             {
-                var doctor = _roomService.DeleteRoom(id);
-                return Ok();
+                var doctor =  _roomService.DeleteRoom(id);
+                return Task.FromResult<IActionResult>(Ok());
 
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return Task.FromResult<IActionResult>(BadRequest(e.Message));
             }
 
         }

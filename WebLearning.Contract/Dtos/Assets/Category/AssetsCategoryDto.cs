@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WebLearning.Contract.Dtos.Assets.SubCategory;
 
 namespace WebLearning.Contract.Dtos.Assets.Category
 {
@@ -15,7 +14,6 @@ namespace WebLearning.Contract.Dtos.Assets.Category
 
         public string Name { get; set; }
 
-        public ICollection<AssetsSubCategoryDto> AssetsSubCategoryDtos { get; set; }
 
         public ICollection<AssetsDto> AssetsDtos { get; set; }
     }

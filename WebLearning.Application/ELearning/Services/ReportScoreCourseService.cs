@@ -60,7 +60,11 @@ namespace WebLearning.Application.ELearning.Services
 
         public async Task<PagedViewModel<ReportScoreCourseExport>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest)
         {
-            var pageResult = _configuration.GetValue<float>("PageSize:ReportScoreCourse");
+            if (getListPagingRequest.PageSize == 0)
+            {
+                getListPagingRequest.PageSize = Convert.ToInt32(_configuration.GetValue<float>("PageSize:ReportScoreCourse"));
+            }
+            var pageResult = getListPagingRequest.PageSize;
             var pageCount = Math.Ceiling(_context.ReportUserScoreFinals.Count() / (double)pageResult);
             var query = _context.ReportUserScoreFinals.AsQueryable();
             if (!string.IsNullOrEmpty(getListPagingRequest.Keyword))

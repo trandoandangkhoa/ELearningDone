@@ -65,9 +65,9 @@ namespace WebLearning.Application.ELearning.Services
 
             var allCourse = await _context.Courses.Where(x => x.Active == true).Include(x => x.CourseImageVideo).Include(x => x.QuizCourse).Include(x => x.CourseRoles).OrderByDescending(x => x.DateCreated).AsNoTracking().ToListAsync();
 
-            var allLession = await _context.Lessions.Include(x => x.Courses).Include(x => x.LessionVideoImages).Include(x => x.Quizzes).Include(x => x.OtherFileUploads).AsNoTracking().ToListAsync();
+            var allLession = await _context.Lessions.Include(x => x.LessionVideoImages).Include(x => x.Quizzes).AsNoTracking().ToListAsync();
 
-            var allQuizMonthly = await _context.QuizMonthlies.Where(x => x.Active == true).Include(x => x.Role).OrderByDescending(x => x.DateCreated).AsNoTracking().ToListAsync();
+            var allQuizMonthly = await _context.QuizMonthlies.Where(x => x.Active == true).OrderByDescending(x => x.DateCreated).AsNoTracking().ToListAsync();
 
             var allCourseDto = _mapper.Map<List<CourseDto>>(allCourse);
 

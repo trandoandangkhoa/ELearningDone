@@ -16,8 +16,6 @@ namespace WebLearning.Domain.Entites
 
         public string Name { get; set; }
 
-        public ICollection<AssetsSubCategory> SubCategories { get; set; }
-
         public ICollection<Assests> Assests { get; set; }
 
     }

@@ -30,10 +30,15 @@
     <link href="~/vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet" />
     <!-- bootstrap-daterangepicker -->
     <link href="~/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
-
+    <link href="~/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="~/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+    <link href="~/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+    <link href="~/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+    <link href="~/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="~/vendors/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet">
     <link href="~/vendors/fullcalendar/dist/fullcalendar.print.css" rel="stylesheet" media="print">
+    <link href="~/vendors/switchery/dist/switchery.min.css" rel="stylesheet">
 
     <link href="~/build/css/custom.min.css" rel="stylesheet">
     <link href="~/booking/themes/month_calender.css" type="text/css" rel="stylesheet" />
@@ -45,6 +50,7 @@
     <link rel="stylesheet" href="~/booking/themes/modal_flat.css" type="text/css">
     <link rel="stylesheet" href="~/booking/themes/modal_rounded.css" type="text/css">
 
+    <link href="~/vendors/dropzone/dist/min/dropzone.min.css" rel="stylesheet">
 
     @await RenderSectionAsync("Styles", required: false)
     @await RenderSectionAsync("metatags", required: false)
@@ -56,10 +62,12 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
             crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"
-            integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"></script>
+    <style>
+        .datatables_length, .dataTables_info, .dataTables_paginate {
+            display: none;
+        }
+    </style>
+
 </head>
 
 <body class="nav-md" >
@@ -240,6 +248,21 @@
     <!-- Skycons -->
     <script src="~/vendors/skycons/skycons.js"></script>
     <!-- Flot -->
+    <script src="~/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script src="~/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+    <script src="~/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+    <script src="~/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="~/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+    <script src="~/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+    <script src="~/vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
+    <script src="~/vendors/jszip/dist/jszip.min.js"></script>
+    <script src="~/vendors/pdfmake/build/pdfmake.min.js"></script>
+    <script src="~/vendors/pdfmake/build/vfs_fonts.js"></script>
     <script src="~/vendors/Flot/jquery.flot.js"></script>
     <script src="~/vendors/Flot/jquery.flot.pie.js"></script>
     <script src="~/vendors/Flot/jquery.flot.time.js"></script>
@@ -272,9 +295,18 @@
     <script src="~/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
     <!-- bootstrap-datetimepicker -->
     <script src="~/vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/vendors/dropzone/dist/min/dropzone.min.js"></script>
+    <script src="~/vendors/validator/validator.js"></script>
+    <script src="~/vendors/switchery/dist/switchery.min.js"></script>
 
     <script>
         $('#myDatepicker').datetimepicker();
+        $('#dateUsed').datetimepicker();
+        $('#dateMoved').datetimepicker();
+
+        $('#dateChecked').datetimepicker();
+        $('#dateBuyed').datetimepicker();
+        $('#dateRepaired').datetimepicker();
 
         $('#toDate').datetimepicker();
 
@@ -304,7 +336,7 @@
         $("#datetimepicker7").on("dp.change", function (e) {
             $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
         });
-        
+
     </script>
     @*    <script src="~/js/site.js" asp-append-version="true"></script>
     *@    @await Component.InvokeAsync("Notyf")

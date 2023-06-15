@@ -112,9 +112,7 @@ namespace WebLearning.Api.Controllers
 
             return StatusCode(StatusCodes.Status200OK, result);
         }
-        /// <summary>
-        /// Tạo thời gian trống cho từng phòng
-        /// </summary>
+
         // POST: api/Appointments
         //[HttpPost]
         //public async Task<ActionResult<AppointmentSlot>> PostAppointmentSlot(AppointmentSlot appointmentSlot)

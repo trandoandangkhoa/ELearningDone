@@ -93,7 +93,13 @@ namespace WebLearning.Application.ELearning.Services
         }
         public async Task<PagedViewModel<AccountDto>> GetPaging(GetListPagingRequest getListPagingRequest)
         {
-            var pageResult = _configuration.GetValue<float>("PageSize:Account");
+            if (getListPagingRequest.PageSize == 0)
+            {
+                getListPagingRequest.PageSize = Convert.ToInt32(_configuration.GetValue<float>("PageSize:Account"));
+            }
+            var pageResult = getListPagingRequest.PageSize;
+            
+            
             var pageCount = Math.Ceiling(_context.Accounts.Count() / (double)pageResult);
             var query = _context.Accounts.AsQueryable();
             if (!string.IsNullOrEmpty(getListPagingRequest.Keyword))
@@ -150,7 +156,7 @@ namespace WebLearning.Application.ELearning.Services
         }
         public async Task<AccountDto> GetNameUser(string accountName)
         {
-            return _mapper.Map<AccountDto>(await _context.Accounts.Include(x => x.AccountDetail).Include(x => x.Role).FirstOrDefaultAsync(x => x.Email.Equals(accountName)));
+            return _mapper.Map<AccountDto>(await _context.Accounts.Include(x => x.AccountDetail).Include(x => x.Role).AsNoTracking().FirstOrDefaultAsync(x => x.Email.Equals(accountName)));
         }
         public async Task<UserAllInformationDto> GetUserByKeyWord(string keyword)
         {
@@ -171,7 +177,7 @@ namespace WebLearning.Application.ELearning.Services
                 LessionDtos = _mapper.Map<List<LessionDto>>(await _context.Lessions.Include(x => x.Courses).Include(x => x.LessionVideoImages).Include(x => x.Quizzes).Include(x => x.OtherFileUploads).OrderByDescending(x => x.DateCreated).ToListAsync()),
                 QuizCourseDtos = _mapper.Map<List<QuizCourseDto>>(_context.QuizCourses.Include(x => x.Course).ThenInclude(x => x.CourseRoles).Include(x => x.QuestionFinals).AsQueryable()),
                 QuizlessionDtos = _mapper.Map<List<QuizlessionDto>>(_context.QuizLessions.Include(x => x.Lession).Include(x => x.QuestionLessions).AsQueryable()),
-                QuizMonthlyDtos = _mapper.Map<List<QuizMonthlyDto>>(_context.QuizMonthlies.Include(x => x.QuestionMonthlies).AsQueryable()),
+                QuizMonthlyDtos = _mapper.Map<List<QuizMonthlyDto>>(_context.QuizMonthlies.Include(x => x.QuestionMonthlies).Where(x => x.RoleId.Equals(account.RoleId) && x.Active == true).AsQueryable()),
                 ReportScoreCourseDtos = _mapper.Map<List<ReportScoreCourseDto>>(_context.ReportUserScoreFinals.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).AsQueryable()),
                 ReportScoreLessionDtos = _mapper.Map<List<ReportScoreLessionDto>>(_context.ReportUsersScore.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).AsQueryable()),
                 ReportScoreMonthlyDtos = _mapper.Map<List<ReportScoreMonthlyDto>>(_context.ReportUserScoreMonthlies.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).AsQueryable()),

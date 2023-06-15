@@ -53,7 +53,7 @@ namespace WebLearning.Application.Assets.Services
 
         public async Task<IEnumerable<AssetsDepartmentDto>> GetAssetsDepartment()
         {
-            var asset = await _context.AssetsDepartments.Include(x => x.Assests).OrderByDescending(x => x.Code).AsNoTracking().ToListAsync();
+            var asset = await _context.AssetsDepartments.OrderByDescending(x => x.Code).AsNoTracking().ToListAsync();
             var assetDto = _mapper.Map<List<AssetsDepartmentDto>>(asset);
             return assetDto;
         }
@@ -67,14 +67,16 @@ namespace WebLearning.Application.Assets.Services
 
         public async Task<AssetsDepartmentDto> GetCode(string code)
         {
-            var asset = await _context.AssetsDepartments.Include(x => x.Assests).FirstOrDefaultAsync(x => x.Code == code);
+            var asset = await _context.AssetsDepartments.Include(x => x.Assests).FirstOrDefaultAsync(x => x.Code.Contains(code));
 
             return _mapper.Map<AssetsDepartmentDto>(asset);
         }
 
-        public Task<AssetsDepartmentDto> GetName(string name)
+        public async Task<AssetsDepartmentDto> GetName(string name)
         {
-            throw new NotImplementedException();
+            var asset = await _context.AssetsDepartments.Include(x => x.Assests).FirstOrDefaultAsync(x => x.Name.Contains(name));
+
+            return _mapper.Map<AssetsDepartmentDto>(asset);
         }
 
         public async Task<PagedViewModel<AssetsDepartmentDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest)
@@ -109,7 +111,6 @@ namespace WebLearning.Application.Assets.Services
 
         public async Task InsertAssetsDepartment(CreateAssetsDepartmentDto createAssetsDepartmentDto)
         {
-            createAssetsDepartmentDto.Id = Guid.NewGuid();
             string s = _configuration.GetValue<string>("Code:AssetsDepartment");
 
 

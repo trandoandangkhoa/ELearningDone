@@ -11,7 +11,6 @@ using WebLearning.Application.Helper;
 using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos.Assets;
 using WebLearning.Contract.Dtos.Assets.Category;
-using WebLearning.Contract.Dtos.Assets.SubCategory;
 using WebLearning.Contract.Dtos.BookingCalender.Room;
 using WebLearning.Contract.Dtos.Role;
 using WebLearning.Domain.Entites;
@@ -23,7 +22,7 @@ namespace WebLearning.Application.Assets.Services
     {
         Task<IEnumerable<AssetsCategoryDto>> GetAssetsCategory();
         Task<AssetsCategoryDto> GetAssetsCategoryById(Guid id);
-        Task InsertAssetsCategory(CreateAssetCategoryDto createAssetCategoryDto);
+        Task InsertAssetsCategory(CreateAssetsCategoryDto createAssetCategoryDto);
         Task<AssetsCategoryDto> GetName(string name);
         Task DeleteAssetsCategory(Guid id);
         Task UpdateAssetsCategory(UpdateAssetsCategoryDto updateAssetsCategoryDto, Guid id);
@@ -55,21 +54,21 @@ namespace WebLearning.Application.Assets.Services
 
         public async Task<IEnumerable<AssetsCategoryDto>> GetAssetsCategory()
         {
-            var asset = await _context.AssetsCategories.Include(x => x.SubCategories).Include(x => x.Assests).OrderByDescending(x => x.CatCode).AsNoTracking().ToListAsync();
+            var asset = await _context.AssetsCategories.OrderByDescending(x => x.CatCode).AsNoTracking().ToListAsync();
             var assetDto = _mapper.Map<List<AssetsCategoryDto>>(asset);
             return assetDto;
         }
 
         public async Task<AssetsCategoryDto> GetAssetsCategoryById(Guid id)
         {
-            var asset = await _context.AssetsCategories.Include(x => x.SubCategories).Include(x => x.Assests).FirstOrDefaultAsync(x => x.Id.Equals(id));
+            var asset = await _context.AssetsCategories.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(id));
 
             return _mapper.Map<AssetsCategoryDto>(asset);
         }
 
         public async Task<AssetsCategoryDto> GetCode(string code)
         {
-            var asset = await _context.AssetsCategories.Include(x => x.SubCategories).Include(x => x.Assests).FirstOrDefaultAsync(x => x.CatCode.Contains(code));
+            var asset = await _context.AssetsCategories.AsNoTracking().FirstOrDefaultAsync(x => x.CatCode.Contains(code));
 
             return _mapper.Map<AssetsCategoryDto>(asset);
         }
@@ -83,7 +82,7 @@ namespace WebLearning.Application.Assets.Services
         {
             var pageResult = _configuration.GetValue<float>("PageSize:AssetsCategory");
             var pageCount = Math.Ceiling(_context.AssetsCategories.Count() / (double)pageResult);
-            var query = _context.AssetsCategories.Include(x => x.SubCategories).Include(x => x.Assests).AsNoTracking().OrderByDescending(x => x.CatCode).AsQueryable();
+            var query = _context.AssetsCategories.Include(x => x.Assests).AsNoTracking().OrderByDescending(x => x.CatCode).AsQueryable();
             if (!string.IsNullOrEmpty(getListPagingRequest.Keyword))
             {
                 query = query.Where(x => x.Name.Contains(getListPagingRequest.Keyword) || x.CatCode.Contains(getListPagingRequest.Keyword));
@@ -97,8 +96,6 @@ namespace WebLearning.Application.Assets.Services
                                         Id = x.Id,
                                         Name = x.Name,
                                         CatCode = x.CatCode,
-                                         AssetsDtos = _mapper.Map<List<AssetsDto>>(x.Assests),
-                                        AssetsSubCategoryDtos = _mapper.Map<List<AssetsSubCategoryDto>>(x.SubCategories),
                                     }).AsNoTracking()
                                     .OrderByDescending(x => x.CatCode).ToListAsync();
             var assetResponse = new PagedViewModel<AssetsCategoryDto>
@@ -111,7 +108,7 @@ namespace WebLearning.Application.Assets.Services
             return assetResponse;
         }
 
-        public async Task InsertAssetsCategory(CreateAssetCategoryDto createAssetCategoryDto)
+        public async Task InsertAssetsCategory(CreateAssetsCategoryDto createAssetCategoryDto)
         {
             createAssetCategoryDto.Id = Guid.NewGuid();
             string s = _configuration.GetValue<string>("Code:AssetsCategory");

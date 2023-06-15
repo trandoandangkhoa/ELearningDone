@@ -1,0 +1,61 @@
+﻿@using WebLearning.Contract.Dtos.Assets;
+@model IEnumerable<HistoryCheckBox>
+@{
+    Layout = null;
+}
+@if(Model != null && Model.Count() > 0)
+{
+    foreach(var item in Model)
+    {
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" class="rb" value="@item.Name" 
+                @if (item.IsChecked == true)
+                {
+                    @:checked
+                } disabled />@item.Name
+            </label>
+        </div>
+        <button onclick="deleteItem()" id="delete" data-mahh="@item.Id">Xóa</button>
+    }
+}
+else
+{
+    <p>Chưa có lịch sử</p>
+}
+<script>
+    function deleteItem(){
+        var icb = $('#delete').attr("data-mahh");
+        $.ajax({
+            url: "/Asset/Remove",
+            type: "POST",
+            dataType: "JSON",
+            data: { id: icb },
+            success: function (result) {
+                if (result.success == true) {
+                    $.ajax({
+                        url: '/lich-su-loc.html',
+                        datatype: "json",
+                        type: "GET",
+                        //data: formData,
+                        success: function (results) {
+                            $("#checkBoxHistory").html("");
+                            $("#checkBoxHistory").html(results);
+                        },
+                        //error: function (xhr) {
+                        //    alert('Vui lòng đăng nhập lại');
+                        //    window.location.href = "/dang-nhap.html"
+                        //}
+                    });
+                }
+                $('.catCheckBox:checked').prop("checked", false)
+                catGroup.style.display = "none";
+
+            },
+            error: function (rs) {
+                alert("error");
+            }
+
+        });
+    }
+</script>
