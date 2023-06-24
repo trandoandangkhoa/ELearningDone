@@ -37,6 +37,10 @@
                         <button class="btn btn-danger btn-xs" style="font-size:14px" id="deletebutton"><i class="fa fa-trash"></i> Xóa</button>
 
                     </div>
+                    <div>
+                        <button class="btn btn-primary btn-xs" style="font-size:14px" id="seemovedetailbutton"><i class="fa fa-history"></i> Lịch sử điều chuyển</button>
+
+                    </div>
                 </div>
 
 
@@ -59,7 +63,7 @@
                             <th>Thông số</th>
                             <th>Số seri</th>
                             <th>Số lượng</th>
-                            <th>Trạng thái</th>
+                            <th>Hoạt động</th>
                             <th>Đơn vị sử dụng</th>
                             <th>Người sử dụng</th>
                             <th>Đơn vị quản lý</th>
@@ -182,7 +186,7 @@
                                 }
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Trạng thái:</label>
+                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Hoạt động:</label>
 
                                 <div class="col-md-8 col-sm-8 col-xs-12">
 
@@ -204,7 +208,7 @@
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Loại Tài sản: <span class="required">*</span></label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <select class="js-example-responsive form-control" style="width: 100%" id="AssetsCategoryId" asp-for="@Model.AssetsCategoryId" asp-items="ViewBag.Cat">
+                                    <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" id="AssetsCategoryId" asp-for="@Model.AssetsCategoryId" asp-items="ViewBag.Cat">
                                     </select>
                                 </div>
 
@@ -302,7 +306,7 @@
                                     Đơn vị sử dụng: <span class="required">*</span>
                                 </label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <select class="js-example-responsive form-control" style="width: 100%" asp-for="@Model.AssetsDepartmentId" asp-items="ViewBag.Dep">
+                                    <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" asp-for="@Model.AssetsDepartmentId" asp-items="ViewBag.Dep">
                                     </select>
                                 </div>
                             </div>
@@ -342,7 +346,7 @@
                                     Tình trạng: <span class="required">*</span>
                                 </label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <select class="js-example-responsive form-control" style="width: 100%" value="@Model.AssetsStatusId" asp-for="@Model.AssetsStatusId" asp-items="ViewBag.Status">
+                                    <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" value="@Model.AssetsStatusId" asp-for="@Model.AssetsStatusId" asp-items="ViewBag.Status">
                                     </select>
                                 </div>
                             </div>
@@ -507,7 +511,7 @@
                                 }
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Trạng thái:</label>
+                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Hoạt động:</label>
 
                                 <div class="col-md-8 col-sm-8 col-xs-12">
 
@@ -529,7 +533,7 @@
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Loại Tài sản: <span class="required">*</span></label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <select class="js-example-responsive form-control" style="width: 100%" id="AssetsCategoryId" asp-for="@Model.AssetsCategoryId" asp-items="ViewBag.Cat">
+                                    <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" id="AssetsCategoryId" asp-for="@Model.AssetsCategoryId" asp-items="ViewBag.Cat">
                                     </select>
                                 </div>
 
@@ -627,7 +631,7 @@
                                     Đơn vị sử dụng: <span class="required">*</span>
                                 </label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <select class="js-example-responsive form-control" style="width: 100%" asp-for="@Model.AssetsDepartmentId" asp-items="ViewBag.Dep">
+                                    <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" asp-for="@Model.AssetsDepartmentId" asp-items="ViewBag.Dep">
                                     </select>
                                 </div>
                             </div>
@@ -667,7 +671,7 @@
                                     Tình trạng: <span class="required">*</span>
                                 </label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <select class="js-example-responsive form-control" style="width: 100%" value="@Model.AssetsStatusId" asp-for="@Model.AssetsStatusId" asp-items="ViewBag.Status">
+                                    <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" value="@Model.AssetsStatusId" asp-for="@Model.AssetsStatusId" asp-items="ViewBag.Status">
                                     </select>
                                 </div>
                             </div>
@@ -786,11 +790,209 @@
             </div>
         </div>
     </div>
+    <div class="col-md-12 col-sm-12 col-xs-12 moveassetContainer" style="display:none">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><i class="fa fa-paper-plane-o"></i> Điều chuyển <small>thông tin chi tiết</small></h2>                     
+
+                <ul class="nav navbar-right panel_toolbox">
+                    <li>
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    
+
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                @if (Model.AssetsMovedsDto != null && Model.AssetsMovedsDto.Count > 0 ){
+                    <div class="col-xs-5">
+                        <button type="button" id="updatemoveasset" class="btn btn-md  btn-warning"> Sửa</button>
+                        <!-- required for floating -->
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs tabs-left">
+
+                            @foreach (var item in Model.AssetsMovedsDto.OrderByDescending(x => x.DateMoved))
+                            {
+                                <li>
+                                    <a href="#@item.Id" data-toggle="tab">@item.DateMoved</a>
+                                </li>
+                            }
+
+                        </ul>
+                    </div>
+
+                    <div class="col-xs-7">
+
+                        <!-- Tab panes -->
+                        <form asp-action="Edit" asp-controller="AssetMoved" method="post">
+
+                            <div class="tab-content">
+                                <div class="tab-pane active">
+                                    @*                            <p class="lead">Home tab</p>
+                                *@
+                                    <p>
+                                        Click từng mục bên trái để xem nội dung
+                                    </p>
+                                </div>
+
+                                @foreach (var item in Model.AssetsMovedsDto.OrderByDescending(x => x.DateMoved))
+                                {
+                                    <div class="tab-pane" id="@item.Id">
+                                        <div class="form-group" hidden>
+                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Id: <span class="required">*</span></label>
+                                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                                <input class="form-control" type="text" aso-for="@item.Id" value="@item.Id" name="IdTemp" readonly="readonly" />
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Mã tài sản: <span class="required">*</span></label>
+                                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                                <input class="form-control" type="text" asp-for="@item.AssetsId" value="@item.AssetsId" name="AssetId" readonly="readonly" required />
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Tên người nhận: <span class="required">*</span></label>
+                                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                                <input class="form-control" type="text" asp-for="@item.Receiver" value="@item.Receiver" name="Receiver" readonly="readonly" required />
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">SĐT người nhận: <span class="required">*</span></label>
+                                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                                <input class="form-control" type="text" asp-for="@item.ReceiverPhoneNumber" value="@item.ReceiverPhoneNumber" required name="ReceiverPhoneNumber" readonly="readonly" />
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">SĐT người chuyển: <span class="required">*</span></label>
+                                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                                <input class="form-control" type="text" asp-for="@item.SenderPhoneNumber" value="@item.SenderPhoneNumber" required name="SenderPhoneNumber" readonly="readonly" />
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Đơn vị sử dụng: <span class="required">*</span></label>
+                                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                                <select required id="AssetsDepartmentId" name="AssetsDepartmentId" asp-for="@item.AssetsDepartmentId" asp-items="ViewBag.Dep" class="selectpicker form-control" data-live-search="true" data-show-subtext="true" data-live-search-style="begins">
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Nội dung: <span class="required">*</span></label>
+                                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                                <input class="form-control" type="text" asp-for="@item.Description" value="@item.Description" required name="Description" readonly="readonly" />
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày dùng: </label>
+                                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                                <div class="input-group date" id="assetMoveDateUsed">
+                                                    <input type="text" class="form-control col-md-10" asp-for="@item.DateUsed" value="@item.DateUsed" name="DateUsed" readonly="readonly" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày chuyển: <span class="required">*</span></label>
+                                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                                <div class="input-group date" id="dateChecked">
+                                                    <input type="text" class="form-control col-md-10" asp-for="@item.DateMoved" value="@item.DateMoved" name="DateMoved" readonly="readonly" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Trạng thái: </label>
+                                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                                @if (item.MovedStatus == 1)
+                                                {
+                                                    <label class="label label-success" style="font-size:12px">@item.AssetsMovedStatusDto.Name</label>
+                                                }
+                                            </div>
+
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <div class="form-group">
+                                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                                <input type="submit" disabled="disabled" id="savechangmoveitem" name="savechangmoveitem" class="btn btn-md btn-success" value="Lưu" />
+                                                @*                                            <a class="btn btn-md btn-danger" href="/chi-tiet-tai-san/{@item.AssetsId}/xoa-dieu-chuyen/{@item.Id}">Xóa</a>
+                                        *@
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                }
+
+                            </div>
+
+                        </form>
+
+                    </div>
+                }else
+                {
+                    <h4>Tài sản chưa được điều chuyển</h4>
+                }
+
+
+                <div class="clearfix"></div>
+
+            </div>
+        </div>
+    </div>
 
 </div>
 
 @section Scripts{
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js" integrity="sha512-NqYds8su6jivy1/WLoW8x1tZMRD7/1ZfhWG/jcRQLOzV1k1rIODCpMgoBnar5QXshKJGV7vi0LXLNXPoFsM5Zg==" crossorigin="anonymous" defer></script>
     <script src="~/src/js/assetdetail.js"></script>
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script>
+        $(function () {
+
+            $("#updatemoveasset").on("click", function () {
+                if (this.innerText == "Cập nhật") {
+                    this.innerText = "Hủy thao tác";
+                    $("[name=Receiver]").removeAttr("readonly");
+                    $("[name=ReceiverPhoneNumber]").removeAttr("readonly");
+                    $("[name=SenderPhoneNumber]").removeAttr("readonly");
+                    $("[name=Description]").removeAttr("readonly");
+                    $("[name=DateUsed]").removeAttr("readonly");
+                    $("#AssetsDepartmentId").attr("disabled", false);
+                    $("[name=savechangmoveitem]").attr("disabled", false);
+
+                }
+                else {
+                    this.innerText = "Cập nhật";
+                    $("[name=Receiver]").attr("readonly", "readonly");
+                    $("[name=Receiver]").attr("readonly", "readonly");
+                    $("[name=ReceiverPhoneNumber]").attr("readonly", "readonly");
+                    $("[name=SenderPhoneNumber]").attr("readonly", "readonly");
+                    $("[name=Description]").attr("readonly", "readonly");
+                    $("[name=DateUsed]").attr("readonly", "readonly");
+                    $("#AssetsDepartmentId").attr("disabled", true);
+                    $("[name=savechangmoveitem]").attr("disabled", true);
+
+
+                }
+            });
+        });
+    </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
 }

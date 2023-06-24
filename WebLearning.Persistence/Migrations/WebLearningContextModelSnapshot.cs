@@ -352,6 +352,69 @@ namespace WebLearning.Persistence.Migrations
                     b.ToTable("AssetsDepartment", (string)null);
                 });
 
+            modelBuilder.Entity("WebLearning.Domain.Entites.AssetsMoved", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AssestsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("AssetsDepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DateMoved")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateUsed")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MovedStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NumBravo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Receiver")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReceiverPhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderPhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssestsId");
+
+                    b.HasIndex("AssetsDepartmentId");
+
+                    b.HasIndex("MovedStatus");
+
+                    b.ToTable("AssetsMoved", (string)null);
+                });
+
+            modelBuilder.Entity("WebLearning.Domain.Entites.AssetsMovedStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AssetsMovedStatus", (string)null);
+                });
+
             modelBuilder.Entity("WebLearning.Domain.Entites.AssetsStatus", b =>
                 {
                     b.Property<int>("Id")
@@ -1490,6 +1553,31 @@ namespace WebLearning.Persistence.Migrations
                     b.Navigation("AssetsStatus");
                 });
 
+            modelBuilder.Entity("WebLearning.Domain.Entites.AssetsMoved", b =>
+                {
+                    b.HasOne("WebLearning.Domain.Entites.Assests", "Assests")
+                        .WithMany("AssetsMoveds")
+                        .HasForeignKey("AssestsId");
+
+                    b.HasOne("WebLearning.Domain.Entites.AssetsDepartment", "AssetsDepartment")
+                        .WithMany()
+                        .HasForeignKey("AssetsDepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebLearning.Domain.Entites.AssetsMovedStatus", "AssetsMovedStatus")
+                        .WithMany("AssetsMoved")
+                        .HasForeignKey("MovedStatus")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Assests");
+
+                    b.Navigation("AssetsDepartment");
+
+                    b.Navigation("AssetsMovedStatus");
+                });
+
             modelBuilder.Entity("WebLearning.Domain.Entites.Avatar", b =>
                 {
                     b.HasOne("WebLearning.Domain.Entites.Account", "Account")
@@ -1728,6 +1816,11 @@ namespace WebLearning.Persistence.Migrations
                     b.Navigation("Avatar");
                 });
 
+            modelBuilder.Entity("WebLearning.Domain.Entites.Assests", b =>
+                {
+                    b.Navigation("AssetsMoveds");
+                });
+
             modelBuilder.Entity("WebLearning.Domain.Entites.AssetsCategory", b =>
                 {
                     b.Navigation("Assests");
@@ -1736,6 +1829,11 @@ namespace WebLearning.Persistence.Migrations
             modelBuilder.Entity("WebLearning.Domain.Entites.AssetsDepartment", b =>
                 {
                     b.Navigation("Assests");
+                });
+
+            modelBuilder.Entity("WebLearning.Domain.Entites.AssetsMovedStatus", b =>
+                {
+                    b.Navigation("AssetsMoved");
                 });
 
             modelBuilder.Entity("WebLearning.Domain.Entites.AssetsStatus", b =>

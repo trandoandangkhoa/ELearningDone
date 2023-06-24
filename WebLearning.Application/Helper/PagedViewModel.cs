@@ -6,7 +6,7 @@ namespace WebLearning.Application.Ultities
     {
         public IEnumerable<T> Items { get; set; }
         public CheckBox CheckBox { get; set; }
-        public CheckBox HistoryChecked { get;set; }
-        
+        public CheckBox HistoryChecked { get; set; }
+
     }
 }

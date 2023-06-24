@@ -60,6 +60,7 @@ namespace WebLearning.Application
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IStatusService, StatusService>();
+            services.AddScoped<IAssetMovedService, AssetMovedService>();
 
             services.AddScoped<ICourseService, CourseService>();
 
@@ -118,6 +119,7 @@ namespace WebLearning.Application
             services.AddScoped<IImportExcelService, ImportExcelService>();
 
             services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<IChartService, ChartService>();
 
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -161,6 +163,8 @@ namespace WebLearning.Application
             services.AddAutoMapper(typeof(AssetsCategoryMappingProfile).Assembly);
             services.AddAutoMapper(typeof(AssetsDepartmentMappingProfile).Assembly);
             services.AddAutoMapper(typeof(AssetsStatusMappingProfile).Assembly);
+            services.AddAutoMapper(typeof(AssetsMovedMappingProfile).Assembly);
+            services.AddAutoMapper(typeof(AssetsMovedStatusMappingProfile).Assembly);
 
             services.AddAutoMapper(typeof(AppointmentMappingProfile).Assembly);
 

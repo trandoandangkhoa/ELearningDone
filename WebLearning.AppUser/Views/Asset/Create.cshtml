@@ -1,0 +1,321 @@
+﻿@using WebLearning.Contract.Dtos.Assets;
+@model CreateAssetsDto
+@{
+    ViewData["Title"] = "Tạo mới";
+}
+
+<div class="col-md-12 col-sm-12 col-xs-12" id="createForm">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Tạo mới tài sản</h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+
+                <li>
+                    <a class="close-link"><i class="fa fa-close"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content"> 
+            <form asp-action="Create" asp-controller="Asset" method="post" class="form-horizontal">
+                <div class="x_panel">
+                    <div class="col-md-5 col-sm-5 col-xs-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Mã Tài sản: <span class="required">*</span></label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" required asp-for="@Model.AssetId" />
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12" for="name">Tên Tài sản:  <span class="required">*</span></label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" required="required" asp-for="@Model.AssetName" />
+
+                            </div>
+                            @if (TempData["AssetName"] != null)
+                            {
+                                <span class="text-danger">@TempData["ErrorAssetName"]</span>
+
+                            }
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Hoạt động:</label>
+
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+
+                                <label class="statusconatiner">
+                                    <input type="checkbox" id="active" class="js-switch" checked asp-for="@Model.Active" />
+
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Loại Tài sản: <span class="required">*</span></label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" id="AssetsCategoryId" asp-for="@Model.AssetsCategoryId" asp-items="ViewBag.Cat">
+                                </select>
+                            </div>
+
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12"></label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                @if (TempData["ErrorCat"] != null)
+                                {
+                                    <span class="text-danger">@TempData["ErrorCat"]</span>
+
+                                }
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Model Tài sản: <span class="required">*</span></label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" required asp-for="@Model.AssetSubCategory" />
+
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12"></label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                @if (TempData["ErrorSubCat"] != null)
+                                {
+                                    <span class="text-danger">@TempData["ErrorSubCat"]</span>
+
+                                }
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Thông số:</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" asp-for="@Model.Spec" />
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Số seri:</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" asp-for="@Model.SeriNumber" />
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Số lượng: <span class="required">*</span></label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="number" min="1" required="required" asp-for="@Model.Quantity" />
+
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Nhà cung cấp:</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" asp-for="@Model.Supplier" />
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày mua:</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <div class="input-group date" id="dateBuyed">
+                                    <input type="text" class="form-control col-md-10" asp-for="@Model.DateBuyed" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Mã hóa đơn</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" asp-for="@Model.OrderNumber" />
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Giá tiền</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" asp-for="@Model.Price" />
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7 col-sm-7 col-xs-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">
+                                Đơn vị sử dụng: <span class="required">*</span>
+                            </label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" asp-for="@Model.AssetsDepartmentId" asp-items="ViewBag.Dep">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12"></label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                @if (TempData["ErrorDep"] != null)
+                                {
+                                    <span class="text-danger">@TempData["ErrorDep"]</span>
+
+                                }
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Người sử dụng:</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" asp-for="@Model.Customer" />
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">
+                                Đơn vị quản lí: <span class="required">*</span>
+                            </label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" required="required" asp-for="@Model.Manager" />
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">
+                                Tình trạng: <span class="required">*</span>
+                            </label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" asp-for="@Model.AssetsStatusId" asp-items="ViewBag.Status">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12"></label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                @if (TempData["ErrorStatus"] != null)
+                                {
+                                    <span class="text-danger">@TempData["ErrorStatus"]</span>
+
+                                }
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Thời hạn bảo hành:</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" asp-for="@Model.ExpireDay" />
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày hết bảo hành</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" asp-for="@Model.DateExpired" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày đưa vào sử dụng:</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <div class="input-group date" id="dateUsed">
+                                    <input type="text" class="form-control col-md-10" asp-for="@Model.DateUsed" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày điều chuyển:</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <div class="input-group date" id="dateMoved">
+                                    <input type="text" class="form-control col-md-10" asp-for="@Model.DateMoved" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày kiểm kê: <span class="required">*</span></label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <div class="input-group date" id="dateChecked">
+                                    <input type="text" class="form-control col-md-10" required asp-for="@Model.DateChecked" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày sửa chữa:</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <div class="input-group date" id="dateRepaired">
+                                    <input type="text" class="form-control col-md-10" asp-for="@Model.DateRepaired" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Nơi sửa chữa:</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" asp-for="@Model.RepairLocation" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày tạo</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" asp-for="@Model.DateCreated" readonly />
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Ghi chú</label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" asp-for="@Model.Note" />
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+
+                            <button type="submit" class="btn btn-success"><i class="fa fa-edit"></i> Lưu</button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
+
+}

@@ -1,0 +1,84 @@
+﻿@using System.Linq;
+@using WebLearning.Contract.Dtos.Assets.Chart;
+@model List<TotalAsset>
+@{
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Name).ToList());
+    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Quantity).ToList());
+    Layout = null;
+
+}
+<div style="height:300px;
+  width: auto;">
+    <canvas id="myChart"></canvas>
+</div>
+<div id="pielegend"></div>
+
+
+
+<script type="text/javascript">
+    const values = @Html.Raw(YValues);
+    const labels = @Html.Raw(XLabels);
+    $(function () {
+        var chartName = "myChart";
+        var ctx = document.getElementById(chartName).getContext('2d');
+        var chartEl = document.getElementById("myChart");
+        chartEl.height = 500;
+        var color = [];
+
+
+        for (var i in values) {
+            color.push(random_rgba());
+        };
+        var data = {
+            labels: labels,
+            datasets: [{
+                //label: "Drinks Chart",
+                backgroundColor: color,
+                borderColor: color,
+                borderWidth: 1,
+                data: values,
+                fill: true,
+
+            }]
+        };
+
+        var options = {
+            responsive: true,
+            display: true,
+            legend: false,
+
+            legendCallback: function (chart) {
+                var text = [];
+                text.push('<div class="' + chart.id + '-legend" >');
+                for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
+                    text.push('<div style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14px"><div style="background-color:' + chart.data.datasets[0].backgroundColor[i] + ';padding:10px;width:5%;margin-top:5px;margin:right:5px"></div><span style="margin-left:3px">');
+                    if (chart.data.labels[i]) {
+                        text.push("[" + values[i] + "] " + chart.data.labels[i] + " </div>");
+                    }
+                }
+                text.push('</div>');
+                return text.join("");
+            },
+            maintainAspectRatio: false,
+        };
+        var myChart = new Chart(ctx, {
+            options: options,
+            data: data,
+            type: 'pie'
+
+        });
+        $("#pielegend").html(myChart.generateLegend());
+
+
+    });
+
+
+    function random_rgba() {
+        var o = Math.round,
+            r = Math.random,
+            s = 255;
+        return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + r().toFixed(1) + ')';
+    }
+</script>
+
+ 

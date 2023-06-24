@@ -1,10 +1,28 @@
 ﻿// ------------------Chi tiết tài sản JS-----------------------
 var submitUpdateButton = document.getElementById('updatebutton');
 var submitDeleteButton = document.getElementById('deletebutton');
+//var submitSeeMoveAssetDetailButton = document.getElementById('seemovedetailbutton');
+var submitSeeMoveAssetDetailButton = document.getElementById('seemovedetailbutton');
 
 let buttonUpdateClicked = false;
 let buttonDeleteClicked = false;
+//let buttonMoveAssetDetailClicked = false;
+let buttonMoveAssetDetailClicked = false;
+submitSeeMoveAssetDetailButton.addEventListener('click', function handleClick() {
+    $(".moveassetContainer").css("display", "block");
+    submitSeeMoveAssetDetailButton.textContent = 'Hủy thao tác xem';
 
+
+    if (buttonMoveAssetDetailClicked) {
+        $(".moveassetContainer").css("display", "none");
+        submitSeeMoveAssetDetailButton.innerHTML = `<i class="fa fa-history"></i> Lịch sử điều chuyển `;
+
+        buttonMoveAssetDetailClicked = false;
+        return;
+    }
+    buttonMoveAssetDetailClicked = true;
+
+});
 submitUpdateButton.addEventListener('click', function handleClick() {
     $(".updateContainer").css("display", "block");
     submitUpdateButton.textContent = 'Hủy thao tác cập nhật';
@@ -33,16 +51,4 @@ submitDeleteButton.addEventListener('click', function handleClick() {
     }
     buttonDeleteClicked = true;
 
-});
-$(document).ready(function () {
-    $('.js-example-responsive').select2({
-        tags: 'true',
-        placeholder: "---Vui lòng chọn---",
-        allowClear: true,
-        width: 'resolve',
-
-    });
-});
-$(document).ready(function () {
-    $('.js-example-basic-single').select2();
 });

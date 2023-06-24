@@ -62,7 +62,7 @@ namespace WebLearning.Application.ELearning.Services
             {
                 pageResult = getListPagingRequest.PageSize;
             }
-             
+
             var pageCount = Math.Ceiling(_context.OptionCourses.Count() / (double)pageResult);
 
             var query = _context.OptionCourses.AsQueryable();

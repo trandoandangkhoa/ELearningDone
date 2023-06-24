@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebLearning.Application.Assets.Services;
-using WebLearning.Application.ELearning.Services;
 using WebLearning.Application.Helper;
 using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos;
@@ -27,7 +26,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet]
 
-        //[SecurityAssetDepartment(AuthorizeAssetDepartment.AdminAssetDepartment, AuthorizeAssetDepartment.StudentAssetDepartment)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IEnumerable<AssetsDepartmentDto>> GetAssetsDepartments()
         {
@@ -40,7 +39,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("paging")]
 
-        //[SecurityAssetDepartment(AuthorizeAssetDepartment.AdminAssetDepartment)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<PagedViewModel<AssetsDepartmentDto>> GetUsers([FromQuery] GetListPagingRequest getListPagingRequest)
         {
@@ -55,7 +54,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("{id}")]
 
-        //[SecurityAssetDepartment(AuthorizeAssetDepartment.AdminAssetDepartment, AuthorizeAssetDepartment.StudentAssetDepartment)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
         public async Task<IActionResult> GetAssetDepartmentById(Guid id)
         {
             if (await _departmentService.GetAssetsDepartmentById(id) == null)
@@ -70,7 +69,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("catcode/{code}")]
 
-        //[SecurityAssetDepartment(AuthorizeAssetDepartment.AdminAssetDepartment, AuthorizeAssetDepartment.StudentAssetDepartment)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
         public async Task<IActionResult> GetCatByCode(string code)
         {
             if (await _departmentService.GetCode(code) == null)
@@ -86,7 +85,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpPost]
 
-        //[SecurityAssetDepartment(AuthorizeAssetDepartment.AdminAssetDepartment)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IActionResult> Post([FromBody] CreateAssetsDepartmentDto createAssetsDepartmentDto)
         {
@@ -113,7 +112,7 @@ namespace WebLearning.Api.Controllers
         /// Cập nhật đơn vị sử dụng
         /// </summary>
         [HttpPut("{id}")]
-        //[SecurityAssetDepartment(AuthorizeAssetDepartment.AdminAssetDepartment)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IActionResult> UpdateAssetDepartment(Guid id, [FromBody] UpdateAssetsDepartmentDto updateAssetsDepartmentDto)
         {
@@ -144,7 +143,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         // DELETE api/<AssetDepartmentController>/5
         [HttpDelete("{id}")]
-        //[SecurityAssetDepartment(AuthorizeAssetDepartment.AdminAssetDepartment)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IActionResult> DeleteAssetDepartment(Guid id)
         {

@@ -59,9 +59,9 @@ namespace WebLearning.Application.ELearning.Services
             }
             else
             {
- pageResult = getListPagingRequest.PageSize;
+                pageResult = getListPagingRequest.PageSize;
             }
-            
+
             var pageCount = Math.Ceiling(_context.OptionMonthlies.Count() / (double)pageResult);
             var query = _context.OptionMonthlies.AsQueryable();
             if (!string.IsNullOrEmpty(getListPagingRequest.Keyword))

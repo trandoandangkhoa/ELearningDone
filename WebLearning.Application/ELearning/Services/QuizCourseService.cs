@@ -160,8 +160,8 @@ namespace WebLearning.Application.ELearning.Services
                 pageCount = Math.Ceiling(query.Count() / (double)pageResult);
             }
             var totalRow = await query.CountAsync();
-            var data = await query.Skip((getListPagingRequest.PageIndex - 1) * (int)pageResult)
-                                    .Take((int)pageResult)
+            var data = await query.Skip((getListPagingRequest.PageIndex - 1) * pageResult)
+                                    .Take(pageResult)
                                     .Select(quizCourse => new QuizCourseDto()
                                     {
                                         ID = quizCourse.ID,

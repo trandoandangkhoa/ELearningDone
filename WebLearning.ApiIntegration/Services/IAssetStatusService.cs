@@ -4,9 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
-using WebLearning.Application.Helper;
 using WebLearning.Application.Ultities;
-using WebLearning.Contract.Dtos.Account;
 using WebLearning.Contract.Dtos.Assets.Status;
 
 namespace WebLearning.ApiIntegration.Services

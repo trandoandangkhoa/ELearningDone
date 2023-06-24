@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WebLearning.Contract.Dtos.Assets.Category
+﻿namespace WebLearning.Contract.Dtos.Assets.Category
 {
     public class AssetsCategoryDto
     {
@@ -15,6 +9,6 @@ namespace WebLearning.Contract.Dtos.Assets.Category
         public string Name { get; set; }
 
 
-        public ICollection<AssetsDto> AssetsDtos { get; set; }
+        public IEnumerable<AssetsDto> AssetsDtos { get; set; }
     }
 }

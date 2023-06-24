@@ -82,7 +82,7 @@ namespace WebLearning.Api.Controllers
         {
             try
             {
-                var doctor =  _roomService.DeleteRoom(id);
+                var doctor = _roomService.DeleteRoom(id);
                 return Task.FromResult<IActionResult>(Ok());
 
             }

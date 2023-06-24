@@ -1,0 +1,151 @@
+﻿@using WebLearning.Contract.Dtos.Assets.Chart;
+@model HomeViewModel
+<div class="row">
+    <div class="col-md-8 col-sm-8 col-xs-12">
+        <div class="col-md-12 col-sm-12 col-xs-12" id="actioncontainer" style="height:75%">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2><i class="fa fa-external-link"></i> Hành động</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <a href="/tao-moi-tai-san.html" class="btn label-success btn-lg" style="color:white;width:100%;height:auto"><i class="fa fa-plus-circle"></i> Tạo mới</a>
+                    <a href="/tai-san.html" class="btn label-primary btn-lg" style="color:white;width:100%"><i class="fa fa-cubes"></i> Tài sản</a>
+                    <a href="/loai-tai-san.html" class="btn label-primary btn-lg" style="color:white;width:100%"><i class="fa fa-database"></i> Loại tài sản</a>
+                    <a href="/bo-phan.html" class="btn label-primary btn-lg" style="color:white;width:100%"><i class="fa fa-building"></i> Bộ phận</a>
+                    <a href="/tinh-trang-tai-san.html" class="btn label-primary btn-lg" style="color:white;width:100%"><i class="fa fa-gears"></i> Tình trạng</a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-6 col-xs-12" id="piechartcontainer" style="margin:auto;height:25%">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2><i class="fa fa-database"></i> Số lượng <small>Tình trạng</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content" style="height:50%">
+                    <div id="pc"></div>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-12" id="donutchartcontainer" style="margin:auto;height:25%">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2><i class="fa fa-database"></i> Số lượng <small>Hoạt động</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content" style="height:50%">
+                    <div id="dc"></div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-4 col-sm-4 col-xs-12" id="barchartcontainer">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2><i class="fa fa-database"></i> Số lượng <small>Loại</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div id="tc"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts{
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js" defer></script>
+}
+<script type="text/javascript">
+    
+    $(document).ready(function () {
+
+        $("#piechartcontainer").LoadingOverlay("show");
+        $("#donutchartcontainer").LoadingOverlay("show");
+        $("#barchartcontainer").LoadingOverlay("show");
+
+
+        // Hide it after 3 seconds
+        
+
+        $.ajax({
+            url: '/AssetManagement/TotalAssetInCategory',
+            datatype: "json",
+            type: "GET",
+            //data: formData,   
+
+            success: function (results) {
+                $("#tc").html("");
+                $("#tc").html(results);
+            },
+
+        }).done(function () {
+            setTimeout(function () {
+                $("#barchartcontainer").LoadingOverlay("hide");
+            }, 1000);
+        });
+        $.ajax({
+            url: '/AssetManagement/TotalAssetInStatus',
+            datatype: "json",
+            type: "GET",
+            //data: formData,
+            success: function (results) {
+                $("#pc").html("");
+                $("#pc").html(results);
+            },
+
+        }).done(function () {
+            setTimeout(function () {
+                $("#piechartcontainer").LoadingOverlay("hide");
+            }, 1000);
+        });
+        $.ajax({
+            url: '/AssetManagement/TotalAssetAvailable',
+            datatype: "json",
+            type: "GET",
+            //data: formData,
+            success: function (results) {
+                $("#dc").html("");
+                $("#dc").html(results);
+            },
+
+        }).done(function () {
+            setTimeout(function () {
+                $("#donutchartcontainer").LoadingOverlay("hide");
+            }, 1000);
+        });
+    });
+</script>

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using WebLearning.Contract.Dtos.Course;
 using WebLearning.Contract.Dtos.Notification;
 using WebLearning.Domain.Entites;
 
@@ -12,7 +11,7 @@ namespace WebLearning.Application.Mapping.NotificationMapping
 
             CreateMap<NotificationResponse, NotificationResponseDto>();
 
-          
+
             CreateMap<CreateNotificationResponseDto, NotificationResponse>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                                     .ForMember(dest => dest.TargetNotificationId, opt => opt.MapFrom(src => src.TargetNotificationId))
                                     .ForMember(dest => dest.FatherAlias, opt => opt.MapFrom(src => src.FatherAlias))

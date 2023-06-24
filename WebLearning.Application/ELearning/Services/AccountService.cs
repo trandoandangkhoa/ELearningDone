@@ -98,8 +98,8 @@ namespace WebLearning.Application.ELearning.Services
                 getListPagingRequest.PageSize = Convert.ToInt32(_configuration.GetValue<float>("PageSize:Account"));
             }
             var pageResult = getListPagingRequest.PageSize;
-            
-            
+
+
             var pageCount = Math.Ceiling(_context.Accounts.Count() / (double)pageResult);
             var query = _context.Accounts.AsQueryable();
             if (!string.IsNullOrEmpty(getListPagingRequest.Keyword))
@@ -108,8 +108,8 @@ namespace WebLearning.Application.ELearning.Services
                 pageCount = Math.Ceiling(query.Count() / (double)pageResult);
             }
             var totalRow = await query.CountAsync();
-            var data = await query.Skip((getListPagingRequest.PageIndex - 1) * (int)pageResult)
-                                    .Take((int)pageResult)
+            var data = await query.Skip((getListPagingRequest.PageIndex - 1) * pageResult)
+                                    .Take(pageResult)
                                     .Select(x => new AccountDto()
                                     {
                                         Id = x.Id,
@@ -237,6 +237,13 @@ namespace WebLearning.Application.ELearning.Services
                     account.AuthorizeRole = Domain.AuthorizeRoles.TeacherRole;
 
                 }
+                else if (roleName.RoleName == "IT")
+                {
+
+                    createAccountDto.AuthorizeRole = AuthorizeRole.ITRole;
+                    account.AuthorizeRole = Domain.AuthorizeRoles.ITRole;
+
+                }
                 else
                 {
                     createAccountDto.AuthorizeRole = AuthorizeRole.StudentRole;
@@ -300,6 +307,13 @@ namespace WebLearning.Application.ELearning.Services
 
                         updateUserDetailDto.AuthorizeRole = AuthorizeRole.TeacherRole;
                         account.AuthorizeRole = Domain.AuthorizeRoles.TeacherRole;
+
+                    }
+                    else if (roleName.RoleName == "IT")
+                    {
+
+                        updateUserDetailDto.AuthorizeRole = AuthorizeRole.ITRole;
+                        account.AuthorizeRole = Domain.AuthorizeRoles.ITRole;
 
                     }
                     else if (roleName.RoleName == "Guest")

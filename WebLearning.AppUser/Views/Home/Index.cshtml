@@ -26,7 +26,7 @@
             <div class="dashboard-widget-content">
                 <ul class="quick-list" style="width:65%">
                     <li style="">
-                        <i class="fa fa-dashboard"></i><a href="/elearning.html">Trang chủ</a>
+                        <i class="fa fa-c"></i><a href="/elearning.html">Trang chủ</a>
 
                     </li>
                     <li style="13px">
@@ -53,9 +53,9 @@
     </div>
 </div>
 @if (User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "StaffRole"
-                   || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "ManagerRole"
-                   || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole"
-                  )
+                                       || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "ManagerRole"
+                                       || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole"
+                                      )
 {
     <div class="col-md-4 col-sm-4 col-xs-12">
         <div class="x_panel tile fixed_height_320" style="">
@@ -72,8 +72,8 @@
                 <div class="dashboard-widget-content">
                     <ul class="quick-list" style="width:65%">
                         @if (User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "StaffRole"
-                        || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "ManagerRole"
-                        || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole")
+      || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "ManagerRole"
+      || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole")
                         {
                             <li style="font-size:14px">
                                 <i class="fa fa-calendar"></i><a href="/dat-lich.html">Đặt lịch họp</a>
@@ -83,14 +83,14 @@
                         }
 
                         @if (User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "ManagerRole"
-                        || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole")
+      || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole")
                         {
                             <li style="font-size:14px">
                                 <i class="fa fa-building"></i><a href="/manager.html">Quản lý phòng</a>
 
                             </li>
                         }
-                        @if(User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole")
+                        @if (User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole")
                         {
                             <li style="font-size:14px">
                                 <i class="fa fa-gears"></i><a href="/admin.html">Cài đặt phòng</a>
@@ -111,48 +111,52 @@
             </div>
         </div>
     </div>
+    
+}
+@if (User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "ITRole"
+                                            || User.Claims.Where(x => x.Type == "Role").Select(x => x.Value).FirstOrDefault() == "AdminRole")
+{
     <div class="col-md-4 col-sm-4 col-xs-12">
         <div class="x_panel tile fixed_height_320" style="">
-            <div class="x_title">
-                <h2><i class="fa fa-tasks"></i> Assets Management</h2>
-                <ul class="nav navbar-right panel_toolbox">
-                    <li>
-                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-                <div class="dashboard-widget-content">
-                    <ul class="quick-list" style="width:65%">
-                        <li style="font-size:14px">
-                            <i class="fa fa-cubes"></i><a href="/tai-san.html">Tài sản</a>
-
+                <div class="x_title">
+                    <h2><i class="fa fa-tasks"></i> Assets Management</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                         </li>
-                        <li style="font-size:14px">
-                            <i class="fa fa-database"></i><a href="/loai-tai-san.html">Loại tài sản</a>
-
-                        </li>
-                        <li style="font-size:14px">
-                            <i class="fa fa-building"></i><a href="/bo-phan.html">Bộ phận</a>
-
-                        </li>
-                        <li style="font-size:14px">
-                            <i class="fa fa-gears"></i><a href="/tinh-trang-tai-san.html">Tình trạng</a>
-
-                        </li>
-
                     </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="dashboard-widget-content">
+                        <ul class="quick-list" style="width:65%">
+                            <li style="font-size:14px">
+                                <i class="fa fa-dashboard"></i><a href="/trang-chu-tai-san.html">Trang chủ</a>
 
-                    <div class="sidebar-widget" style="width:35%">
-                        <br />
-                        <img src="~/build/images/assets.png" width="50%" height="50%" />
-                        <div class="clearfix"></div>
-                        <br />
+                            </li>
+@*                            <li style="font-size:14px">
+                                <i class="fa fa-database"></i><a href="/loai-tai-san.html">Loại tài sản</a>
+
+                            </li>
+                            <li style="font-size:14px">
+                                <i class="fa fa-building"></i><a href="/bo-phan.html">Bộ phận</a>
+
+                            </li>
+                            <li style="font-size:14px">
+                                <i class="fa fa-gears"></i><a href="/tinh-trang-tai-san.html">Tình trạng</a>
+
+                            </li>*@
+
+                        </ul>
+
+                        <div class="sidebar-widget" style="width:35%">
+                            <br />
+                            <img src="~/build/images/assets.png" width="50%" height="50%" />
+                            <div class="clearfix"></div>
+                            <br />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-}
-
+    }

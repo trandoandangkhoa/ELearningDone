@@ -24,10 +24,10 @@ namespace WebLearning.AppUser.Controllers
         {
             var token = HttpContext.Session.GetString("Token");
 
-            //if (token == null)
-            //{
-            //    return Redirect("/dang-nhap.html");
-            //}
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
             var request = new GetListPagingRequest()
             {
                 Keyword = keyword,
@@ -48,10 +48,10 @@ namespace WebLearning.AppUser.Controllers
         {
             var token = HttpContext.Session.GetString("Token");
 
-            //if (token == null)
-            //{
-            //    return Redirect("/dang-nhap.html");
-            //}
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
             var allCourse = await _assetCategoryService.GetAllAssetsCategory();
 
             List<SelectListItem> list = new();

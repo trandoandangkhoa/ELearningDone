@@ -355,7 +355,7 @@ namespace WebLearning.Application.BookingCalender
                             "<p style=\"font-weight:500;margin-top:0;margin-bottom:16px;font-size:14px;line-height:20px;color:#121e28\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>\r\n\t\t\t\t\t\t\t\t\t\t\t<span>" +
                             "Bạn có một yêu cầu dời lịch từ: </span>\r\n" +
                             "\r\n\t\t\t\t\t\t\t\t\t\t\t\r\n\r\n\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t</b>" +
-                            "<b style=\"font-size:14px;color: #9A0000\"><a style=\"font-size:14px;color: #9A0000\" href=mailto:" + accountBooker.Email + ">" + accountBooker.Email+ "</a></b></p><br>" +
+                            "<b style=\"font-size:14px;color: #9A0000\"><a style=\"font-size:14px;color: #9A0000\" href=mailto:" + accountBooker.Email + ">" + accountBooker.Email + "</a></b></p><br>" +
                             "<b style=\"font-size:14px;color: #9A0000\"><a style=\"font-size:14px;color: #9A0000\">Người đặt: </a></b>" + "<span style=\"color: #9A0000;font-size:14px\"> " + accountBooker.accountDetailDto.FullName + "</span><br>\r\n\t\t\t\t\t\t\t\t\t" +
                             "<b style=\"font-size:14px;color: #9A0000\"><a style=\"font-size:14px;color: #9A0000\">Email: </a></b>" + "<span style=\"color: #9A0000;font-size:14px\"> " + accountBooker.Email + "</span><br>\r\n\t\t\t\t\t\t\t\t\t" +
                                                         "<b style=\"font-size:14px;color: #9A0000\"><a style=\"font-size:14px;color: #9A0000\">Tiêu đề: </a></b>" + "<span style=\"color: #9A0000;font-size:14px\"> " + title + "</span><br>\r\n\t\t\t\t\t\t\t\t\t" +

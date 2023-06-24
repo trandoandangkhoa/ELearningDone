@@ -1,8 +1,6 @@
 using AspNetCoreHero.ToastNotification;
-using FluentValidation;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using WebLearning.ApiIntegration.Services;
-using WebLearning.Application.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +44,9 @@ builder.Services.AddScoped<IAssetDepartmentService, AssetDepartmentService>();
 
 builder.Services.AddScoped<IAssetStatusService, AssetStatusService>();
 
+builder.Services.AddScoped<IAssetMovedService, AssetMoveService>();
+
+
 builder.Services.AddScoped<IQuizLessionService, QuizLessionService>();
 
 builder.Services.AddScoped<IQuizCourseService, QuizCourseService>();
@@ -82,9 +83,9 @@ builder.Services.AddScoped<IBookingService, BookingService>();
 
 builder.Services.AddScoped<IRoomService, RoomService>();
 
+builder.Services.AddScoped<IIChartService, IChartService>();
 
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; });
-
 
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 var app = builder.Build();

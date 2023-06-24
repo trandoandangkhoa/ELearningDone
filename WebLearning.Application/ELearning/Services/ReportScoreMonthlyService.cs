@@ -65,7 +65,7 @@ namespace WebLearning.Application.ELearning.Services
             {
                 getListPagingRequest.PageSize = Convert.ToInt32(_configuration.GetValue<float>("PageSize:ReportScoreMonthly"));
             }
-            var pageResult = getListPagingRequest.PageSize;            var pageCount = Math.Ceiling(_context.ReportUserScoreMonthlies.Count() / (double)pageResult);
+            var pageResult = getListPagingRequest.PageSize; var pageCount = Math.Ceiling(_context.ReportUserScoreMonthlies.Count() / (double)pageResult);
             var query = _context.ReportUserScoreMonthlies.AsQueryable();
             if (!string.IsNullOrEmpty(getListPagingRequest.Keyword))
             {
@@ -73,8 +73,8 @@ namespace WebLearning.Application.ELearning.Services
                 pageCount = Math.Ceiling(query.Count() / (double)pageResult);
             }
             var totalRow = await query.CountAsync();
-            var data = await query.Skip((getListPagingRequest.PageIndex - 1) * (int)pageResult)
-                                    .Take((int)pageResult)
+            var data = await query.Skip((getListPagingRequest.PageIndex - 1) * pageResult)
+                                    .Take(pageResult)
                                     .Select(x => new ReportScoreMonthlyExport()
                                     {
                                         Id = x.Id,

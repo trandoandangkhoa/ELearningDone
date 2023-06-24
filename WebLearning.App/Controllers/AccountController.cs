@@ -65,12 +65,12 @@ namespace WebLearning.App.Controllers
         [Route("/tao-moi-tai-khoan.html")]
         public async Task<IActionResult> Create()
         {
-            var token = HttpContext.Session.GetString("Token");
+            //var token = HttpContext.Session.GetString("Token");
 
-            if (token == null)
-            {
-                return Redirect("/dang-nhap.html");
-            }
+            //if (token == null)
+            //{
+            //    return Redirect("/dang-nhap.html");
+            //}
             var allRole = await _roleService.GetAllRoles();
             ViewData["DanhMuc"] = new SelectList(allRole, "Id", "RoleName");
             return View();

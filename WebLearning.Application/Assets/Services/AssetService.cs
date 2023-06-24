@@ -2,19 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WebLearning.Application.Helper;
 using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos.Assets;
 using WebLearning.Contract.Dtos.Assets.Category;
 using WebLearning.Contract.Dtos.Assets.Department;
 using WebLearning.Contract.Dtos.Assets.Status;
-using WebLearning.Contract.Dtos.BookingCalender.Room;
-using WebLearning.Contract.Dtos.Role;
 using WebLearning.Domain.Entites;
 using WebLearning.Persistence.ApplicationContext;
 
@@ -28,7 +20,10 @@ namespace WebLearning.Application.Assets.Services
         Task<AssetsDto> GetName(string name);
         Task DeleteAsset(string id);
         Task UpdateAsset(UpdateAssetsDto updateAssetsDto, string id);
+        Task UpdateMultiAsset(UpdateMultiAssetsDto updateMultiAssetsDto);
+
         Task<PagedViewModel<AssetsDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest);
+        Task<IEnumerable<AssetsDto>> Export([FromQuery] GetListPagingRequest getListPagingRequest);
 
         Task<AssetsDto> GetCode(string code);
     }
@@ -59,6 +54,38 @@ namespace WebLearning.Application.Assets.Services
 
         }
 
+        public async Task<IEnumerable<AssetsDto>> Export([FromQuery] GetListPagingRequest getListPagingRequest)
+        {
+
+            var query = _context.Assests.Include(x => x.AssetsStatus).Include(x => x.AssetsCategory).Include(x => x.AssetsDepartment).OrderBy(x => x.Id).AsNoTracking().AsQueryable();
+
+
+            if (!string.IsNullOrEmpty(getListPagingRequest.Keyword))
+            {
+                query = query.Where(x => x.AssetName.Contains(getListPagingRequest.Keyword) || x.Id.Contains(getListPagingRequest.Keyword)
+                                    || x.AssetId.Contains(getListPagingRequest.Keyword) || x.Customer.Contains(getListPagingRequest.Keyword) || x.AssetSubCategory.Contains(getListPagingRequest.Keyword));
+            }
+            if (getListPagingRequest.Active == false)
+            {
+                query = query.Where(x => x.Active == false);
+            }
+            if (getListPagingRequest.AssetsCategoryId != null && getListPagingRequest.AssetsCategoryId.Length > 0)
+            {
+                query = query.Where(x => getListPagingRequest.AssetsCategoryId.Contains(x.AssetsCategoryId));
+            }
+            if (getListPagingRequest.AssetsDepartmentId != null && getListPagingRequest.AssetsDepartmentId.Length > 0)
+            {
+                query = query.Where(x => getListPagingRequest.AssetsDepartmentId.Contains(x.AssetsDepartmentId));
+            }
+            if (getListPagingRequest.AssetsStatusId != null && getListPagingRequest.AssetsStatusId.Length > 0)
+            {
+                query = query.Where(x => getListPagingRequest.AssetsStatusId.Contains(x.AssetsStatusId));
+            }
+            var data = _mapper.Map<IEnumerable<AssetsDto>>(query);
+
+            return data;
+        }
+
         public async Task<IEnumerable<AssetsDto>> GetAsset()
         {
             var asset = await _context.Assests.Include(x => x.AssetsStatus).Include(x => x.AssetsCategory).Include(x => x.AssetsDepartment).OrderBy(x => x.Id).AsNoTracking().ToListAsync();
@@ -68,7 +95,7 @@ namespace WebLearning.Application.Assets.Services
 
         public async Task<AssetsDto> GetAssetById(string id)
         {
-            var asset = await _context.Assests.Include(x => x.AssetsStatus).Include(x => x.AssetsCategory).Include(x => x.AssetsDepartment).FirstOrDefaultAsync(x => x.Id == id);
+            var asset = await _context.Assests.Include(x => x.AssetsStatus).Include(x => x.AssetsCategory).Include(x => x.AssetsDepartment).Include(x => x.AssetsMoveds).ThenInclude(x => x.AssetsMovedStatus).FirstOrDefaultAsync(x => x.Id == id);
 
             return _mapper.Map<AssetsDto>(asset);
         }
@@ -107,21 +134,24 @@ namespace WebLearning.Application.Assets.Services
                 query = query.Where(x => x.Active == false).AsNoTracking();
                 pageCount = Math.Ceiling(query.Count() / (double)pageResult);
             }
-            if (getListPagingRequest.AssetsCategoryId != null && getListPagingRequest.AssetsCategoryId.Length > 0) {
+            if (getListPagingRequest.AssetsCategoryId != null && getListPagingRequest.AssetsCategoryId.Length > 0)
+            {
                 query = query.Where(x => getListPagingRequest.AssetsCategoryId.Contains(x.AssetsCategoryId)).AsNoTracking();
                 pageCount = Math.Ceiling(query.Count() / (double)pageResult);
             }
-            if (getListPagingRequest.AssetsDepartmentId != null && getListPagingRequest.AssetsDepartmentId.Length > 0) {
+            if (getListPagingRequest.AssetsDepartmentId != null && getListPagingRequest.AssetsDepartmentId.Length > 0)
+            {
                 query = query.Where(x => getListPagingRequest.AssetsDepartmentId.Contains(x.AssetsDepartmentId)).AsNoTracking();
                 pageCount = Math.Ceiling(query.Count() / (double)pageResult);
             }
-            if (getListPagingRequest.AssetsStatusId != null && getListPagingRequest.AssetsStatusId.Length > 0) {
+            if (getListPagingRequest.AssetsStatusId != null && getListPagingRequest.AssetsStatusId.Length > 0)
+            {
                 query = query.Where(x => getListPagingRequest.AssetsStatusId.Contains(x.AssetsStatusId)).AsNoTracking();
                 pageCount = Math.Ceiling(query.Count() / (double)pageResult);
             }
             var totalRow = await query.CountAsync();
-            var data = await query.Skip((getListPagingRequest.PageIndex - 1) * (int)pageResult)
-                                    .Take((int)pageResult)
+            var data = await query.Skip((getListPagingRequest.PageIndex - 1) * pageResult)
+                                    .Take(pageResult)
                                     .Select(x => new AssetsDto()
                                     {
                                         Id = x.Id,
@@ -153,24 +183,27 @@ namespace WebLearning.Application.Assets.Services
                 PageSize = getListPagingRequest.PageSize,
                 TotalRecord = (int)pageCount,
                 TotalItems = query.Count(),
-                
+
                 CheckBox = new CheckBox()
                 {
                     AssetsCategoryDtos = _mapper.Map<List<AssetsCategoryDto>>(await _context.AssetsCategories.AsNoTracking().ToListAsync()).Select(x => new AssetsCategoryDto
                     {
                         Id = x.Id,
                         Name = x.Name,
-                    }).ToList(),
+                        CatCode = x.CatCode,
+                    }).OrderBy(x => x.Name).ToList(),
                     AssetsDepartmentDtos = _mapper.Map<List<AssetsDepartmentDto>>(await _context.AssetsDepartments.AsNoTracking().ToListAsync()).Select(x => new AssetsDepartmentDto
                     {
                         Id = x.Id,
                         Name = x.Name,
-                    }).ToList(),
+                        Code = x.Code,
+                    }).OrderBy(x => x.Name).ToList(),
                     AssetsStatusDtos = _mapper.Map<List<AssetsStatusDto>>(await _context.AssetsStatuses.AsNoTracking().ToListAsync()).Select(x => new AssetsStatusDto
                     {
                         Id = x.Id,
+
                         Name = x.Name,
-                    }).ToList(),
+                    }).OrderBy(x => x.Name).ToList(),
 
                 },
                 //HistoryChecked = new CheckBox()
@@ -191,13 +224,14 @@ namespace WebLearning.Application.Assets.Services
         {
             string s = _configuration.GetValue<string>("Code:Assets");
 
-            if(createAssetsDto.DateBuyed != null)
+            if (createAssetsDto.DateBuyed != null)
             {
                 createAssetsDto.DateExpired = createAssetsDto.DateBuyed.Value.AddMonths(createAssetsDto.ExpireDay);
 
             }
             //createAssetsDto.ExpireDayRemaining = Math.Abs((DateTime.Now - createAssetsDto.DateExpired).Days);
-
+            createAssetsDto.DateCreated = DateTime.Now;
+            
             if (createAssetsDto.Id == null)
             {
                 var list = await _context.Assests.AsNoTracking().OrderByDescending(x => x.Id).ToListAsync();
@@ -237,6 +271,12 @@ namespace WebLearning.Application.Assets.Services
         public async Task UpdateAsset(UpdateAssetsDto updateAssetsDto, string id)
         {
             var item = await _context.Assests.FirstOrDefaultAsync(x => x.Id == id);
+            updateAssetsDto.DateCreated = DateTime.Now;
+            if (updateAssetsDto.DateBuyed != null)
+            {
+                updateAssetsDto.DateExpired = updateAssetsDto.DateBuyed.Value.AddMonths(updateAssetsDto.ExpireDay);
+
+            }
             if (item != null)
             {
 
@@ -244,6 +284,11 @@ namespace WebLearning.Application.Assets.Services
 
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public Task UpdateMultiAsset(UpdateMultiAssetsDto updateMultiAssetsDto)
+        {
+            throw new NotImplementedException();
         }
     }
 }

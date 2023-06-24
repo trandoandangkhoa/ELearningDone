@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebLearning.Application.Assets.Services;
-using WebLearning.Application.ELearning.Services;
 using WebLearning.Application.Helper;
 using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos;
 using WebLearning.Contract.Dtos.Assets;
-using WebLearning.Contract.Dtos.Assets.Department;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,7 +26,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet]
 
-        //[SecurityAsset(AuthorizeAsset.AdminAsset, AuthorizeAsset.StudentAsset)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IEnumerable<AssetsDto>> GetAssests()
         {
@@ -42,12 +40,20 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("paging")]
 
-        //[SecurityAsset(AuthorizeAsset.AdminAsset)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<PagedViewModel<AssetsDto>> GetUsers([FromQuery] GetListPagingRequest getListPagingRequest)
         {
 
             return await _assetService.GetPaging(getListPagingRequest);
+
+        }
+        [HttpGet("export")]
+
+        public async Task<IEnumerable<AssetsDto>> Export([FromQuery] GetListPagingRequest getListPagingRequest)
+        {
+
+            return await _assetService.Export(getListPagingRequest);
 
         }
         [HttpGet("paging/historyFilter")]
@@ -64,7 +70,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("{id}")]
 
-        //[SecurityAsset(AuthorizeAsset.AdminAsset, AuthorizeAsset.StudentAsset)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
         public async Task<IActionResult> GetAssetById(string id)
         {
             if (await _assetService.GetAssetById(id) == null)
@@ -79,7 +85,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("catcode/{code}")]
 
-        //[SecurityAsset(AuthorizeAsset.AdminAsset, AuthorizeAsset.StudentAsset)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
         public async Task<IActionResult> GetCatByCode(string code)
         {
             if (await _assetService.GetCode(code) == null)
@@ -95,7 +101,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpPost]
 
-        //[SecurityAsset(AuthorizeAsset.AdminAsset)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IActionResult> Post([FromBody] CreateAssetsDto createAssetsDto)
         {
@@ -122,7 +128,7 @@ namespace WebLearning.Api.Controllers
         /// Cập nhật tài sản
         /// </summary>
         [HttpPut("{id}")]
-        //[SecurityAsset(AuthorizeAsset.AdminAsset)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IActionResult> UpdateAsset(string id, [FromBody] UpdateAssetsDto updateAssetsDto)
         {
@@ -148,12 +154,38 @@ namespace WebLearning.Api.Controllers
                     e.Message);
             }
         }
+
+        /// <summary>
+        /// Cập nhật tài sản
+        /// </summary>
+        [HttpPut("multiassets")]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+
+        public async Task<IActionResult> UpdateMultiAsset([FromBody] UpdateMultiAssetsDto updateMultiAssetsDto)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    await _assetService.UpdateMultiAsset(updateMultiAssetsDto);
+
+                }
+
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
         /// <summary>
         /// Xóa tài sản
         /// </summary>
         // DELETE api/<AssetController>/5
         [HttpDelete("{id}")]
         //[SecurityAsset(AuthorizeAsset.AdminAsset)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IActionResult> DeleteAsset(string id)
         {

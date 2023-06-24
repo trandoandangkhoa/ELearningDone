@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NuGet.ContentModel;
 using OfficeOpenXml;
-using System;
 using System.Globalization;
 using WebLearning.Application.Assets.Services;
 using WebLearning.Application.ELearning.Services;
@@ -9,7 +7,6 @@ using WebLearning.Application.Helper;
 using WebLearning.Contract.Dtos;
 using WebLearning.Contract.Dtos.Account;
 using WebLearning.Contract.Dtos.Assets;
-using WebLearning.Contract.Dtos.Assets.Department;
 using WebLearning.Contract.Dtos.CourseRole;
 using WebLearning.Contract.Dtos.Lession.LessionAdminView;
 using WebLearning.Contract.Dtos.Question;
@@ -19,7 +16,6 @@ using WebLearning.Contract.Dtos.Question.QuestionMonthlyAdminView;
 using WebLearning.Contract.Dtos.Quiz;
 using WebLearning.Contract.Dtos.Role;
 using WebLearning.Contract.Dtos.VideoLession;
-using WebLearning.Domain.Entites;
 
 namespace WebLearning.Api.Controllers
 {
@@ -42,10 +38,11 @@ namespace WebLearning.Api.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IDepartmentService _departmentService;
         private readonly IStatusService _statusService;
+        private readonly IAssetMovedService _assetMovedService;
         public ImportExcelController(IQuestionLessionService questionLessionService, IRoleService roleService, IAccountService accountService, ICourseRoleService courseRoleService
 , ICourseService courseService, ILessionService lessionService, IQuizLessionService quizLessionService, IQuizCourseService quizCourseService, IQuizMonthlyService quizMonthlyService, IQuestionCourseService questionCourseService, IQuestionMonthlyService questionMonthlyService
-            ,IAssetService assetService, IDepartmentService departmentService, IStatusService statusService,ICategoryService categoryService)
-        
+            , IAssetService assetService, IDepartmentService departmentService, IStatusService statusService, ICategoryService categoryService, IAssetMovedService assetMovedService)
+
         {
             _roleService = roleService;
             _accountService = accountService;
@@ -62,6 +59,7 @@ namespace WebLearning.Api.Controllers
             _departmentService = departmentService;
             _statusService = statusService;
             _categoryService = categoryService;
+            _assetMovedService = assetMovedService;
         }
 
 
@@ -757,7 +755,7 @@ namespace WebLearning.Api.Controllers
                     //ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
                     var a = package.Workbook.Worksheets.Count();
-                    for(int i = 0; i< a; i++)
+                    for (int i = 0; i < a; i++)
                     {
                         ExcelWorksheet worksheet = package.Workbook.Worksheets[i];
                         var rowCount = worksheet.Dimension.Rows;
@@ -780,17 +778,15 @@ namespace WebLearning.Api.Controllers
                             if (worksheet.Cells[row, 11].Value != null) customer = worksheet.Cells[row, 11].Value.ToString().Trim();
                             if (worksheet.Cells[row, 14].Value != null) spec = worksheet.Cells[row, 14].Value.ToString().Trim();
                             if (worksheet.Cells[row, 15].Value != null) note = worksheet.Cells[row, 15].Value.ToString().Trim();
-                            if (worksheet.Cells[row, 19].Value != null) expireDay= int.Parse(worksheet.Cells[row, 19].Value.ToString().Trim());
-
+                            if (worksheet.Cells[row, 19].Value != null) expireDay = int.Parse(worksheet.Cells[row, 19].Value.ToString().Trim());
                             var catId = await _categoryService.GetCode(worksheet.Cells[row, 7].Value.ToString().Trim());
                             var depId = await _departmentService.GetCode(worksheet.Cells[row, 10].Value.ToString().Trim());
 
-
-                            if (catId == null ) return importResponse.Msg = $"Dòng {row} trong sheet {worksheet.Name} có mã loại không tồn tại";
+                            if (catId == null) return importResponse.Msg = $"Dòng {row} trong sheet {worksheet.Name} có mã loại không tồn tại";
 
                             if (worksheet.Cells[row, 16].Value == null || worksheet.Cells[row, 18].Value == null)
                             {
-                                if(worksheet.Cells[row, 16].Value == null && worksheet.Cells[row,18].Value != null)
+                                if (worksheet.Cells[row, 16].Value == null && worksheet.Cells[row, 18].Value != null)
                                 {
                                     createAssetsDtos.Add(new CreateAssetsDto
                                     {
@@ -818,7 +814,7 @@ namespace WebLearning.Api.Controllers
                                         ExpireDay = expireDay,
                                     });
                                 }
-                                else if(worksheet.Cells[row, 16].Value != null && worksheet.Cells[row, 18].Value == null)
+                                else if (worksheet.Cells[row, 16].Value != null && worksheet.Cells[row, 18].Value == null)
                                 {
                                     createAssetsDtos.Add(new CreateAssetsDto
                                     {
@@ -910,12 +906,15 @@ namespace WebLearning.Api.Controllers
                     }
                     foreach (var item in createAssetsDtos)
                     {
+
                         await _assetService.InsertAsset(item);
+
+                       
                     }
 
                 }
             }
-            
+
 
 
             return importResponse.Msg = "Import Success";

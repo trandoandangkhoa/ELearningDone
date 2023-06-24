@@ -1,0 +1,153 @@
+﻿@using WebLearning.Contract.Dtos.Assets.Chart;
+@model List<TotalAsset>
+@{
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Name).ToList());
+    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Quantity).ToList());
+    Layout = null;    
+}
+
+@*<div class="chart-container">
+    <canvas id="linechart" style="width:50%"></canvas>
+</div>*@
+<div style="width:100%; height:300px;">
+    <canvas id="barchart" ></canvas>
+
+</div>
+<div id="barlegend" style="height:auto"></div>
+
+
+<script type="text/javascript">
+    $(function () {
+        var color = [];
+        const value = @Html.Raw(YValues);
+        const label = @Html.Raw(XLabels);
+
+        for (var i in value) {
+            color.push(random_rgba());
+        };
+        var bc = document.getElementById("barchart").getContext('2d');
+        var data = {
+            labels: label,
+            datasets: [{
+                backgroundColor: color,
+                borderColor: color,
+                borderWidth: 1,
+                data: value
+            }]
+        };
+
+        var options = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        labelColor: function (context) {
+                            return {
+                                borderColor: 'rgb(0, 0, 255)',
+                                backgroundColor: 'rgb(255, 0, 0)',
+                                borderWidth: 2,
+                                borderDash: [2, 2],
+                                borderRadius: 2,
+                            };
+                        },
+                        labelTextColor: function (context) {
+                            return '#543453';
+                        }
+                    }
+                }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        beginAtZero: true
+                    },
+                    gridLines: {
+                        display: true,
+                        color: "rgba(255,99,164,0.2)"
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        min: 0,
+                        beginAtZero: true
+                    },
+                    gridLines: {
+                        display: false
+                    }
+                }]
+            },
+            
+            legend: false,
+            legendCallback: function (chart) {
+                var text = [];
+                text.push('<div class="' + chart.id + '-legend" >');
+                for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
+                    text.push('<div style="float:left;max-width:50%%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14px"><div style="background-color:' + chart.data.datasets[0].backgroundColor[i] + ';padding:10px;width:10%;margin-top:4px;margin:right:4px"></div><span style="margin-left:3px">');
+                    if (chart.data.labels[i]) {
+                        text.push("[" + value[i] + "] " + chart.data.labels[i] + " </div>");
+                    }
+                }
+                text.push('</div>');
+                return text.join("");
+            },
+        };
+        var barchart = new Chart(bc, {
+            options: options,
+            data: data,
+            type: 'bar'
+
+        });
+
+        //var lc = document.getElementById("linechart").getContext('2d');
+
+        //var data = {
+        //    labels: label,
+        //    datasets: [{
+        //        borderWidth: 1,
+        //        data: value
+        //    }]
+        //};
+        //var options = {
+        //    maintainAspectRatio: false,
+        //    scales: {
+        //        yAxes: [{
+        //            ticks: {
+        //                min: 0,
+        //                beginAtZero: true
+        //            },
+        //            gridLines: {
+        //                display: true,
+        //                color: "rgba(255,99,164,0.2)"
+        //            }
+        //        }],
+        //        xAxes: [{
+        //            ticks: {
+        //                min: 0,
+        //                beginAtZero: true
+        //            },
+        //            gridLines: {
+        //                display: false
+        //            }
+        //        }]
+        //    }
+        //};
+
+        //var myChart = new Chart(lc, {
+        //    options: options,
+        //    data: data,
+        //    type: 'line'
+
+        //});
+        $("#barlegend").html(barchart.generateLegend());
+
+    });
+
+    function random_rgba() {
+        var o = Math.round,
+            r = Math.random,
+            s = 255;
+        return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + r().toFixed(1) + ')';
+    }
+</script>

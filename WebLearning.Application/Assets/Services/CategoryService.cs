@@ -2,17 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WebLearning.Application.Helper;
 using WebLearning.Application.Ultities;
-using WebLearning.Contract.Dtos.Assets;
 using WebLearning.Contract.Dtos.Assets.Category;
-using WebLearning.Contract.Dtos.BookingCalender.Room;
-using WebLearning.Contract.Dtos.Role;
 using WebLearning.Domain.Entites;
 using WebLearning.Persistence.ApplicationContext;
 
@@ -54,7 +45,7 @@ namespace WebLearning.Application.Assets.Services
 
         public async Task<IEnumerable<AssetsCategoryDto>> GetAssetsCategory()
         {
-            var asset = await _context.AssetsCategories.OrderByDescending(x => x.CatCode).AsNoTracking().ToListAsync();
+            var asset = await _context.AssetsCategories.OrderByDescending(x => x.Name).AsNoTracking().ToListAsync();
             var assetDto = _mapper.Map<List<AssetsCategoryDto>>(asset);
             return assetDto;
         }
@@ -118,26 +109,26 @@ namespace WebLearning.Application.Assets.Services
             {
                 var list = await _context.AssetsCategories.AsNoTracking().OrderByDescending(x => x.CatCode).ToListAsync();
 
-                if(list.Count == 0) { createAssetCategoryDto.CatCode = s+"00000001"; }
+                if (list.Count == 0) { createAssetCategoryDto.CatCode = s + "00000001"; }
 
-                else if(list.Count > 0)
+                else if (list.Count > 0)
                 {
-                int k = Convert.ToInt32(list[0].CatCode.Substring(6, 8)) + 1;
+                    int k = Convert.ToInt32(list[0].CatCode.Substring(6, 8)) + 1;
                     if (k < 10) s += "0000000";
                     else if (k < 100)
-                    s += "000000";
+                        s += "000000";
                     else if (k < 1000)
-                    s += "00000";
+                        s += "00000";
                     else if (k < 10000)
-                    s += "0000";
+                        s += "0000";
                     else if (k < 100000)
-                    s += "000";
+                        s += "000";
                     else if (k < 1000000)
-                    s += "00";
+                        s += "00";
                     else if (k < 10000000)
-                    s +=  "0";
-                s += k.ToString();
-                createAssetCategoryDto.CatCode = s;
+                        s += "0";
+                    s += k.ToString();
+                    createAssetCategoryDto.CatCode = s;
                 }
                 AssetsCategory asset = _mapper.Map<AssetsCategory>(createAssetCategoryDto);
 

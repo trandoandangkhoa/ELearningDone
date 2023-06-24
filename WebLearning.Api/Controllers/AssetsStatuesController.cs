@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebLearning.Application.Assets.Services;
-using WebLearning.Application.ELearning.Services;
 using WebLearning.Application.Helper;
 using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos;
 using WebLearning.Contract.Dtos.Assets.Status;
-using WebLearning.Contract.Dtos.Role;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,7 +26,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet]
 
-        //[SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.StudentRole)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IEnumerable<AssetsStatusDto>> GetAssetsStatues()
         {
@@ -41,7 +39,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("paging")]
 
-        //[SecurityRole(AuthorizeRole.AdminRole)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<PagedViewModel<AssetsStatusDto>> GetUsers([FromQuery] GetListPagingRequest getListPagingRequest)
         {
@@ -56,7 +54,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("{id}")]
 
-        //[SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.StudentRole)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
         public async Task<IActionResult> GetRoleById(int id)
         {
             if (await _statusService.GetAssetsStatusById(id) == null)
@@ -72,7 +70,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpPost]
 
-        //[SecurityRole(AuthorizeRole.AdminRole)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IActionResult> Post([FromBody] CreateAssetsStatusDto createAssetsStatusDto)
         {
@@ -99,7 +97,7 @@ namespace WebLearning.Api.Controllers
         /// Cập nhật trạng thái
         /// </summary>
         [HttpPut("{id}")]
-        //[SecurityRole(AuthorizeRole.AdminRole)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IActionResult> UpdateAccount(int id, [FromBody] UpdateAssetsStatusDto updateAssetsStatusDto)
         {
@@ -130,7 +128,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         // DELETE api/<RoleController>/5
         [HttpDelete("{id}")]
-        //[SecurityRole(AuthorizeRole.AdminRole)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IActionResult> DeleteRole(int id)
         {

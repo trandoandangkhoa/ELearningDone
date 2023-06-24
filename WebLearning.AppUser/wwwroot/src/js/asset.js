@@ -1,25 +1,28 @@
-﻿var values = [];
-
+﻿
 var cbstate = JSON.parse(localStorage['CBState'] || '{}');
 
 var checkBoxItem = document.getElementsByClassName('checkBoxTable');
+$('input[type="checkbox"][name="assetsCategoryId"]').on('change', function () {
+    $('#formGetData').submit(); 
+});
+$('input[type="checkbox"][name="assetsSubCategoryId"]').on('change', function () {
+    $('#formGetData').submit();
+});
+$('input[type="checkbox"][name="assetsDepartmentId"]').on('change', function () {
+    $('#formGetData').submit();
+});
+$('input[type="checkbox"][name="assetsStatusId"]').on('change', function () {
+    $('#formGetData').submit();
+});
 
 $(function () {
-    //$('input[type="checkbox"][name="assetsCategoryId"]').on('change', function () {
-    //    $('#form').submit();
-    //});
-    //$('input[type="checkbox"][name="assetsSubCategoryId"]').on('change', function () {
-    //    $('#form').submit();
-    //});
-    //$('input[type="checkbox"][name="assetsDepartmentId"]').on('change', function () {
-    //    $('#form').submit();
-    //});
-    //$('input[type="checkbox"][name="assetsStatusId"]').on('change', function () {
-    //    $('#form').submit();
-    //});
+    
     $("#removeCheckedBox").on("click", function () {
         localStorage.removeItem("CBState");
-        window.location.href = "/tai-san.html"
+        location.href = "tai-san.html"
+    });
+    $("#deleteAsset").on("click", function () {
+        localStorage.removeItem("CBState");
     });
     // variable to store our current state
     // bind to the onload event
@@ -64,6 +67,7 @@ $(function () {
         for (var i = 0; i < cbTb.length; i++) {
             cbTb[i].addEventListener('click', function () {
                 var rowConItem = document.getElementById("rowContainer-" + $(this).attr("data-mahh"));
+
                 var buttonConItem = document.getElementById("buttonTable-" + $(this).attr("data-mahh"));
 
                 if (this.checked) {
@@ -78,7 +82,6 @@ $(function () {
                     delete cbstate[$(this).attr("data-mahh")];
                     $(rowConItem).css({ "background-color": "white" });
                     $(buttonConItem).css({ "display": "block" });
-
                 }
 
                 // Persist state
@@ -87,8 +90,9 @@ $(function () {
             });
 
         }
-
     });
+    
+
 
 });
 
@@ -102,6 +106,7 @@ $(function () {
 
      var disableItems = document.getElementById("disableItems");
 
+     var record = [];
 
     for (var i = 0; i < buttonsItem.length; i++) {
         if (checkAll.checked) {
@@ -126,11 +131,8 @@ $(function () {
         if ($(checkBoxItem[i]).prop("checked") == true) {
 
             //rowChecked++;
-
+            record.push(checkBoxItem[i]);
             cbstate[$(checkBoxItem[i]).attr("data-mahh")] = true;
-
-            values.push($(checkBoxItem[i]).attr("data-mahh"));
-
 
         }
         else if (cbstate[$(checkBoxItem[i]).attr("data-mahh")]) {
@@ -140,7 +142,8 @@ $(function () {
         }
         localStorage.CBState = JSON.stringify(cbstate);
 
-    }
+     }
+
 }
 
 for (var i in cbstate) {
@@ -153,9 +156,8 @@ for (var i in cbstate) {
 
     $(buttonConItem).css({ "display": "none" });
 }
-function moveAll() {
+function loadDataMoveAll() {
     var record = [];
-
     for (var i in cbstate) {
 
         if (i.includes("IT")) {
@@ -164,37 +166,74 @@ function moveAll() {
 
         }
     }
+    console.log(record);
+    $('[name=table_records]').val(record);
     $.ajax({
-        url: "/Asset/MoveAsset",
+        url: '/Asset/GetItem',
+        datatype: "json",
         type: "POST",
-        data: { table_records: record },
-        success: function (response) {
-            alert(response);
+        data: { id: record },
+        success: function (results) {
+            $("#si").html("");
+            $("#si").html(results);
         },
-        error: function (request, status, error) {
-            alert(request.responseText);
-        }
 
-    });
+    })
 }
-function deleteAll() {
+function deleteAllData() {
     var record = [];
     for (var i in cbstate) {
+
         if (i.includes("IT")) {
+
             record.push(i);
 
         }
     }
+    console.log(record);
+    $('[name=table_records]').val(record);
     $.ajax({
-        url: "/Asset/DeleteAsset",
+        url: '/Asset/GetItem',
+        datatype: "json",
         type: "POST",
-        data: { table_records: record },
-        success: function (response) {
-            alert(response);
+        data: { id: record },
+        success: function (results) {
+            $("#sid").html("");
+            $("#sid").html(results);
         },
-        error: function (request, status, error) {
-            alert(request.responseText);
-        }
 
-    });
+    })
+}
+function exportAll() {
+    var active = false;
+    if ($('input[type = "checkbox"][name = "active"]').prop("checked") == true) {
+        active = true;
+    }
+    console.log(active);
+
+    var address = location.search;
+
+    if (address.length <= 0) address += "?active=true";
+    else {
+        if(active == true){
+            address = address.replace("active=true", "active=false");
+        }
+        else {
+            address += "&active=true";
+
+        }
+    }
+
+    $('#formExport').append(`<input type="text" id="querySearch" value=${address}  name="querySearch"  style='display:none' />`);
+
+    //$.ajax({
+    //    url: "/Asset/Export",
+    //    type: "get",
+    //    data:
+    //    {
+    //        address:address
+
+
+    //    },
+    //});
 }

@@ -7,6 +7,7 @@
         StaffRole,
         TeacherRole,
         StudentRole,
+        ITRole,
         Guest,
     }
 }

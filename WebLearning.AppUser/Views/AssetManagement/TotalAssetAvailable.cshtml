@@ -1,0 +1,67 @@
+﻿@using WebLearning.Contract.Dtos.Assets.Chart;
+@model List<TotalAsset>
+@{
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Name).ToList());
+    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Quantity).ToList());
+    Layout = null;
+}
+<style>
+    svg:not(:root) {
+        height: 100% !important;
+    }
+
+</style>
+<div>
+    <div id="donutchart" ></div>
+</div>
+<div>
+    <div id="visitor_legend" class="bar-chart-legend"></div> <!-- the legend area -->
+
+</div>
+@*<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+*@
+<script type="text/javascript">
+    const values = @Html.Raw(YValues);
+    const labels = @Html.Raw(XLabels);
+    var datadonut = [];
+
+    for (let i = 0; i < labels.length; i++) {
+        const newArray = {
+            label: labels[i],
+            value: values[i],
+            color: random_rgba(),
+        }
+        datadonut.push(newArray);
+    };
+    console.log(datadonut);
+    var bar = Morris.Donut({
+        element: 'donutchart',
+        data: datadonut,
+        resize:true,
+        redraw:true,
+
+    });
+
+    function random_rgba() {
+        var o = Math.round,
+            r = Math.random,
+            s = 255;
+        return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + r().toFixed(1) + ')';
+    }
+
+    //resize height and width
+    $('#donutchart').resize(function () { bar.redraw(); });
+    $("#donutchart").css("height", "300px");
+    
+    bar.options.data.forEach(function (label, i) {
+
+        var legendItem = $('<span></span>').text(" [" + label['value'] + "] " + label['label']).prepend('<br><span>&nbsp;</span>');
+            legendItem.find('span')
+               .css('backgroundColor', bar.options.data[i].color)
+               .css('width', '20px')
+               .css('display', 'inline-block')
+               .css('margin', '4px');
+               $('#visitor_legend').append(legendItem) // ID pf the legend div declared above
+    });
+
+</script> 

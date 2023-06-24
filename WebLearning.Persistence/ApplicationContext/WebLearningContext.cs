@@ -39,6 +39,8 @@ namespace WebLearning.Persistence.ApplicationContext
         public DbSet<AssetsCategory> AssetsCategories { get; set; }
         public DbSet<AssetsDepartment> AssetsDepartments { get; set; }
         public DbSet<AssetsStatus> AssetsStatuses { get; set; }
+        public DbSet<AssetsMoved> AssetsMoveds { get; set; }
+        public DbSet<AssetsMovedStatus> AssetsMovedStatuses { get; set; }
 
 
         public DbSet<Role> Roles { get; set; }
@@ -129,6 +131,8 @@ namespace WebLearning.Persistence.ApplicationContext
             modelBuilder.Entity<AssetsDepartment>().ToTable("AssetsDepartment");
             modelBuilder.Entity<AssetsStatus>().ToTable("AssetsStatus").Property(f => f.Id)
             .ValueGeneratedOnAdd();
+            modelBuilder.Entity<AssetsMoved>().ToTable("AssetsMoved");
+            modelBuilder.Entity<AssetsMovedStatus>().ToTable("AssetsMovedStatus");
 
 
             modelBuilder.Entity<Role>().ToTable("Role");

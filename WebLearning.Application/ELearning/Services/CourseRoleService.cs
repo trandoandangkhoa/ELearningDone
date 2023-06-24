@@ -75,8 +75,8 @@ namespace WebLearning.Application.ELearning.Services
 
             var totalRow = await query.CountAsync();
 
-            var data = await query.Skip((getListPagingRequest.PageIndex - 1) * (int)pageResult)
-                                    .Take((int)pageResult)
+            var data = await query.Skip((getListPagingRequest.PageIndex - 1) * pageResult)
+                                    .Take(pageResult)
                                     .Select(x => new CourseRoleDto()
                                     {
                                         Id = x.Id,

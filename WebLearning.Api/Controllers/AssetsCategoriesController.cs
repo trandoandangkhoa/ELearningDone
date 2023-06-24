@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebLearning.Application.Assets.Services;
-using WebLearning.Application.ELearning.Services;
 using WebLearning.Application.Helper;
 using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos;
@@ -27,7 +26,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet]
 
-        //[SecurityAssetCategory(AuthorizeAssetCategory.AdminAssetCategory, AuthorizeAssetCategory.StudentAssetCategory)]
+        [SecurityRole(AuthorizeRole.AdminRole,AuthorizeRole.ITRole)]
 
         public async Task<IEnumerable<AssetsCategoryDto>> GetAssetsCategories()
         {
@@ -40,7 +39,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("paging")]
 
-        //[SecurityAssetCategory(AuthorizeAssetCategory.AdminAssetCategory)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<PagedViewModel<AssetsCategoryDto>> GetUsers([FromQuery] GetListPagingRequest getListPagingRequest)
         {
@@ -55,7 +54,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("{id}")]
 
-        //[SecurityAssetCategory(AuthorizeAssetCategory.AdminAssetCategory, AuthorizeAssetCategory.StudentAssetCategory)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
         public async Task<IActionResult> GetAssetCategoryById(Guid id)
         {
             if (await _categoryService.GetAssetsCategoryById(id) == null)
@@ -70,7 +69,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("catcode/{code}")]
 
-        //[SecurityAssetCategory(AuthorizeAssetCategory.AdminAssetCategory, AuthorizeAssetCategory.StudentAssetCategory)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
         public async Task<IActionResult> GetCatByCode(string code)
         {
             if (await _categoryService.GetCode(code) == null)
@@ -86,7 +85,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpPost]
 
-        //[SecurityAssetCategory(AuthorizeAssetCategory.AdminAssetCategory)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IActionResult> Post([FromBody] CreateAssetsCategoryDto createAssetCategoryDto)
         {
@@ -113,7 +112,7 @@ namespace WebLearning.Api.Controllers
         /// Cập nhật loại
         /// </summary>
         [HttpPut("{id}")]
-        //[SecurityAssetCategory(AuthorizeAssetCategory.AdminAssetCategory)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IActionResult> UpdateAssetCategory(Guid id, [FromBody] UpdateAssetsCategoryDto updateAssetsCategoryDto)
         {
@@ -144,7 +143,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         // DELETE api/<AssetCategoryController>/5
         [HttpDelete("{id}")]
-        //[SecurityAssetCategory(AuthorizeAssetCategory.AdminAssetCategory)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IActionResult> DeleteAssetCategory(Guid id)
         {

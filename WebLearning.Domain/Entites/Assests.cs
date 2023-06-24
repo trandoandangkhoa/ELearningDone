@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebLearning.Domain.Entites
 {
     public class Assests
     {
         [Key]
-        public string Id { get;set; }
+        public string Id { get; set; }
 
-        public string AssetId { get;set; }
+        public string AssetId { get; set; }
 
-        public string AssetName { get;set; }    
+        public string AssetName { get; set; }
 
-        public   bool Active { get; set; }
+        public bool Active { get; set; }
         public string SeriNumber { get; set; }
 
         public string Price { get; set; }
@@ -25,12 +20,12 @@ namespace WebLearning.Domain.Entites
 
         public string OrderNumber { get; set; }
 
-        public Guid AssetsCategoryId { get;set; }
+        public Guid AssetsCategoryId { get; set; }
 
         public string AssetSubCategory { get; set; }
 
         public int Quantity { get; set; }
-        
+
         public Guid AssetsDepartmentId { get; set; }
 
         public string Customer { get; set; }
@@ -43,7 +38,7 @@ namespace WebLearning.Domain.Entites
         public DateTime? DateExpired { get; set; }
         public DateTime? DateUsed { get; set; }
         public int ExpireDay { get; set; }
-        public DateTime? DateMoved { get; set; } 
+        public DateTime? DateMoved { get; set; }
 
         public DateTime DateChecked { get; set; }
 
@@ -60,5 +55,7 @@ namespace WebLearning.Domain.Entites
         public AssetsDepartment AssetsDepartment { get; set; }
 
         public AssetsStatus AssetsStatus { get; set; }
+
+        public ICollection<AssetsMoved> AssetsMoveds { get; set; }
     }
 }

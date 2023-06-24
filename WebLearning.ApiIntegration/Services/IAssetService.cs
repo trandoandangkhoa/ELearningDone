@@ -4,20 +4,18 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Web;
-using WebLearning.Application.Helper;
 using WebLearning.Application.Ultities;
-using WebLearning.Contract.Dtos.Account;
 using WebLearning.Contract.Dtos.Assets;
-using WebLearning.Domain.Entites;
 
 namespace WebLearning.ApiIntegration.Services
 {
     public interface IAssetService
     {
-        public Task<PagedViewModel<AssetsDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest, Guid[] assetsCategoryId, Guid[] assetsDepartmentId, int[] statusId, string url);
+        public Task<PagedViewModel<AssetsDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest, Guid[] assetsCategoryId, Guid[] assetsDepartmentId, int[] statusId);
         public Task<IEnumerable<AssetsDto>> GetAllAssets();
         public Task<IEnumerable<AssetsDto>> FilterAssets(Guid catId, Guid subId, Guid depId, int statusId);
+        public Task<IEnumerable<AssetsDto>> Export(string url);
+
         public Task<AssetsDto> GetAssetById(string id);
         public Task<bool> InsertAsset(CreateAssetsDto createAssetsDto);
         public Task<bool> DeleteAsset(string id);
@@ -37,7 +35,7 @@ namespace WebLearning.ApiIntegration.Services
             _httpContextAccessor = httpContextAccessor;
             _httpClientFactory = httpClientFactory;
         }
-        public async Task<PagedViewModel<AssetsDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest, Guid[] assetsCategoryId, Guid[] assetsDepartmentId, int[] statusId,string url)
+        public async Task<PagedViewModel<AssetsDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest, Guid[] assetsCategoryId, Guid[] assetsDepartmentId, int[] statusId)
         {
             //if(getListPagingRequest.Keyword != null)
             //{
@@ -55,11 +53,6 @@ namespace WebLearning.ApiIntegration.Services
 
             string address = $"/api/Assests/paging?pageIndex=" +
     $"{getListPagingRequest.PageIndex}&pageSize={getListPagingRequest.PageSize}&keyword={getListPagingRequest.Keyword}&active={getListPagingRequest.Active}&";
-            //if(url != null)
-            //{
-            //    address += url;
-            //}
-
 
             for (int i = 0; i < assetsCategoryId.Length; i++)
             {
@@ -192,7 +185,28 @@ namespace WebLearning.ApiIntegration.Services
             return users;
         }
 
+        public async Task<IEnumerable<AssetsDto>> Export(string url)
+        {
 
+            var client = _httpClientFactory.CreateClient();
+
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+            string address = $"/api/Assests/export" + url;
+
+
+            var response = await client.GetAsync(address);
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            var users = JsonConvert.DeserializeObject<IEnumerable<AssetsDto>>(body);
+
+            return users;
+        }
     }
 }
 

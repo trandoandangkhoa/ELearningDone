@@ -46,7 +46,7 @@ namespace WebLearning.Application.ELearning.Services
             {
                 pageResult = getListPagingRequest.PageSize;
             }
-            
+
             var pageCount = Math.Ceiling(_context.CorrectAnswerLessions.Count() / (double)pageResult);
             var query = _context.CorrectAnswerLessions.AsQueryable();
             if (!string.IsNullOrEmpty(getListPagingRequest.Keyword))

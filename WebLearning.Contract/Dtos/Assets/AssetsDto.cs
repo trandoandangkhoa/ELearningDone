@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WebLearning.Contract.Dtos.Assets.Category;
+﻿using WebLearning.Contract.Dtos.Assets.Category;
 using WebLearning.Contract.Dtos.Assets.Department;
 using WebLearning.Contract.Dtos.Assets.Status;
 
@@ -65,6 +60,9 @@ namespace WebLearning.Contract.Dtos.Assets
 
         public AssetsDepartmentDto AssetsDepartmentDto { get; set; }
 
-        public AssetsStatusDto AssetsStatusDto{ get; set; }
+        public AssetsStatusDto AssetsStatusDto { get; set; }
+
+        public ICollection<AssetsMovedDto> AssetsMovedsDto { get; set; }
+
     }
 }
