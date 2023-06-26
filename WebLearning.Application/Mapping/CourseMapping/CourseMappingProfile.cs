@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using MailKit;
 using WebLearning.Contract.Dtos.Course;
 using WebLearning.Contract.Dtos.ImageCourse;
+using WebLearning.Contract.Dtos.Lession;
 using WebLearning.Domain.Entites;
 
 namespace WebLearning.Application.Mapping.CourseMapping
@@ -15,6 +17,7 @@ namespace WebLearning.Application.Mapping.CourseMapping
             CreateMap<Course, CourseDto>()
                     .ForPath(dest => dest.LessionDtos, opt => opt.MapFrom(src => src.Lessions))
                     .ForPath(dest => dest.QuizCourseDto, opt => opt.MapFrom(src => src.QuizCourse))
+                    .ForPath(dest => dest.QuizCourseDto.QuestionCourseDtos, opt => opt.MapFrom(src => src.QuizCourse.QuestionFinals))
                     .ForPath(dest => dest.CourseRoleDtos, opt => opt.MapFrom(src => src.CourseRoles))
                     .ForPath(dest => dest.CourseImageVideoDto, opt => opt.MapFrom(src => src.CourseImageVideo));
             //.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

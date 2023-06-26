@@ -24,7 +24,7 @@ namespace WebLearning.AppUser.Controllers.Component
             var ownCourse = await _accountService.GetAccountByEmail(User.Identity.Name);
 
 
-            notificationItemViewModels.NotificationResponseDtos = listNotification.Where(x => x.Notify == true && x.AccountName.Equals(ownCourse.AccountDto.Email) && x.RoleId.Equals(ownCourse.AccountDto.RoleId)).ToList();
+            notificationItemViewModels.NotificationResponseDtos = listNotification.ToList();
 
 
             return View(notificationItemViewModels);

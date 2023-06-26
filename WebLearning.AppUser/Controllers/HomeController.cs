@@ -8,6 +8,12 @@ namespace WebLearning.AppUser.Controllers
         [Authorize]
         public IActionResult Index()
         {
+            var token = HttpContext.Session.GetString("Token");
+
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
             return View();
         }
     }

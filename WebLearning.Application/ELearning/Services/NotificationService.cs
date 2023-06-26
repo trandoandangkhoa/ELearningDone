@@ -63,22 +63,27 @@ namespace WebLearning.Application.ELearning.Services
         {
             var getDetail = await _accountService.GetNameUser(accountName);
 
-            var allCourse = await _context.Courses.Where(x => x.Active == true).Include(x => x.CourseImageVideo).Include(x => x.QuizCourse).Include(x => x.CourseRoles).OrderByDescending(x => x.DateCreated).AsNoTracking().ToListAsync();
+            //var allCourse = await _context.Courses.Where(x => x.Active == true).Include(x => x.CourseImageVideo).Include(x => x.QuizCourse).Include(x => x.CourseRoles).OrderByDescending(x => x.DateCreated).AsNoTracking().ToListAsync();
 
-            var allLession = await _context.Lessions.Include(x => x.LessionVideoImages).Include(x => x.Quizzes).AsNoTracking().ToListAsync();
+            //var allLession = await _context.Lessions.Include(x => x.LessionVideoImages).Include(x => x.Quizzes).AsNoTracking().ToListAsync();
 
-            var allQuizMonthly = await _context.QuizMonthlies.Where(x => x.Active == true).OrderByDescending(x => x.DateCreated).AsNoTracking().ToListAsync();
+            //var allQuizMonthly = await _context.QuizMonthlies.Where(x => x.Active == true).OrderByDescending(x => x.DateCreated).AsNoTracking().ToListAsync();
 
-            var allCourseDto = _mapper.Map<List<CourseDto>>(allCourse);
+            //var allCourseDto = _mapper.Map<List<CourseDto>>(allCourse);
 
-            var allLessionDto = _mapper.Map<List<LessionDto>>(allLession);
+            //var allLessionDto = _mapper.Map<List<LessionDto>>(allLession);
 
-            var allQuizMonthlyDto = _mapper.Map<List<QuizMonthlyDto>>(allQuizMonthly);
+            //var allQuizMonthlyDto = _mapper.Map<List<QuizMonthlyDto>>(allQuizMonthly);
+
+            var a = await _accountService.GetUserByKeyWord(accountName);
 
             List<NotificationResponseDto> notificationResponseDtos = new();
+            //if(a.CourseDtos.Where(x => x.Notify == true) != null)
+            //{
+            //    notificationResponseDtos.AddRange();
+            //}
 
-
-            foreach (var course in allCourseDto.Where(x => x.CourseRoleDtos.Any(x => x.RoleId.Equals(getDetail.RoleId)) && x.Active == true))
+            foreach (var course in a.OwnCourseDtos.Where(x => x.Notify == true).AsQueryable())
             {
 
                 notificationResponseDtos.Add(new NotificationResponseDto
@@ -111,7 +116,7 @@ namespace WebLearning.Application.ELearning.Services
 
                 if (course.QuizCourseDto != null)
                 {
-                    if (course.QuizCourseDto.Notify == true && course.QuizCourseDto.Active == true && course.QuizCourseDto.CourseId.Equals(course.Id))
+                    if (course.QuizCourseDto.Notify == true && course.QuizCourseDto.Active == true)
                     {
                         notificationResponseDtos.Add(new NotificationResponseDto
                         {
@@ -143,7 +148,7 @@ namespace WebLearning.Application.ELearning.Services
                     }
                 }
 
-                foreach (var lession in allLessionDto.Where(x => x.Notify == true && x.Active == true && x.CourseId.Equals(course.Id)))
+                foreach (var lession in a.LessionDtos.Where(x => x.Notify == true && x.Active == true && x.CourseId.Equals(course.Id)).AsQueryable())
                 {
 
                     notificationResponseDtos.Add(new NotificationResponseDto
@@ -173,7 +178,7 @@ namespace WebLearning.Application.ELearning.Services
                         DescNotify = lession.DescNotify,
                     });
 
-                    foreach (var videoLession in lession.LessionVideoDtos.Where(x => x.Notify == true && x.LessionId.Equals(lession.Id)))
+                    foreach (var videoLession in lession.LessionVideoDtos.Where(x => x.Notify == true && x.LessionId.Equals(lession.Id)).AsQueryable())
                     {
                         notificationResponseDtos.Add(new NotificationResponseDto
                         {
@@ -205,7 +210,7 @@ namespace WebLearning.Application.ELearning.Services
                     }
                     if (lession.QuizlessionDtos != null)
                     {
-                        foreach (var quizLession in lession.QuizlessionDtos.Where(x => x.Notify == true && x.Active == true && x.LessionId.Equals(lession.Id)))
+                        foreach (var quizLession in lession.QuizlessionDtos.Where(x => x.Notify == true && x.Active == true && x.LessionId.Equals(lession.Id)).AsQueryable())
                         {
                             notificationResponseDtos.Add(new NotificationResponseDto
                             {
@@ -241,9 +246,9 @@ namespace WebLearning.Application.ELearning.Services
 
             }
 
-            foreach (var quizMonthly in allQuizMonthlyDto.Where(x => x.RoleId.Equals(getDetail.RoleId)).OrderByDescending(x => x.DateCreated))
+            foreach (var quizMonthly in a.QuizMonthlyDtos)
             {
-                if (quizMonthly != null && quizMonthly.Active == true && quizMonthly.Active == true)
+                if (quizMonthly != null)
                 {
                     notificationResponseDtos.Add(new NotificationResponseDto
                     {
@@ -281,7 +286,7 @@ namespace WebLearning.Application.ELearning.Services
         public async Task InsertNotificationResponse(CreateNotificationResponseDto createNotificationResponseDto, string accountName)
         {
             var list = await GetNotificationResponses(accountName);
-
+            
             foreach (var item in list)
             {
                 if (_context.NotificationResponses.Any(x => x.TargetNotificationId.Equals(item.TargetNotificationId) && x.AccountName.Equals(item.AccountName)) == false)
@@ -326,8 +331,6 @@ namespace WebLearning.Application.ELearning.Services
         {
             if (accountName != null)
             {
-                var account = await _accountService.GetNameUser(accountName);
-
                 CreateNotificationResponseDto createNotificationResponseAccountDto = new CreateNotificationResponseDto();
 
                 var total = await GetNotificationResponses(accountName);
@@ -337,7 +340,7 @@ namespace WebLearning.Application.ELearning.Services
                     await InsertNotificationResponse(createNotificationResponseAccountDto, accountName);
                 }
 
-                var db = await _context.NotificationResponses.Where(x => x.RoleId.Equals(account.RoleId)).OrderByDescending(x => x.DateCreated).AsNoTracking().ToListAsync();
+                var db = await _context.NotificationResponses.Where(x => x.AccountName == accountName && x.Notify == true).OrderByDescending(x => x.DateCreated).AsNoTracking().ToListAsync();
 
                 var notificationResponseDto = _mapper.Map<List<NotificationResponseDto>>(db);
 

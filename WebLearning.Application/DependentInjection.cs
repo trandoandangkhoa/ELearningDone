@@ -45,7 +45,7 @@ namespace WebLearning.Application
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<WebLearningContext>(options => options.UseSqlServer(configuration.GetConnectionString("WebLearningConnection")
+            services.AddDbContextPool<WebLearningContext>(options => options.UseSqlServer(configuration.GetConnectionString("WebLearningConnection")
                                                       , o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
             services.AddScoped<IAccountService, AccountService>();

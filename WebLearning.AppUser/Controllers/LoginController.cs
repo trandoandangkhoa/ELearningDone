@@ -96,6 +96,7 @@ namespace WebLearning.AppUser.Controllers
             HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principle, props).Wait();
 
             HttpContext.Session.SetString("Token", token);
+            HttpContext.Session.SetString("AccountId", account.Id.ToString());
 
             _notyf.Success("Đăng nhập thành công!");
 
@@ -149,13 +150,13 @@ namespace WebLearning.AppUser.Controllers
             {
                 return Redirect("/dang-nhap.html");
             }
-            var account = await _accountService.GetAccountByEmail(User.Identity.Name);
+            var account = await _accountService.GetFullName(User.Identity.Name);
 
             if (account == null)
             {
                 return RedirectToAction("Login", "Login");
             }
-            accountId = account.AccountDto.Id;
+            accountId = account.Id;
 
             createAvatarDto.Name = (await _accountService.GetAccountById(accountId)).accountDetailDto.FullName;
 
@@ -209,15 +210,15 @@ namespace WebLearning.AppUser.Controllers
             }
 
 
-            var account = await _accountService.GetAccountByEmail(User.Identity.Name);
+            var account = await _accountService.GetFullName(User.Identity.Name);
 
             if (account == null)
             {
                 return RedirectToAction("Login", "Login");
             }
-            accountId = account.AccountDto.Id;
+            accountId = account.Id;
 
-            updateAvatarDto.Name = account.AccountDto.accountDetailDto.FullName;
+            updateAvatarDto.Name = account.accountDetailDto.FullName;
 
 
             updateAvatarDto.Image = fThumb;

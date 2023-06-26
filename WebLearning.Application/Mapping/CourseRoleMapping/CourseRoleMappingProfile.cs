@@ -10,6 +10,7 @@ namespace WebLearning.Application.Mapping.CourseRoleMapping
         {
 
             CreateMap<CourseRole, CourseRoleDto>().ForPath(dest => dest.CourseDto, opt => opt.MapFrom(src => src.Course))
+                                                    .ForPath(dest => dest.CourseDto.LessionDtos, opt => opt.MapFrom(src => src.Course.Lessions))
                                                   .ForPath(dest => dest.RoleDto, opt => opt.MapFrom(src => src.Role));
             //.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             //.ForMember(dest => dest.CourseId, opt => opt.MapFrom(src => src.CourseId))

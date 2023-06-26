@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 using WebLearning.Application.Helper;
 using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos.Course;
@@ -96,9 +97,9 @@ namespace WebLearning.Application.ELearning.Services
 
         public async Task<CourseDto> UserCourse(Guid id, string accountName)
         {
-            var course = await _context.Courses.Include(x => x.QuizCourse).Include(x => x.CourseImageVideo).Include(x => x.Lessions).Include(x => x.CourseRoles).FirstOrDefaultAsync(x => x.Id.Equals(id));
+            var course = await _context.Courses.Include(x => x.QuizCourse).Include(x => x.CourseImageVideo).Include(x => x.Lessions).Include(x => x.CourseRoles).AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(id));
 
-            var roleId = await _accountService.GetUserByKeyWord(accountName);
+            var roleId = await _accountService.GetNameUser(accountName);
 
             var imageCourse = _context.CourseImageVideos.Where(x => x.CourseId.Equals(course.Id)).OrderBy(x => x.DateCreated).AsNoTracking().AsQueryable();
 
@@ -106,14 +107,13 @@ namespace WebLearning.Application.ELearning.Services
 
             var quizCourse = await _context.QuizCourses.FirstOrDefaultAsync(x => x.CourseId.Equals(course.Id));
 
-            var courseRole = _context.CourseRoles.Where(x => x.CourseId.Equals(course.Id) && x.RoleId.Equals(roleId.AccountDto.RoleId)).AsNoTracking().AsQueryable();
+            var courseRole = _context.CourseRoles.Where(x => x.CourseId.Equals(course.Id) && x.RoleId.Equals(roleId.RoleId)).AsNoTracking().AsQueryable();
 
             var courseImageDto = _mapper.Map<List<CourseImageDto>>(imageCourse);
 
             var lessionDto = _mapper.Map<List<LessionDto>>(lessionCourse);
 
             var courseRoleDto = _mapper.Map<List<CourseRoleDto>>(courseRole);
-
 
             if (quizCourse != null)
             {

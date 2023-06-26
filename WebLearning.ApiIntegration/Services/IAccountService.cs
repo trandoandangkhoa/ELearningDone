@@ -63,54 +63,6 @@ namespace WebLearning.ApiIntegration.Services
             var users = JsonConvert.DeserializeObject<PagedViewModel<AccountDto>>(body);
 
             return users;
-            //var a = getListPagingRequest.Keyword;
-
-            //if (!string.IsNullOrEmpty(a))
-            //{
-            //    _httpContextAccessor.HttpContext.Session.SetString("Keyword", a);
-            //}
-            //var ksession = _httpContextAccessor.HttpContext.Session.GetString("Keyword");
-
-            //if (string.IsNullOrEmpty(ksession))
-            //{
-            //    if (string.IsNullOrEmpty(a))
-            //    {
-
-            //        var response = await client.GetAsync($"/accountpaging?PageIndex=" +
-            //            $"{getListPagingRequest.PageIndex}&PageSize={getListPagingRequest.PageSize}&Keyword={getListPagingRequest.Keyword}");
-
-            //        var body = await response.Content.ReadAsStringAsync();
-
-            //        var users = JsonConvert.DeserializeObject<PagedViewModel<AccountDto>>(body);
-
-            //        return users;
-            //    }
-            //    else if (!string.IsNullOrEmpty(a))
-            //    {
-
-            //        var response = await client.GetAsync($"/accountpaging?PageIndex=" +
-            //            $"{getListPagingRequest.PageIndex}&PageSize={getListPagingRequest.PageSize}&Keyword={getListPagingRequest.Keyword}");
-
-            //        var body = await response.Content.ReadAsStringAsync();
-
-            //        var users = JsonConvert.DeserializeObject<PagedViewModel<AccountDto>>(body);
-
-            //        return users;
-            //    }
-            //}
-            //else
-            //{
-            //    var response = await client.GetAsync($"/accountpaging?PageIndex=" +
-            //    $"{getListPagingRequest.PageIndex}&PageSize={getListPagingRequest.PageSize}&Keyword={ksession}");
-
-            //    var body = await response.Content.ReadAsStringAsync();
-
-            //    var users = JsonConvert.DeserializeObject<PagedViewModel<AccountDto>>(body);
-
-            //    return users;
-            //}
-
-            //return default;
 
         }
         public async Task<bool> InsertAccount(CreateAccountDto createAccountDto)

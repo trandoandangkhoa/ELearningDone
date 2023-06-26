@@ -140,7 +140,7 @@ namespace WebLearning.Application.ELearning.Services
         {
             var roleId = await _accountService.GetUserByKeyWord(accountName);
 
-            var exist = await _context.CourseRoles.FirstOrDefaultAsync(x => x.CourseId.Equals(courseId));
+            var exist = await _context.CourseRoles.Include(x => x.Course).ThenInclude(x => x.Lessions).FirstOrDefaultAsync(x => x.CourseId.Equals(courseId));
 
             var course = await _context.Courses.FirstOrDefaultAsync(x => x.Id.Equals(courseId));
 
@@ -170,7 +170,7 @@ namespace WebLearning.Application.ELearning.Services
 
 
 
-            var courseRole = await _context.CourseRoles.Include(x => x.Role).Include(x => x.Course).ThenInclude(x => x.QuizCourse).FirstOrDefaultAsync(x => x.CourseId.Equals(courseId) && x.RoleId.Equals(roleId.AccountDto.RoleId));
+            var courseRole = await _context.CourseRoles.Include(x => x.Role).Include(x => x.Course).ThenInclude(x => x.QuizCourse).Include(x => x.Course.Lessions).FirstOrDefaultAsync(x => x.CourseId.Equals(courseId) && x.RoleId.Equals(roleId.AccountDto.RoleId));
 
             var courseRoleDto = _mapper.Map<CourseRoleDto>(courseRole);
 

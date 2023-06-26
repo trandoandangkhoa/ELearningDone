@@ -47,9 +47,9 @@ namespace WebLearning.AppUser.Controllers
             {
                 return RedirectToAction("Login", "Login");
             }
-            var roleUser = await _accountService.GetAccountByEmail(accountName);
+            var roleUser = await _accountService.GetFullName(accountName);
 
-            var roleId = await _roleService.GetRoleById(roleUser.AccountDto.RoleId);
+            var roleId = await _roleService.GetRoleById(roleUser.RoleId);
 
             var getOwnQuiz = await _quizService.GetOwnQuiz(roleId.Id);
 

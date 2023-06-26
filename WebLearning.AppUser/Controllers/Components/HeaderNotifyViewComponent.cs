@@ -36,7 +36,7 @@ namespace WebLearning.AppUser.Controllers.Components
 
             notificationItemViewModels.OwnCourseDtos = course.CourseDtos.Where(x => x.Active == true && x.CourseRoleDtos.Any(x => x.RoleId.Equals(course.AccountDto.RoleId))).ToList();
 
-            notificationItemViewModels.NotificationResponseDtos = listNotification.Where(x => x.Notify == true).ToList();
+            notificationItemViewModels.NotificationResponseDtos = listNotification.ToList();
 
             notificationItemViewModels.QuizMonthlyDtos = course.QuizMonthlyDtos.ToList();
 

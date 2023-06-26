@@ -39,10 +39,10 @@ namespace WebLearning.AppUser.Controllers
             {
                 return Redirect("/dang-nhap.html");
             }
-            var a = await _accountService.GetAccountByEmail(User.Identity.Name);
+            var a = await _accountService.GetFullName(User.Identity.Name);
 
-            if (a.AccountDto.AuthorizeRole.ToString() != "ManagerRole" && a.AccountDto.AuthorizeRole.ToString() != "AdminRole"
-                && a.AccountDto.AuthorizeRole.ToString() != "TeacherRole" && a.AccountDto.AuthorizeRole.ToString() != "StaffRole") { return Redirect("/khong-tim-thay-trang.html"); }
+            if (a.AuthorizeRole.ToString() != "ManagerRole" && a.AuthorizeRole.ToString() != "AdminRole"
+                && a.AuthorizeRole.ToString() != "TeacherRole" && a.AuthorizeRole.ToString() != "StaffRole") { return Redirect("/khong-tim-thay-trang.html"); }
             return View();
         }
         [HttpGet]
@@ -131,8 +131,8 @@ namespace WebLearning.AppUser.Controllers
             {
                 return Redirect("/dang-nhap.html");
             }
-            var a = await _accountService.GetAccountByEmail(User.Identity.Name);
-            if (a.AccountDto.AuthorizeRole.ToString() != "AdminRole") { return Redirect("/khong-tim-thay-trang.html"); }
+            var a = await _accountService.GetFullName(User.Identity.Name);
+            if (a.AuthorizeRole.ToString() != "AdminRole") { return Redirect("/khong-tim-thay-trang.html"); }
             return View();
         }
         [Route("manager.html")]
@@ -145,9 +145,9 @@ namespace WebLearning.AppUser.Controllers
             {
                 return Redirect("/dang-nhap.html");
             }
-            var a = await _accountService.GetAccountByEmail(User.Identity.Name);
-            if (a.AccountDto.AuthorizeRole.ToString() != "ManagerRole" && a.AccountDto.AuthorizeRole.ToString() != "AdminRole"
-                && a.AccountDto.AuthorizeRole.ToString() != "TeacherRole") { return Redirect("/khong-tim-thay-trang.html"); }
+            var a = await _accountService.GetFullName(User.Identity.Name);
+            if (a.AuthorizeRole.ToString() != "ManagerRole" && a.AuthorizeRole.ToString() != "AdminRole"
+                && a.AuthorizeRole.ToString() != "TeacherRole") { return Redirect("/khong-tim-thay-trang.html"); }
             return View();
         }
 
