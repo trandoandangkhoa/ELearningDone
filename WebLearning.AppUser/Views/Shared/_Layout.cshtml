@@ -9,7 +9,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>E Learning VXH </title>
+@*    <title>@ViewData["Title"]</title>
+*@    
+    <title>Vạn Xuân System</title>
+
     <link rel="shortcut icon" type="image/x-icon" href="~/icon.ico" />
 
     <!-- Bootstrap -->
@@ -75,11 +78,19 @@
         .datatables_length, .dataTables_info, .dataTables_paginate {
             display: none;
         }
+         @@media print {
+            @@page {
+                margin: 10mm 5mm 5mm 5mm;
+            }
 
+            body {
+                margin: 0;
+            }
+        }
     </style>
 </head>
 
-<body class="nav-md" >
+<body class="nav-md" style="background-color:white">
 
 
     <div class="container body">
@@ -236,7 +247,7 @@
             </div>
             <!-- /top navigation -->
             <!-- page content -->
-            <div class="right_col" role="main">
+            <div class="right_col" role="main" >
                 @RenderBody()
             </div>
             <!-- /page content -->

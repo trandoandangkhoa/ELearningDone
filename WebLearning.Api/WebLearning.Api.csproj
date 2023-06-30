@@ -42,9 +42,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="imageLession\" />
     <Folder Include="imageCourse\" />
     <Folder Include="document\" />
+    <Folder Include="imageLession\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

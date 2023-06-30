@@ -134,7 +134,7 @@
                                                 <tbody>
                                                     @if (Model.ReportScoreLessionDtos != null)
                                                     {
-                                                        @foreach (var course in Model.ReportScoreLessionDtos.OrderByDescending(x => x.CompletedDate))
+                                                        @foreach (var course in Model.ReportScoreLessionDtos)
                                                         {
 
                                                             <tr>
@@ -199,7 +199,7 @@
                                                 <tbody>
                                                     @if (Model.ReportScoreCourseDtos != null)
                                                     {
-                                                        @foreach (var course in Model.ReportScoreCourseDtos.OrderByDescending(x => x.CompletedDate))
+                                                        @foreach (var course in Model.ReportScoreCourseDtos)
                                                         {
 
                                                             <tr>
@@ -261,7 +261,7 @@
                                                 <tbody>
                                                     @if (Model.ReportScoreMonthlyDtos != null)
                                                     {
-                                                        @foreach (var course in Model.ReportScoreMonthlyDtos.OrderByDescending(x => x.CompletedDate))
+                                                        @foreach (var course in Model.ReportScoreMonthlyDtos)
                                                         {
 
                                                             <tr>

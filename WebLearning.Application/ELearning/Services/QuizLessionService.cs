@@ -165,11 +165,11 @@ namespace WebLearning.Application.ELearning.Services
             }
             else
             {
-                var historySubmitLession = await _context.HistorySubmitLessions.Where(x => x.QuizLessionId.Equals(quizLession.ID) && x.AccountName.Equals(accountName)).ToListAsync();
+                var historySubmitLession = _context.HistorySubmitLessions.Where(x => x.QuizLessionId.Equals(quizLession.ID) && x.AccountName.Equals(accountName)).AsNoTracking().AsQueryable();
 
-                var answerLession = await _context.AnswerLessions.Where(x => x.QuizLessionId.Equals(quizLession.ID) && x.AccountName.Equals(accountName)).ToListAsync();
+                var answerLession = _context.AnswerLessions.Where(x => x.QuizLessionId.Equals(quizLession.ID) && x.AccountName.Equals(accountName)).AsNoTracking().AsQueryable();
 
-                var reportScoreLession = await _context.ReportUsersScore.Where(x => x.QuizLessionId.Equals(quizLession.ID) && x.UserName.Equals(accountName)).ToListAsync();
+                var reportScoreLession = _context.ReportUsersScore.Where(x => x.QuizLessionId.Equals(quizLession.ID) && x.UserName.Equals(accountName)).AsNoTracking().AsQueryable();
 
 
                 var questionDto = _mapper.Map<List<QuestionLessionDto>>(quizLession.QuestionLessions);

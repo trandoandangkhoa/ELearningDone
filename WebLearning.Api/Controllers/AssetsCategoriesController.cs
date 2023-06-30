@@ -26,7 +26,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet]
 
-        [SecurityRole(AuthorizeRole.AdminRole,AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
 
         public async Task<IEnumerable<AssetsCategoryDto>> GetAssetsCategories()
         {

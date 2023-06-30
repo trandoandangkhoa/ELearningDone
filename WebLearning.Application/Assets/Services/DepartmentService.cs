@@ -52,7 +52,7 @@ namespace WebLearning.Application.Assets.Services
 
         public async Task<AssetsDepartmentDto> GetAssetsDepartmentById(Guid id)
         {
-            var asset = await _context.AssetsDepartments.Include(x => x.Assests).FirstOrDefaultAsync(x => x.Id.Equals(id));
+            var asset = await _context.AssetsDepartments.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(id));
 
             return _mapper.Map<AssetsDepartmentDto>(asset);
         }

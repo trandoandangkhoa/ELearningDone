@@ -222,11 +222,11 @@ namespace WebLearning.Application.ELearning.Services
                 {
                     var questionMonthly = quizMonthly.QuestionMonthlies.ToList();
 
-                    var historySubmitMonthly = await _context.HistorySubmitMonthlies.Where(x => x.QuizMonthlyId.Equals(quizMonthly.ID) && x.AccountName.Equals(accountName)).ToListAsync();
+                    var historySubmitMonthly = _context.HistorySubmitMonthlies.Where(x => x.QuizMonthlyId.Equals(quizMonthly.ID) && x.AccountName.Equals(accountName)).AsNoTracking().AsQueryable();
 
-                    var answerMonthly = await _context.AnswerMonthlies.Where(x => x.QuizMonthlyId.Equals(quizMonthly.ID) && x.AccountName.Equals(accountName)).ToListAsync();
+                    var answerMonthly = _context.AnswerMonthlies.Where(x => x.QuizMonthlyId.Equals(quizMonthly.ID) && x.AccountName.Equals(accountName)).AsNoTracking().AsQueryable();
 
-                    var reportScoreMonthly = await _context.ReportUserScoreMonthlies.Where(x => x.QuizMonthlyId.Equals(quizMonthly.ID) && x.UserName.Equals(accountName)).ToListAsync();
+                    var reportScoreMonthly = _context.ReportUserScoreMonthlies.Where(x => x.QuizMonthlyId.Equals(quizMonthly.ID) && x.UserName.Equals(accountName)).AsNoTracking().AsQueryable();
 
                     var questionDto = _mapper.Map<List<QuestionMonthlyDto>>(questionMonthly);
 

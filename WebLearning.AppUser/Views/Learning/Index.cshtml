@@ -221,38 +221,7 @@
                             </div>
                         </div>
                     </div>
-
-@*                    <div class="col" style="color:white">
-                        <div class="x_panel" style="background-color:#2A3F54;color:white;border-radius:20px;">
-                            <div class="x_title">
-                                <h2>Bài học mới nhất<small class="badge bg-red pull-right" style="margin-left:10px">New!</small></h2>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="x_content" style="max-height:440px;overflow-y:scroll">
-                                @foreach (var lessions in Model.CourseDtos.Where(x => x.Active == true).Select(x => x.LessionDtos).Take(3))
-                                {
-                                    foreach (var item in lessions.Where(x => x.Active == true).Take(3))
-                                    {
-                                        var month = item.DateCreated.Month;
-                                        var day = item.DateCreated.Day;
-                                        <article class="media event">
-                                            <a class="pull-left date" style="background-color:white">
-                                                <p class="month" style="color:#2a3f54">@month</p>
-                                                <p class="day" style="color:#2a3f54">@day</p>
-                                            </a>
-                                            <div class="media-body">
-                                                <a class="title" href="/chi-tiet-khoa-hoc/{@item.Alias}/{@item.CourseId}" style="color:white">@item.Name</a>
-                                                <p style="color:white">@Html.Raw(item.ShortDesc)</p>
-
-                                            </div>
-                                        </article>
-                                    }
-
-                                }
-                            </div>
-                        </div>
-                    </div>
-*@                </div>
+                </div>
 
 
             </div>
@@ -301,41 +270,7 @@
                             </div>
 
                         </div>
-@*                        <div class="col">
-                            <div class="x_panel" style="background-color:#2A3F54;color:white;border-radius:20px;">
-                                <div class="x_title">
-                                    <h2>Bài học của tôi</h2>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="x_content" style="max-height:440px;overflow-y:scroll">
-
-                                    @foreach (var item in Model.OwnCourseDtos.Where(x => x.Active == true).Select(x => x.LessionDtos).Take(3))
-                                    {
-                                        @foreach (var ownLession in item.Where(x => x.Active == true).Take(3))
-                                        {
-
-                                            var month = ownLession.DateCreated.Month;
-                                            var day = ownLession.DateCreated.Day;
-
-                                            <article class="media event">
-                                                <a class="pull-left date" style="background-color:white">
-                                                    <p class="month" style="color:#2a3f54">@month</p>
-                                                    <p class="day" style="color:#2a3f54">@day</p>
-                                                </a>
-                                                <div class="media-body">
-                                                    <a class="title" style="color:white" href="/chi-tiet-khoa-hoc/{@ownLession.Alias}/{@ownLession.CourseId}">@ownLession.Name</a>
-                                                    <p>@Html.Raw(ownLession.ShortDesc)</p>
-                                                </div>
-                                            </article>
-
-                                        }
-
-                                    }
-                                </div>
-
-                            </div>
-                        </div>
-*@                    </div>
+                    </div>
 
                 </div>
 

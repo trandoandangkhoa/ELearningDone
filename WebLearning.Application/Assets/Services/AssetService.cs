@@ -95,14 +95,14 @@ namespace WebLearning.Application.Assets.Services
 
         public async Task<AssetsDto> GetAssetById(string id)
         {
-            var asset = await _context.Assests.Include(x => x.AssetsStatus).Include(x => x.AssetsCategory).Include(x => x.AssetsDepartment).Include(x => x.AssetsMoveds).ThenInclude(x => x.AssetsMovedStatus).FirstOrDefaultAsync(x => x.Id == id);
+            var asset = await _context.Assests.Include(x => x.AssetsStatus).Include(x => x.AssetsCategory).Include(x => x.AssetsDepartment).Include(x => x.AssetsMoveds).ThenInclude(x => x.AssetsMovedStatus).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
             return _mapper.Map<AssetsDto>(asset);
         }
 
         public async Task<AssetsDto> GetCode(string code)
         {
-            var asset = await _context.Assests.Include(x => x.AssetsStatus).Include(x => x.AssetsCategory).Include(x => x.AssetsDepartment).FirstOrDefaultAsync(x => x.AssetId == code);
+            var asset = await _context.Assests.Include(x => x.AssetsStatus).Include(x => x.AssetsCategory).Include(x => x.AssetsDepartment).AsNoTracking().FirstOrDefaultAsync(x => x.AssetId == code);
 
             return _mapper.Map<AssetsDto>(asset);
         }
@@ -231,7 +231,7 @@ namespace WebLearning.Application.Assets.Services
             }
             //createAssetsDto.ExpireDayRemaining = Math.Abs((DateTime.Now - createAssetsDto.DateExpired).Days);
             createAssetsDto.DateCreated = DateTime.Now;
-            
+
             if (createAssetsDto.Id == null)
             {
                 var list = await _context.Assests.AsNoTracking().OrderByDescending(x => x.Id).ToListAsync();

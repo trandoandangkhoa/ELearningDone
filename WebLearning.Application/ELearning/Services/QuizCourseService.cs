@@ -218,11 +218,11 @@ namespace WebLearning.Application.ELearning.Services
                 {
                     var questionCourse = quizCourse.QuestionFinals.ToList();
 
-                    var historySubmitCourse = await _context.HistorySubmitFinals.Where(x => x.QuizCourseId.Equals(quizCourse.ID) && x.AccountName.Equals(accountName)).AsNoTracking().ToListAsync();
+                    var historySubmitCourse = _context.HistorySubmitFinals.Where(x => x.QuizCourseId.Equals(quizCourse.ID) && x.AccountName.Equals(accountName)).AsNoTracking().AsQueryable();
 
-                    var answerCourse = await _context.AnswerCourses.Where(x => x.QuizCourseId.Equals(quizCourse.ID) && x.AccountName.Equals(accountName)).AsNoTracking().ToListAsync();
+                    var answerCourse = _context.AnswerCourses.Where(x => x.QuizCourseId.Equals(quizCourse.ID) && x.AccountName.Equals(accountName)).AsNoTracking().AsQueryable();
 
-                    var reportScoreCourse = await _context.ReportUserScoreFinals.Where(x => x.QuizCourseId.Equals(quizCourse.ID) && x.UserName.Equals(accountName)).AsNoTracking().ToListAsync();
+                    var reportScoreCourse = _context.ReportUserScoreFinals.Where(x => x.QuizCourseId.Equals(quizCourse.ID) && x.UserName.Equals(accountName)).AsNoTracking().AsQueryable();
 
                     var questionDto = _mapper.Map<List<QuestionCourseDto>>(questionCourse);
 

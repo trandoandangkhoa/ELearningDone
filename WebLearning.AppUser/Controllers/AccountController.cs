@@ -7,19 +7,13 @@ namespace WebLearning.AppUser.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly ILogger<AccountController> _logger;
-        private readonly IConfiguration _configuration;
-        private readonly ILoginService _loginService;
         private readonly IAccountService _accountService;
 
         private readonly INotyfService _notyf;
 
-        public AccountController(ILogger<AccountController> logger, ILoginService loginService, IConfiguration configuration, IAccountService accountService
+        public AccountController(IAccountService accountService
                                 , INotyfService notyfService)
         {
-            _logger = logger;
-            _loginService = loginService;
-            _configuration = configuration;
             _accountService = accountService;
             _notyf = notyfService;
         }

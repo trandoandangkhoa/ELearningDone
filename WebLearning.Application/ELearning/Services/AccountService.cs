@@ -178,17 +178,11 @@ namespace WebLearning.Application.ELearning.Services
                 QuizCourseDtos = _mapper.Map<List<QuizCourseDto>>(_context.QuizCourses.Include(x => x.Course).ThenInclude(x => x.CourseRoles).Include(x => x.QuestionFinals).AsQueryable()),
                 QuizlessionDtos = _mapper.Map<List<QuizlessionDto>>(_context.QuizLessions.Include(x => x.Lession).Include(x => x.QuestionLessions).AsQueryable()),
                 QuizMonthlyDtos = _mapper.Map<List<QuizMonthlyDto>>(_context.QuizMonthlies.Include(x => x.QuestionMonthlies).Where(x => x.RoleId.Equals(account.RoleId) && x.Active == true).AsQueryable()),
-<<<<<<< Updated upstream
-                ReportScoreCourseDtos = _mapper.Map<List<ReportScoreCourseDto>>(_context.ReportUserScoreFinals.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).AsQueryable()),
-                ReportScoreLessionDtos = _mapper.Map<List<ReportScoreLessionDto>>(_context.ReportUsersScore.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).AsQueryable()),
-                ReportScoreMonthlyDtos = _mapper.Map<List<ReportScoreMonthlyDto>>(_context.ReportUserScoreMonthlies.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).AsQueryable()),
-                HistoryAddSlotDtos = _mapper.Map<List<HistoryAddSlotDto>>(_context.HistoryAddSlots.Include(x => x.Room).Where(x => x.Email.Equals(account.Email)).AsQueryable()),
-=======
+
                 ReportScoreCourseDtos = _mapper.Map<List<ReportScoreCourseDto>>(_context.ReportUserScoreFinals.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreCourseDto() { QuizCourseId = x.QuizCourseId,Passed=x.Passed,TotalScore=x.TotalScore,CourseId=x.CourseId}).AsNoTracking().AsQueryable()),
                 ReportScoreLessionDtos = _mapper.Map<List<ReportScoreLessionDto>>(_context.ReportUsersScore.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreLessionDto() { QuizLessionId = x.QuizLessionId, Passed = x.Passed,LessionId=x.LessionId, TotalScore = x.TotalScore }).AsNoTracking().AsQueryable()),
                 ReportScoreMonthlyDtos = _mapper.Map<List<ReportScoreMonthlyDto>>(_context.ReportUserScoreMonthlies.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreMonthlyDto() {QuizMonthlyId = x.QuizMonthlyId, Passed = x.Passed, RoleId=x.RoleId,TotalScore = x.TotalScore }).AsNoTracking().AsQueryable()),
                 HistoryAddSlotDtos = _mapper.Map<List<HistoryAddSlotDto>>(_context.HistoryAddSlots.Include(x => x.Room).Where(x => x.Email.Equals(account.Email)).AsNoTracking().AsQueryable()),
->>>>>>> Stashed changes
             };
 
 
