@@ -160,7 +160,7 @@ namespace WebLearning.Application.ELearning.Services
         }
         public async Task<UserAllInformationDto> GetUserByKeyWord(string keyword)
         {
-            var account = await _context.Accounts.Include(x => x.Role).Include(x => x.AccountDetail).Include(x => x.Avatar).FirstOrDefaultAsync(x => x.Email.Equals(keyword));
+            var account = await _context.Accounts.Include(x => x.Role).Include(x => x.AccountDetail).Include(x => x.Avatar).AsNoTracking().FirstOrDefaultAsync(x => x.Email.Equals(keyword));
 
             if (account == null)
             {
@@ -173,11 +173,11 @@ namespace WebLearning.Application.ELearning.Services
             {
                 AccountDto = _mapper.Map<AccountDto>(account),
                 CourseDtos = _mapper.Map<List<CourseDto>>(course),
-                OwnCourseDtos = _mapper.Map<List<CourseDto>>(course.Where(x => x.CourseRoles.Any(x => x.RoleId.Equals(account.RoleId)))),
-                LessionDtos = _mapper.Map<List<LessionDto>>(await _context.Lessions.Include(x => x.Courses).Include(x => x.LessionVideoImages).Include(x => x.Quizzes).Include(x => x.OtherFileUploads).OrderByDescending(x => x.DateCreated).ToListAsync()),
-                QuizCourseDtos = _mapper.Map<List<QuizCourseDto>>(_context.QuizCourses.Include(x => x.Course).ThenInclude(x => x.CourseRoles).Include(x => x.QuestionFinals).AsQueryable()),
-                QuizlessionDtos = _mapper.Map<List<QuizlessionDto>>(_context.QuizLessions.Include(x => x.Lession).Include(x => x.QuestionLessions).AsQueryable()),
-                QuizMonthlyDtos = _mapper.Map<List<QuizMonthlyDto>>(_context.QuizMonthlies.Include(x => x.QuestionMonthlies).Where(x => x.RoleId.Equals(account.RoleId) && x.Active == true).AsQueryable()),
+                OwnCourseDtos = _mapper.Map<List<CourseDto>>(course.Where(x => x.CourseRoles.Any(x => x.RoleId.Equals(account.RoleId))).AsQueryable()),
+                LessionDtos = _mapper.Map<List<LessionDto>>(await  _context.Lessions.Include(x => x.Courses).Include(x => x.LessionVideoImages).Include(x => x.Quizzes).Include(x => x.OtherFileUploads).OrderByDescending(x => x.DateCreated).ToListAsync()),
+                QuizCourseDtos = _mapper.Map<List<QuizCourseDto>>( _context.QuizCourses.Include(x => x.Course).Include(x => x.QuestionFinals).AsNoTracking().AsQueryable()),
+                QuizlessionDtos = _mapper.Map<List<QuizlessionDto>>(_context.QuizLessions.Include(x => x.Lession).Include(x => x.QuestionLessions).AsNoTracking().AsQueryable()),
+                QuizMonthlyDtos = _mapper.Map<List<QuizMonthlyDto>>(_context.QuizMonthlies.Include(x => x.QuestionMonthlies).Where(x => x.RoleId.Equals(account.RoleId) && x.Active == true).AsNoTracking().AsQueryable()),
 
                 ReportScoreCourseDtos = _mapper.Map<List<ReportScoreCourseDto>>(_context.ReportUserScoreFinals.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreCourseDto() { QuizCourseId = x.QuizCourseId,Passed=x.Passed,TotalScore=x.TotalScore,CourseId=x.CourseId}).AsNoTracking().AsQueryable()),
                 ReportScoreLessionDtos = _mapper.Map<List<ReportScoreLessionDto>>(_context.ReportUsersScore.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreLessionDto() { QuizLessionId = x.QuizLessionId, Passed = x.Passed,LessionId=x.LessionId, TotalScore = x.TotalScore }).AsNoTracking().AsQueryable()),

@@ -48,7 +48,6 @@ namespace WebLearning.AppUser.Controllers
         public async Task<IActionResult> LoginAccount(LoginDto loginDto, string returnUrl = null)
         {
             var provider = new EphemeralDataProtectionProvider();
-            var protector = provider.CreateProtector(loginDto.Password);
 
             if (!ModelState.IsValid) return View(ModelState);
 

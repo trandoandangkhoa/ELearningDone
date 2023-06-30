@@ -243,7 +243,7 @@ namespace WebLearning.Application.ELearning.Services
 
             foreach (var quizMonthly in allQuizMonthlyDto.Where(x => x.RoleId.Equals(getDetail.RoleId)).OrderByDescending(x => x.DateCreated))
             {
-                if (quizMonthly != null && quizMonthly.Active == true && quizMonthly.Active == true)
+                if (quizMonthly != null && quizMonthly.Active == true)
                 {
                     notificationResponseDtos.Add(new NotificationResponseDto
                     {

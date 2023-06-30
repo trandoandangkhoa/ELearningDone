@@ -22,7 +22,7 @@ namespace WebLearning.AppUser.Controllers
         }
         [Authorize]
         [Route("elearning.html")]
-        public async Task<IActionResult> Index(DashboardViewModel dasboardModel)
+        public async Task<IActionResult> Index()
         {
             var account = await _accountService.GetAccountByEmail(User.Identity.Name);
 
@@ -32,24 +32,27 @@ namespace WebLearning.AppUser.Controllers
             {
                 return Redirect("/dang-nhap.html");
             }
+            DashboardViewModel dashboardView = new()
+            {
+                CourseDtos = account.CourseDtos,
 
-            dasboardModel.CourseDtos = account.CourseDtos.ToList();
+                LessionDtos = account.LessionDtos,
 
-            dasboardModel.LessionDtos = account.LessionDtos.ToList();
+                QuizlessionDtos = account.QuizlessionDtos,
 
-            dasboardModel.QuizlessionDtos = account.QuizlessionDtos.ToList();
-
-            dasboardModel.OwnCourseDtos = account.OwnCourseDtos.ToList();
-
-
-            dasboardModel.ReportScoreLessionDtos = account.ReportScoreLessionDtos.ToList();
-
-            dasboardModel.ReportScoreCourseDtos = account.ReportScoreCourseDtos.ToList();
-
-            dasboardModel.ReportScoreMonthlyDtos = account.ReportScoreMonthlyDtos.ToList();
+                OwnCourseDtos = account.OwnCourseDtos,
 
 
-            return View(dasboardModel);
+                ReportScoreLessionDtos = account.ReportScoreLessionDtos,
+
+                ReportScoreCourseDtos = account.ReportScoreCourseDtos,
+
+                ReportScoreMonthlyDtos = account.ReportScoreMonthlyDtos,
+            };
+
+
+
+            return View(dashboardView);
         }
 
         public IActionResult Privacy()

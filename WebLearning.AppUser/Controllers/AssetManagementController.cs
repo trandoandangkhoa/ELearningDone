@@ -21,7 +21,7 @@ namespace WebLearning.AppUser.Controllers
             _assetService = assetService;
             _chartService = chartService;
         }
-        [Route("/trang-chu-tai-san.html")]
+        [Route("/quan-li-tai-san.html")]
         public async Task<IActionResult> Index()
         {
             var token = HttpContext.Session.GetString("Token");

@@ -11,16 +11,13 @@ namespace WebLearning.AppUser.Controllers.Components
 
         private readonly INotificationService _notificationService;
 
-        private readonly ICourseService courseService;
 
 
 
-
-        public HeaderNotifyViewComponent(IAccountService accountService, INotificationService notificationService, ICourseService courseService)
+        public HeaderNotifyViewComponent(IAccountService accountService, INotificationService notificationService )
         {
             _accountService = accountService;
             _notificationService = notificationService;
-            this.courseService = courseService;
         }
         public async Task<IViewComponentResult> InvokeAsync()
         {
@@ -28,17 +25,14 @@ namespace WebLearning.AppUser.Controllers.Components
 
             NotificationItemViewModel notificationItemViewModels = new();
 
-            CreateNotificationResponseDto createNotificationResponseDto = new();
-
-
             var course = await _accountService.GetAccountByEmail(User.Identity.Name);
 
 
-            notificationItemViewModels.OwnCourseDtos = course.CourseDtos.Where(x => x.Active == true && x.CourseRoleDtos.Any(x => x.RoleId.Equals(course.AccountDto.RoleId))).ToList();
+            notificationItemViewModels.OwnCourseDtos = course.OwnCourseDtos;
 
             notificationItemViewModels.NotificationResponseDtos = listNotification.Where(x => x.Notify == true).ToList();
 
-            notificationItemViewModels.QuizMonthlyDtos = course.QuizMonthlyDtos.ToList();
+            notificationItemViewModels.QuizMonthlyDtos = course.QuizMonthlyDtos;
 
             return View(notificationItemViewModels);
         }
