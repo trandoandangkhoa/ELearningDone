@@ -45,8 +45,13 @@ namespace WebLearning.Application
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+<<<<<<< Updated upstream
             services.AddDbContext<WebLearningContext>(options => options.UseSqlServer(configuration.GetConnectionString("WebLearningConnection")
                                                       , o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
+=======
+            services.AddDbContextPool<WebLearningContext>(options => options.UseSqlServer(configuration.GetConnectionString("WebLearningConnection")
+                                                      /*, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)*/));
+>>>>>>> Stashed changes
 
             services.AddScoped<IAccountService, AccountService>();
 
