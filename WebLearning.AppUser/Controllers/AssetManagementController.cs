@@ -22,16 +22,16 @@ namespace WebLearning.AppUser.Controllers
             _chartService = chartService;
         }
         [Route("/quan-li-tai-san.html")]
-        public async Task<IActionResult> Index()
+        public Task<IActionResult> Index()
         {
             var token = HttpContext.Session.GetString("Token");
 
             if (token == null)
             {
-                return Redirect("/dang-nhap.html");
+                return Task.FromResult<IActionResult>(Redirect("/dang-nhap.html"));
             }
             var a = new HomeViewModel();
-            return View(a);
+            return Task.FromResult<IActionResult>(View(a));
         }
         public async Task<IActionResult> TotalAssetInCategory()
         {

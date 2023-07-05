@@ -38,7 +38,10 @@
 
                     </div>
                     <div>
-                        <button class="btn btn-primary btn-xs" style="font-size:14px" id="seemovedetailbutton"><i class="fa fa-history"></i> Lịch sử điều chuyển</button>
+@*                        <button class="btn btn-primary btn-xs" style="font-size:14px" id="seemovedetailbutton"><i class="fa fa-history"></i> Lịch sử điều chuyển</button>
+*@
+                    </div>
+                    <div>
 
                     </div>
                 </div>
@@ -115,12 +118,19 @@
                             <td>@Model.AssetsStatusDto.Name</td>
                             <td>@Model.ExpireDay tháng <code>còn lại @days ngày</code></td>
                             <td>@Model.DateExpired </td>
-                            <td>@Model.DateMoved</td>
+                            <td>@Model.DateMoved <br/> <a class="label label-info" style="font-size:11px" id="seemovedetailbutton"><i class="fa fa-history"></i> Xem tất cả</a></td>
                             <td>@Model.DateUsed</td>
                             <td>@Model.DateChecked</td>
-                            <td>@Model.Supplier</td>
+                            @if(Model.AssetsSupplierDto != null)
+                            {
+                                <td>@Model.AssetsSupplierDto.CompanyName</td>
+                            }
+                            else
+                            {
+                            <td></td>
+                            }
                             <td>@Model.DateBuyed</td>
-                            <td>@Model.DateRepaired</td>
+                            <td>@Model.DateRepaired <br/><a class="label label-info" style="font-size:11px" id="seerepairbutton"><i class="fa fa-history"></i> Xem tất cả</a></td>
                             <td>@Model.RepairLocation</td>
                             <td>@Model.OrderNumber</td>
                             @if(Model.Price != "")
@@ -270,8 +280,8 @@
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Nhà cung cấp:</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="text" value="@Model.Supplier" asp-for="@Model.Supplier" />
-
+                                    <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" asp-for="@Model.AssetsSupplierId" asp-items="ViewBag.Supplier">
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -592,13 +602,13 @@
                                 </div>
 
                             </div>
-                            <div class="form-group">
+@*                            <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Nhà cung cấp:</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
                                     <input class="form-control" type="text" value="@Model.Supplier" asp-for="@Model.Supplier" />
 
                                 </div>
-                            </div>
+                            </div>*@
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày mua:</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
@@ -790,7 +800,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-12 col-sm-12 col-xs-12 moveassetContainer" style="display:none">
+    <div class="col-md-8 col-sm-8 col-xs-12 moveassetContainer" style="display:none">
         <div class="x_panel">
             <div class="x_title">
                 <h2><i class="fa fa-paper-plane-o"></i> Điều chuyển <small>thông tin chi tiết</small></h2>                     
@@ -806,146 +816,64 @@
             </div>
             <div class="x_content">
                 @if (Model.AssetsMovedsDto != null && Model.AssetsMovedsDto.Count > 0 ){
-                    <div class="col-xs-5">
-                        <button type="button" id="updatemoveasset" class="btn btn-md  btn-warning"> Sửa</button>
-                        <!-- required for floating -->
-                        <!-- Nav tabs -->
-                        <ul class="nav nav-tabs tabs-left">
 
-                            @foreach (var item in Model.AssetsMovedsDto.OrderByDescending(x => x.DateMoved))
-                            {
-                                <li>
-                                    <a href="#@item.Id" data-toggle="tab">@item.DateMoved</a>
-                                </li>
-                            }
-
-                        </ul>
-                    </div>
-
-                    <div class="col-xs-7">
-
-                        <!-- Tab panes -->
-                        <form asp-action="Edit" asp-controller="AssetMoved" method="post">
-
-                            <div class="tab-content">
-                                <div class="tab-pane active">
-                                    @*                            <p class="lead">Home tab</p>
-                                *@
-                                    <p>
-                                        Click từng mục bên trái để xem nội dung
-                                    </p>
-                                </div>
-
+                    <div class="table-responsive" style="height:290px;overflow-y:auto">
+                        <table class="table table-striped table-bordered bulk_action">
+                            <thead>
+                                <tr>
+                                    <th>Tên người nhận</th>
+                                    <th>SĐT người nhận</th>
+                                    <th>SĐT người chuyển</th>
+                                    <th>Đơn vị sử dụng</th>
+                                    <th>Nội dung</th>
+                                    <th>Ngày dùng</th>
+                                    <th>Ngày chuyển</th>
+                                    <th>Trạng thái</th>
+                                    <th>#</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 @foreach (var item in Model.AssetsMovedsDto.OrderByDescending(x => x.DateMoved))
                                 {
-                                    <div class="tab-pane" id="@item.Id">
-                                        <div class="form-group" hidden>
-                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Id: <span class="required">*</span></label>
-                                            <div class="col-md-8 col-sm-8 col-xs-12">
-                                                <input class="form-control" type="text" aso-for="@item.Id" value="@item.Id" name="IdTemp" readonly="readonly" />
-                                            </div>
+                                    <tr>
+                                        <td>
+                                            @item.Receiver
+                                        </td>
+                                        <td>
+                                            @item.ReceiverPhoneNumber
+                                        </td>
+                                        <td>
+                                            @item.SenderPhoneNumber
+                                        </td>
+                                        <td>
+                                            @item.AssetsDepartmentDto.Name
+                                        </td>
+                                        <td>
+                                            @item.Description
+                                        </td>
+                                        <td>
+                                            @item.DateUsed
+                                        </td>
+                                        <td>
+                                            @item.DateMoved
+                                        </td>
+                                        <td>
+                                            @if (item.MovedStatus == 1)
+                                            {
+                                                <label class="label label-success" style="font-size:12px">Thành công</label>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="/cap-nhat-dieu-chuyen/@item.Id" class="label label-warning"><i class="fa fa-edit"></i> Cập nhật</a>
 
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Mã tài sản: <span class="required">*</span></label>
-                                            <div class="col-md-8 col-sm-8 col-xs-12">
-                                                <input class="form-control" type="text" asp-for="@item.AssetsId" value="@item.AssetsId" name="AssetId" readonly="readonly" required />
-                                            </div>
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Tên người nhận: <span class="required">*</span></label>
-                                            <div class="col-md-8 col-sm-8 col-xs-12">
-                                                <input class="form-control" type="text" asp-for="@item.Receiver" value="@item.Receiver" name="Receiver" readonly="readonly" required />
-                                            </div>
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">SĐT người nhận: <span class="required">*</span></label>
-                                            <div class="col-md-8 col-sm-8 col-xs-12">
-                                                <input class="form-control" type="text" asp-for="@item.ReceiverPhoneNumber" value="@item.ReceiverPhoneNumber" required name="ReceiverPhoneNumber" readonly="readonly" />
-                                            </div>
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">SĐT người chuyển: <span class="required">*</span></label>
-                                            <div class="col-md-8 col-sm-8 col-xs-12">
-                                                <input class="form-control" type="text" asp-for="@item.SenderPhoneNumber" value="@item.SenderPhoneNumber" required name="SenderPhoneNumber" readonly="readonly" />
-                                            </div>
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Đơn vị sử dụng: <span class="required">*</span></label>
-                                            <div class="col-md-8 col-sm-8 col-xs-12">
-                                                <select required id="AssetsDepartmentId" name="AssetsDepartmentId" asp-for="@item.AssetsDepartmentId" asp-items="ViewBag.Dep" class="selectpicker form-control" data-live-search="true" data-show-subtext="true" data-live-search-style="begins">
-                                                </select>
-                                            </div>
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Nội dung: <span class="required">*</span></label>
-                                            <div class="col-md-8 col-sm-8 col-xs-12">
-                                                <input class="form-control" type="text" asp-for="@item.Description" value="@item.Description" required name="Description" readonly="readonly" />
-                                            </div>
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày dùng: </label>
-                                            <div class="col-md-8 col-sm-8 col-xs-12">
-                                                <div class="input-group date" id="assetMoveDateUsed">
-                                                    <input type="text" class="form-control col-md-10" asp-for="@item.DateUsed" value="@item.DateUsed" name="DateUsed" readonly="readonly" />
-                                                    <span class="input-group-addon">
-                                                        <span class="glyphicon glyphicon-calendar"></span>
-                                                    </span>
-                                                </div>
-
-                                            </div>
-
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày chuyển: <span class="required">*</span></label>
-                                            <div class="col-md-8 col-sm-8 col-xs-12">
-                                                <div class="input-group date" id="dateChecked">
-                                                    <input type="text" class="form-control col-md-10" asp-for="@item.DateMoved" value="@item.DateMoved" name="DateMoved" readonly="readonly" />
-                                                    <span class="input-group-addon">
-                                                        <span class="glyphicon glyphicon-calendar"></span>
-                                                    </span>
-                                                </div>
-
-                                            </div>
-
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Trạng thái: </label>
-                                            <div class="col-md-8 col-sm-8 col-xs-12">
-                                                @if (item.MovedStatus == 1)
-                                                {
-                                                    <label class="label label-success" style="font-size:12px">@item.AssetsMovedStatusDto.Name</label>
-                                                }
-                                            </div>
-
-                                        </div>
-                                        <div class="clearfix"></div>
-                                        <div class="form-group">
-                                            <div class="col-md-8 col-sm-8 col-xs-12">
-                                                <input type="submit" disabled="disabled" id="savechangmoveitem" name="savechangmoveitem" class="btn btn-md btn-success" value="Lưu" />
-                                                @*                                            <a class="btn btn-md btn-danger" href="/chi-tiet-tai-san/{@item.AssetsId}/xoa-dieu-chuyen/{@item.Id}">Xóa</a>
-                                        *@
-                                            </div>
-                                        </div>
-
-                                    </div>
-
+                                        </td>
+                                    </tr>
                                 }
-
-                            </div>
-
-                        </form>
+                            </tbody>
+                        </table>
 
                     </div>
+
                 }else
                 {
                     <h4>Tài sản chưa được điều chuyển</h4>
@@ -957,15 +885,113 @@
             </div>
         </div>
     </div>
+    <div class="col-md-4 col-sm-4 col-xs-12 repairassetContainer" style="display:none">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><i class="fa fa-gear"></i> Sửa chữa <small>thông tin chi tiết</small></h2>
 
+                <ul class="nav navbar-right panel_toolbox">
+                    <li>
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+
+
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                @if (Model.AssetsRepairedDtos != null && Model.AssetsRepairedDtos.Count > 0)
+                {
+                    <div class="table-responsive" style="height:290px;overflow-y:auto">
+                        <table class="table table-striped table-bordered bulk_action">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Nơi sửa</th>
+                                    <th>Ngày sửa chữa</th>
+                                    <th>#</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.AssetsRepairedDtos.OrderByDescending(x => x.DateRepaired))
+                                {
+                                    <tr>
+                                        <td>
+                                            @item.AssestsId
+
+                                        </td>
+                                        <td>
+                                            @item.LocationRepaired
+                                        </td>
+                                        <td>
+                                            @item.DateRepaired
+                                        </td>
+                                        <td>
+                                            <a href="/cap-nhat-thong-tin-sua-chua/@item.Id" class="label label-warning"><i class="fa fa-edit"></i> Cập nhật</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                }
+                else
+                {
+                    <h4>Tài sản chưa được sửa chữa</h4>
+                }
+            </div>
+
+            <div class="clearfix"></div>
+
+        </div>
+       </div>
 </div>
+
 
 @section Scripts{
     <script src="~/src/js/assetdetail.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script>
-        $(function () {
 
+        $(function () {
+            var submitSeeRepairAssetDetailButton = document.getElementById('seerepairbutton');
+            var submitSeeMoveAssetDetailButton = document.getElementById('seemovedetailbutton');
+            let buttonMoveAssetDetailClicked = false;
+            let buttonRepairAssetDetailClicked = false;
+            submitSeeRepairAssetDetailButton.addEventListener('click', function handleClick() {
+                $(".repairassetContainer").css("display", "block");
+                submitSeeRepairAssetDetailButton.innerHTML = '<i class="fa fa-history"></i> Hủy thao tác';
+
+
+                if (buttonRepairAssetDetailClicked) {
+                    $(".repairassetContainer").css("display", "none");
+                    submitSeeRepairAssetDetailButton.innerHTML = `<i class="fa fa-history"></i> Xem tất cả `;
+
+                    buttonRepairAssetDetailClicked = false;
+                    return;
+                }
+                buttonRepairAssetDetailClicked = true;
+
+            });
+            submitSeeMoveAssetDetailButton.addEventListener('click', function handleClick() {
+                $(".moveassetContainer").css("display", "block");
+                submitSeeMoveAssetDetailButton.innerHTML = `<i class="fa fa-history"></i> Hủy thao tác`;
+
+
+                if (buttonMoveAssetDetailClicked) {
+                    $(".moveassetContainer").css("display", "none");
+                    submitSeeMoveAssetDetailButton.innerHTML = `<i class="fa fa-history"></i> Xem tất cả `;
+
+                    buttonMoveAssetDetailClicked = false;
+                    return;
+                }
+                buttonMoveAssetDetailClicked = true;
+
+            });
+
+            
             $("#updatemoveasset").on("click", function () {
                 if (this.innerText == "Cập nhật") {
                     this.innerText = "Hủy thao tác";
@@ -994,5 +1020,7 @@
             });
         });
     </script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
+   
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
 }

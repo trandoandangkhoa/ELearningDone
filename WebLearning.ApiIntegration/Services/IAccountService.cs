@@ -8,6 +8,7 @@ using WebLearning.Application.Helper;
 using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos.Account;
 using WebLearning.Contract.Dtos.Avatar;
+using WebLearning.Contract.Dtos.Role;
 
 namespace WebLearning.ApiIntegration.Services
 {
@@ -29,6 +30,8 @@ namespace WebLearning.ApiIntegration.Services
         Task<bool> AddImage(Guid accountId, CreateAvatarDto createAvatarDto);
 
         Task<bool> UpdateImage(Guid accountId, UpdateAvatarDto updateAvatarDto);
+        Task<string> ChangePassword(Guid accountId, ChangePassword changePassword);
+
     }
     public class AccountService : IAccountService
     {
@@ -372,6 +375,28 @@ namespace WebLearning.ApiIntegration.Services
             var user = JsonConvert.DeserializeObject<AccountDto>(body);
 
             return user;
+        }
+
+        public async Task<string> ChangePassword(Guid accountId, ChangePassword changePassword)
+        {
+            var client = _httpClientFactory.CreateClient();
+
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+
+            var json = JsonConvert.SerializeObject(changePassword);
+
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PutAsync($"/api/Accounts/changepassword/{accountId}", httpContent);
+
+            var token = await response.Content.ReadAsStringAsync();
+
+            return token;
         }
     }
 }

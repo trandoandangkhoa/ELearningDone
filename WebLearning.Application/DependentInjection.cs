@@ -62,6 +62,9 @@ namespace WebLearning.Application
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<IAssetMovedService, AssetMovedService>();
+            services.AddScoped<IRepairedService, RepairedService>();
+            services.AddScoped<ISupplierService, SupplierService>();
+
 
             services.AddScoped<ICourseService, CourseService>();
 
@@ -166,6 +169,8 @@ namespace WebLearning.Application
             services.AddAutoMapper(typeof(AssetsStatusMappingProfile).Assembly);
             services.AddAutoMapper(typeof(AssetsMovedMappingProfile).Assembly);
             services.AddAutoMapper(typeof(AssetsMovedStatusMappingProfile).Assembly);
+            services.AddAutoMapper(typeof(AssetsSupplierMappingProfile).Assembly);
+            services.AddAutoMapper(typeof(AssetsRepairedMappingProfile).Assembly);
 
             services.AddAutoMapper(typeof(AppointmentMappingProfile).Assembly);
 

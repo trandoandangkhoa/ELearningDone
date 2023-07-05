@@ -35,6 +35,14 @@ builder.Services.AddScoped<ILessionService, LessionService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddScoped<IAssetService, AssetService>();
+
+builder.Services.AddScoped<IAssetSupplierService, AssetSupplierService>();
+
+builder.Services.AddScoped<IAssetRepairedService, AssetRepairedService>();
+
+
+builder.Services.AddScoped<IAssetService, AssetService>();
+
 builder.Services.AddScoped<IImportExcelService, ImportExcelService>();
 
 builder.Services.AddScoped<IAssetCategoryService, AssetCategoryService>();

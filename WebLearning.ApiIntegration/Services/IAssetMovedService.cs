@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
+using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos.Assets;
+using WebLearning.Domain.Entites;
 
 namespace WebLearning.ApiIntegration.Services
 {
     public interface IAssetMovedService
     {
         public Task<IEnumerable<AssetsMovedDto>> GetAllAssetMoveds();
-
+        public Task<PagedViewModel<AssetsMovedDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest);
         public Task<AssetsMovedDto> GetAssetMovedById(Guid id);
         public Task<bool> InsertAssetMoved(CreateAssetsMovedDto createAssetsMovedDto);
         public Task<bool> DeleteAssetMoved(Guid id);
@@ -117,6 +120,29 @@ namespace WebLearning.ApiIntegration.Services
             var body = await response.Content.ReadAsStringAsync();
 
             var users = JsonConvert.DeserializeObject<IEnumerable<AssetsMovedDto>>(body);
+            return users;
+        }
+
+        public async Task<PagedViewModel<AssetsMovedDto>> GetPaging([FromQuery] GetListPagingRequest getListPagingRequest)
+        {
+            var client = _httpClientFactory.CreateClient();
+
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+            string address = $"/api/AssetsMoved/paging?pageIndex=" +
+    $"{getListPagingRequest.PageIndex}&pageSize={getListPagingRequest.PageSize}&keyword={getListPagingRequest.Keyword}";
+
+            
+            var response = await client.GetAsync(address);
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            var users = JsonConvert.DeserializeObject<PagedViewModel<AssetsMovedDto>>(body);
+
             return users;
         }
     }

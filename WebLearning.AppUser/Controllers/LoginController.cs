@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using WebLearning.ApiIntegration.Services;
+using WebLearning.Contract.Dtos.Account;
 using WebLearning.Contract.Dtos.Avatar;
 using WebLearning.Contract.Dtos.Login;
 
@@ -95,7 +97,7 @@ namespace WebLearning.AppUser.Controllers
             HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principle, props).Wait();
 
             HttpContext.Session.SetString("Token", token);
-
+            HttpContext.Session.SetString("AccountId",account.Id.ToString());
             _notyf.Success("Đăng nhập thành công!");
 
             return RedirectToLocal(returnUrl);
@@ -134,6 +136,43 @@ namespace WebLearning.AppUser.Controllers
                 return Redirect("/dang-nhap.html");
             }
             return View();
+        }
+        [HttpGet]
+        [Route("/thay-doi-mat-khau.html")]
+        public IActionResult ChangePassword()
+        {
+            var token = HttpContext.Session.GetString("Token");
+
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
+            return View();
+        }
+        [HttpPost]
+        [Route("/thay-doi-mat-khau.html")]
+        public async Task<IActionResult> ChangePassword(ChangePassword changePassword)
+        {
+            var token = HttpContext.Session.GetString("Token");
+
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
+            var id = HttpContext.Session.GetString("AccountId");
+            var res = await _accountService.ChangePassword(Guid.Parse(id), changePassword);
+
+            if(res != "Cập nhật thành công!")
+            {
+                _notyf.Error(res);
+                return Redirect("/thay-doi-mat-khau.html");
+
+            }
+            _notyf.Success("Cập nhật thành công");
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return Redirect("/dang-nhap.html");
         }
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 700000000)]

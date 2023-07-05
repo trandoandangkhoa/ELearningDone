@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebLearning.ApiIntegration.Services;
 using WebLearning.AppUser.Models;
-using WebLearning.Contract.Dtos.Notification;
 
 namespace WebLearning.AppUser.Controllers.Components
 {
@@ -14,7 +13,7 @@ namespace WebLearning.AppUser.Controllers.Components
 
 
 
-        public HeaderNotifyViewComponent(IAccountService accountService, INotificationService notificationService )
+        public HeaderNotifyViewComponent(IAccountService accountService, INotificationService notificationService)
         {
             _accountService = accountService;
             _notificationService = notificationService;

@@ -26,7 +26,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet]
 
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<IEnumerable<AssetsDto>> GetAssests()
         {
@@ -40,7 +40,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("paging")]
 
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<PagedViewModel<AssetsDto>> GetUsers([FromQuery] GetListPagingRequest getListPagingRequest)
         {
@@ -70,7 +70,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("{id}")]
 
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
         public async Task<IActionResult> GetAssetById(string id)
         {
             if (await _assetService.GetAssetById(id) == null)
@@ -85,7 +85,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("catcode/{code}")]
 
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
         public async Task<IActionResult> GetCatByCode(string code)
         {
             if (await _assetService.GetCode(code) == null)
@@ -101,7 +101,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpPost]
 
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<IActionResult> Post([FromBody] CreateAssetsDto createAssetsDto)
         {
@@ -128,7 +128,7 @@ namespace WebLearning.Api.Controllers
         /// Cập nhật tài sản
         /// </summary>
         [HttpPut("{id}")]
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<IActionResult> UpdateAsset(string id, [FromBody] UpdateAssetsDto updateAssetsDto)
         {
@@ -159,7 +159,7 @@ namespace WebLearning.Api.Controllers
         /// Cập nhật tài sản
         /// </summary>
         [HttpPut("multiassets")]
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<IActionResult> UpdateMultiAsset([FromBody] UpdateMultiAssetsDto updateMultiAssetsDto)
         {
@@ -185,7 +185,7 @@ namespace WebLearning.Api.Controllers
         // DELETE api/<AssetController>/5
         [HttpDelete("{id}")]
         //[SecurityAsset(AuthorizeAsset.AdminAsset)]
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<IActionResult> DeleteAsset(string id)
         {

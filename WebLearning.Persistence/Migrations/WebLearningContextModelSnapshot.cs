@@ -47,9 +47,6 @@ namespace WebLearning.Persistence.Migrations
                     b.Property<DateTime>("LastLogin")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PasswordHased")
                         .HasColumnType("nvarchar(max)");
 
@@ -253,6 +250,9 @@ namespace WebLearning.Persistence.Migrations
                     b.Property<int>("AssetsStatusId")
                         .HasColumnType("int");
 
+                    b.Property<string>("AssetsSupplierId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Customer")
                         .HasColumnType("nvarchar(max)");
 
@@ -304,9 +304,6 @@ namespace WebLearning.Persistence.Migrations
                     b.Property<string>("Spec")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Supplier")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AssetsCategoryId");
@@ -314,6 +311,8 @@ namespace WebLearning.Persistence.Migrations
                     b.HasIndex("AssetsDepartmentId");
 
                     b.HasIndex("AssetsStatusId");
+
+                    b.HasIndex("AssetsSupplierId");
 
                     b.ToTable("Assets", (string)null);
                 });
@@ -415,6 +414,28 @@ namespace WebLearning.Persistence.Migrations
                     b.ToTable("AssetsMovedStatus", (string)null);
                 });
 
+            modelBuilder.Entity("WebLearning.Domain.Entites.AssetsRepaired", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AssestsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateRepaired")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LocationRepaired")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssestsId");
+
+                    b.ToTable("AssetsRepaired", (string)null);
+                });
+
             modelBuilder.Entity("WebLearning.Domain.Entites.AssetsStatus", b =>
                 {
                     b.Property<int>("Id")
@@ -429,6 +450,31 @@ namespace WebLearning.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AssetsStatus", (string)null);
+                });
+
+            modelBuilder.Entity("WebLearning.Domain.Entites.AssetsSupplier", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyTaxCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Fax")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AssetsSupplier", (string)null);
                 });
 
             modelBuilder.Entity("WebLearning.Domain.Entites.Avatar", b =>
@@ -1546,11 +1592,17 @@ namespace WebLearning.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WebLearning.Domain.Entites.AssetsSupplier", "AssetsSupplier")
+                        .WithMany("Assests")
+                        .HasForeignKey("AssetsSupplierId");
+
                     b.Navigation("AssetsCategory");
 
                     b.Navigation("AssetsDepartment");
 
                     b.Navigation("AssetsStatus");
+
+                    b.Navigation("AssetsSupplier");
                 });
 
             modelBuilder.Entity("WebLearning.Domain.Entites.AssetsMoved", b =>
@@ -1576,6 +1628,15 @@ namespace WebLearning.Persistence.Migrations
                     b.Navigation("AssetsDepartment");
 
                     b.Navigation("AssetsMovedStatus");
+                });
+
+            modelBuilder.Entity("WebLearning.Domain.Entites.AssetsRepaired", b =>
+                {
+                    b.HasOne("WebLearning.Domain.Entites.Assests", "Assests")
+                        .WithMany("AssetsRepaireds")
+                        .HasForeignKey("AssestsId");
+
+                    b.Navigation("Assests");
                 });
 
             modelBuilder.Entity("WebLearning.Domain.Entites.Avatar", b =>
@@ -1819,6 +1880,8 @@ namespace WebLearning.Persistence.Migrations
             modelBuilder.Entity("WebLearning.Domain.Entites.Assests", b =>
                 {
                     b.Navigation("AssetsMoveds");
+
+                    b.Navigation("AssetsRepaireds");
                 });
 
             modelBuilder.Entity("WebLearning.Domain.Entites.AssetsCategory", b =>
@@ -1837,6 +1900,11 @@ namespace WebLearning.Persistence.Migrations
                 });
 
             modelBuilder.Entity("WebLearning.Domain.Entites.AssetsStatus", b =>
+                {
+                    b.Navigation("Assests");
+                });
+
+            modelBuilder.Entity("WebLearning.Domain.Entites.AssetsSupplier", b =>
                 {
                     b.Navigation("Assests");
                 });

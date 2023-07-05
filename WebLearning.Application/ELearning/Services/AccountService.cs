@@ -37,7 +37,7 @@ namespace WebLearning.Application.ELearning.Services
         Task AddImage(Guid accountId, CreateAvatarDto createAvatarDto);
 
         Task UpdateImage(Guid accountId, UpdateAvatarDto updateAvatarDto);
-
+        Task<string> ChangePassword(Guid id, ChangePassword changePassword);
         Task<AvatarDto> GetImageById(Guid accountId);
 
         Task<AccountDto> GetCode(string code);
@@ -114,7 +114,6 @@ namespace WebLearning.Application.ELearning.Services
                                     {
                                         Id = x.Id,
                                         Email = x.Email,
-                                        Password = x.Password,
                                         PasswordHased = x.PasswordHased,
                                         Active = x.Active,
                                         RoleId = x.RoleId,
@@ -174,14 +173,14 @@ namespace WebLearning.Application.ELearning.Services
                 AccountDto = _mapper.Map<AccountDto>(account),
                 CourseDtos = _mapper.Map<List<CourseDto>>(course),
                 OwnCourseDtos = _mapper.Map<List<CourseDto>>(course.Where(x => x.CourseRoles.Any(x => x.RoleId.Equals(account.RoleId))).AsQueryable()),
-                LessionDtos = _mapper.Map<List<LessionDto>>(await  _context.Lessions.Include(x => x.Courses).Include(x => x.LessionVideoImages).Include(x => x.Quizzes).Include(x => x.OtherFileUploads).OrderByDescending(x => x.DateCreated).ToListAsync()),
-                QuizCourseDtos = _mapper.Map<List<QuizCourseDto>>( _context.QuizCourses.Include(x => x.Course).Include(x => x.QuestionFinals).AsNoTracking().AsQueryable()),
+                LessionDtos = _mapper.Map<List<LessionDto>>(await _context.Lessions.Include(x => x.Courses).Include(x => x.LessionVideoImages).Include(x => x.Quizzes).Include(x => x.OtherFileUploads).OrderByDescending(x => x.DateCreated).ToListAsync()),
+                QuizCourseDtos = _mapper.Map<List<QuizCourseDto>>(_context.QuizCourses.Include(x => x.Course).Include(x => x.QuestionFinals).AsNoTracking().AsQueryable()),
                 QuizlessionDtos = _mapper.Map<List<QuizlessionDto>>(_context.QuizLessions.Include(x => x.Lession).Include(x => x.QuestionLessions).AsNoTracking().AsQueryable()),
                 QuizMonthlyDtos = _mapper.Map<List<QuizMonthlyDto>>(_context.QuizMonthlies.Include(x => x.QuestionMonthlies).Where(x => x.RoleId.Equals(account.RoleId) && x.Active == true).AsNoTracking().AsQueryable()),
 
-                ReportScoreCourseDtos = _mapper.Map<List<ReportScoreCourseDto>>(_context.ReportUserScoreFinals.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreCourseDto() { QuizCourseId = x.QuizCourseId,Passed=x.Passed,TotalScore=x.TotalScore,CourseId=x.CourseId}).AsNoTracking().AsQueryable()),
-                ReportScoreLessionDtos = _mapper.Map<List<ReportScoreLessionDto>>(_context.ReportUsersScore.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreLessionDto() { QuizLessionId = x.QuizLessionId, Passed = x.Passed,LessionId=x.LessionId, TotalScore = x.TotalScore }).AsNoTracking().AsQueryable()),
-                ReportScoreMonthlyDtos = _mapper.Map<List<ReportScoreMonthlyDto>>(_context.ReportUserScoreMonthlies.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreMonthlyDto() {QuizMonthlyId = x.QuizMonthlyId, Passed = x.Passed, RoleId=x.RoleId,TotalScore = x.TotalScore }).AsNoTracking().AsQueryable()),
+                ReportScoreCourseDtos = _mapper.Map<List<ReportScoreCourseDto>>(_context.ReportUserScoreFinals.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreCourseDto() { QuizCourseId = x.QuizCourseId, Passed = x.Passed, TotalScore = x.TotalScore, CourseId = x.CourseId }).AsNoTracking().AsQueryable()),
+                ReportScoreLessionDtos = _mapper.Map<List<ReportScoreLessionDto>>(_context.ReportUsersScore.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreLessionDto() { QuizLessionId = x.QuizLessionId, Passed = x.Passed, LessionId = x.LessionId, TotalScore = x.TotalScore }).AsNoTracking().AsQueryable()),
+                ReportScoreMonthlyDtos = _mapper.Map<List<ReportScoreMonthlyDto>>(_context.ReportUserScoreMonthlies.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreMonthlyDto() { QuizMonthlyId = x.QuizMonthlyId, Passed = x.Passed, RoleId = x.RoleId, TotalScore = x.TotalScore }).AsNoTracking().AsQueryable()),
                 HistoryAddSlotDtos = _mapper.Map<List<HistoryAddSlotDto>>(_context.HistoryAddSlots.Include(x => x.Room).Where(x => x.Email.Equals(account.Email)).AsNoTracking().AsQueryable()),
             };
 
@@ -201,10 +200,11 @@ namespace WebLearning.Application.ELearning.Services
 
             var key = code + Utilities.GenerateStringDateTime();
             createAccountDto.Code = key;
+
             account.Code = createAccountDto.Code;
             if (roleName != null)
             {
-                if (roleName.RoleName == "Admin")
+                if (roleName.RoleName == "Admin" || roleName.RoleName.Contains("IT") || roleName.RoleName.Contains("CEO"))
                 {
                     createAccountDto.AuthorizeRole = AuthorizeRole.AdminRole;
                     account.AuthorizeRole = Domain.AuthorizeRoles.AdminRole;
@@ -217,7 +217,10 @@ namespace WebLearning.Application.ELearning.Services
                     account.AuthorizeRole = Domain.AuthorizeRoles.ManagerRole;
 
                 }
-                else if (roleName.RoleName == "Staff")
+                else if (roleName.RoleName == "TeamLeader" || roleName.RoleName == "ProductionEngineering" || roleName.RoleName == "NMHG" || roleName.RoleName == "MaintenanceTechnician" ||
+                    roleName.RoleName == "QCExecutive" || roleName.RoleName == "Test" || roleName.RoleName == "FactoryWorkers" || roleName.RoleName == "StoreManager" || roleName.RoleName == "MBJ" ||
+                    roleName.RoleName == "AssistantManager" || roleName.RoleName == "HODA" || roleName.RoleName == "MMR" || roleName.RoleName == "TeamMember" || roleName.RoleName == "PL" ||
+                    roleName.RoleName == "AssistantDirector" || roleName.RoleName == "OperationManager" || roleName.RoleName == "SecretaryERP")
                 {
 
                     createAccountDto.AuthorizeRole = AuthorizeRole.StaffRole;
@@ -238,13 +241,6 @@ namespace WebLearning.Application.ELearning.Services
                     account.AuthorizeRole = Domain.AuthorizeRoles.TeacherRole;
 
                 }
-                else if (roleName.RoleName == "IT")
-                {
-
-                    createAccountDto.AuthorizeRole = AuthorizeRole.ITRole;
-                    account.AuthorizeRole = Domain.AuthorizeRoles.ITRole;
-
-                }
                 else
                 {
                     createAccountDto.AuthorizeRole = AuthorizeRole.StudentRole;
@@ -263,8 +259,11 @@ namespace WebLearning.Application.ELearning.Services
 
             account.LastLogin = DateTime.Now;
 
-            if (_context.Accounts.Any(x => x.Email.Equals(createAccountDto.Email)) == false)
+            account.Email = createAccountDto.Email.ToLower();
+
+            if (_context.Accounts.Any(x => x.Email.Equals(createAccountDto.Email) && x.AccountDetail.FullName.Equals(createAccountDto.FullName)) == false)
             {
+
                 _context.Add(account);
 
                 await _context.SaveChangesAsync();
@@ -283,7 +282,7 @@ namespace WebLearning.Application.ELearning.Services
 
                 if (roleName != null)
                 {
-                    if (roleName.RoleName == "Admin")
+                    if (roleName.RoleName == "Admin" || roleName.RoleName.Contains("IT") || roleName.RoleName.Contains("CEO"))
                     {
                         updateUserDetailDto.AuthorizeRole = AuthorizeRole.AdminRole;
                         account.AuthorizeRole = Domain.AuthorizeRoles.AdminRole;
@@ -296,11 +295,21 @@ namespace WebLearning.Application.ELearning.Services
                         account.AuthorizeRole = Domain.AuthorizeRoles.ManagerRole;
 
                     }
-                    else if (roleName.RoleName == "Staff")
+                    else if (roleName.RoleName == "TeamLeader" || roleName.RoleName == "ProductionEngineering" || roleName.RoleName == "NMHG" || roleName.RoleName == "MaintenanceTechnician" ||
+                        roleName.RoleName == "QCExecutive" || roleName.RoleName == "Test" || roleName.RoleName == "FactoryWorkers" || roleName.RoleName == "StoreManager" || roleName.RoleName == "MBJ" ||
+                        roleName.RoleName == "AssistantManager" || roleName.RoleName == "HODA" || roleName.RoleName == "MMR" || roleName.RoleName == "TeamMember" || roleName.RoleName == "PL" ||
+                        roleName.RoleName == "AssistantDirector" || roleName.RoleName == "OperationManager" || roleName.RoleName == "SecretaryERP")
                     {
 
                         updateUserDetailDto.AuthorizeRole = AuthorizeRole.StaffRole;
                         account.AuthorizeRole = Domain.AuthorizeRoles.StaffRole;
+
+                    }
+                    else if (roleName.RoleName == "Guest")
+                    {
+
+                        updateUserDetailDto.AuthorizeRole = AuthorizeRole.Guest;
+                        account.AuthorizeRole = Domain.AuthorizeRoles.Guest;
 
                     }
                     else if (roleName.RoleName == "Teacher")
@@ -308,20 +317,6 @@ namespace WebLearning.Application.ELearning.Services
 
                         updateUserDetailDto.AuthorizeRole = AuthorizeRole.TeacherRole;
                         account.AuthorizeRole = Domain.AuthorizeRoles.TeacherRole;
-
-                    }
-                    else if (roleName.RoleName == "IT")
-                    {
-
-                        updateUserDetailDto.AuthorizeRole = AuthorizeRole.ITRole;
-                        account.AuthorizeRole = Domain.AuthorizeRoles.ITRole;
-
-                    }
-                    else if (roleName.RoleName == "Guest")
-                    {
-
-                        updateUserDetailDto.AuthorizeRole = AuthorizeRole.Guest;
-                        account.AuthorizeRole = Domain.AuthorizeRoles.Guest; ;
 
                     }
                     else
@@ -429,6 +424,35 @@ namespace WebLearning.Application.ELearning.Services
             var account = await _context.Accounts.FirstOrDefaultAsync(x => x.Code.Equals(code));
 
             return _mapper.Map<AccountDto>(account);
+        }
+
+        public async Task<string> ChangePassword(Guid accountId, ChangePassword changePassword)
+        {
+            string rs = "";
+            var account = await _context.Accounts.FirstOrDefaultAsync(x => x.Id.Equals(accountId));
+            if (account == null) {
+
+                rs = "Không tìm thấy tài khoản!";
+                return rs;
+             };
+            var checkOldPass = Password.HashedPassword(changePassword.OldPassword);
+            if (checkOldPass != account.PasswordHased) {
+                rs = "Mật khẩu cũ không đúng";
+                return rs;
+            } 
+            if(changePassword.NewPassword != changePassword.ConfirmPassword)
+            {
+                rs = "Mật khẩu nhập lại không đúng!";
+                return rs;
+            }
+            account.PasswordHased = Password.HashedPassword(changePassword.NewPassword);
+
+            _context.Accounts.Update(account);
+
+            await _context.SaveChangesAsync();
+            rs = "Cập nhật thành công!";
+            return rs;
+
         }
     }
 }

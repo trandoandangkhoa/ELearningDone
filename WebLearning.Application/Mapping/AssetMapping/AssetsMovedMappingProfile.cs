@@ -10,6 +10,7 @@ namespace WebLearning.Application.Mapping.AssetMapping
         {
             CreateMap<CreateAssetsMovedDto, AssetsMoved>();
             CreateMap<AssetsMoved, AssetsMovedDto>().ForMember(dest => dest.AssetsId, opt => opt.MapFrom(src => src.AssestsId))
+                                        .ForPath(dest => dest.AssetsDepartmentDto, opt => opt.MapFrom(src => src.AssetsDepartment))
                                         .ForPath(dest => dest.AssetsMovedStatusDto, opt => opt.MapFrom(src => src.AssetsMovedStatus));
             CreateMap<UpdateAssetsMovedDto, AssetsMoved>();
 

@@ -16,11 +16,11 @@ namespace WebLearning.Domain.Entites
 
         public string Price { get; set; }
 
-        public string Supplier { get; set; }
-
         public string OrderNumber { get; set; }
 
         public Guid AssetsCategoryId { get; set; }
+
+        public string AssetsSupplierId { get; set; }
 
         public string AssetSubCategory { get; set; }
 
@@ -56,6 +56,11 @@ namespace WebLearning.Domain.Entites
 
         public AssetsStatus AssetsStatus { get; set; }
 
+
         public ICollection<AssetsMoved> AssetsMoveds { get; set; }
+
+        public AssetsSupplier AssetsSupplier { get; set; }
+
+        public ICollection<AssetsRepaired> AssetsRepaireds { get; set; }
     }
 }

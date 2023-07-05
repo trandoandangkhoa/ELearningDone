@@ -118,8 +118,8 @@
                         <div class="form-group">
                             <label class="control-label col-md-4 col-sm-4 col-xs-12">Nhà cung cấp:</label>
                             <div class="col-md-8 col-sm-8 col-xs-12">
-                                <input class="form-control" type="text" asp-for="@Model.Supplier" />
-
+                                <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" asp-for="@Model.AssetsSupplierId" asp-items="ViewBag.Supplier">
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">

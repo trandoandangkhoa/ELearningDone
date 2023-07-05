@@ -1,0 +1,101 @@
+﻿@using WebLearning.Contract.Dtos.Assets;
+@model UpdateAssetsMovedDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="x_panel">
+        <a href="/chi-tiet-tai-san/@Model.AssetId"><i class="fa fa-reply"></i> Quay lại</a>
+        <form asp-action="Edit" method="post">
+            <div class="x_title">
+                <h2>Cập nhật thông tin</h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12">Mã tài sản: <span class="required">*</span></label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <input class="form-control" type="text" asp-for="@Model.AssetId" value="@Model.AssetId" name="AssetId" readonly />
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12">Tên người nhận: <span class="required">*</span></label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <input class="form-control" type="text" asp-for="@Model.Receiver" value="@Model.Receiver" name="Receiver"  required />
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12">SĐT người nhận: <span class="required">*</span></label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <input class="form-control" type="text" asp-for="@Model.ReceiverPhoneNumber" value="@Model.ReceiverPhoneNumber" required name="ReceiverPhoneNumber"  />
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12">SĐT người chuyển: <span class="required">*</span></label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <input class="form-control" type="text" asp-for="@Model.SenderPhoneNumber" value="@Model.SenderPhoneNumber" required name="SenderPhoneNumber"  />
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12">Đơn vị sử dụng: <span class="required">*</span></label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <select required id="AssetsDepartmentId" name="AssetsDepartmentId" asp-for="@Model.AssetsDepartmentId" asp-items="ViewBag.Dep" class="selectpicker form-control" data-live-search="true" data-show-subtext="true" data-live-search-style="begins">
+                        </select>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12">Nội dung: <span class="required">*</span></label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <input class="form-control" type="text" asp-for="@Model.Description" value="@Model.Description" required name="Description"  />
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày dùng: </label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <div class="input-group date" id="assetMoveDateUsed">
+                            <input type="text" class="form-control col-md-10" asp-for="@Model.DateUsed" value="@Model.DateUsed" name="DateUsed" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày chuyển: <span class="required">*</span></label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <div class="input-group date" id="dateChecked">
+                            <input type="text" class="form-control col-md-10" asp-for="@Model.DateMoved" value="@Model.DateMoved" name="DateMoved" required />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                </div>
+                
+                <div class="clearfix"></div>
+
+            </div>
+
+            <button type="submit" class="btn btn-success">Lưu</button>
+        </form>
+
+
+    </div>
+
+</div>
+@section Scripts{
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
+
+}

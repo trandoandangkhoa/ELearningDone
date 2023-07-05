@@ -1,0 +1,56 @@
+﻿@using WebLearning.Contract.Dtos.Assets.Repair;
+@model UpdateAssetsRepairedDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="x_panel">
+        <a href="/chi-tiet-tai-san/@Model.AssetsId"><i class="fa fa-reply"></i> Quay lại</a>
+        <form asp-action="Edit" method="post">
+            <div class="x_title">
+                <h2>Cập nhật thông tin</h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12">Mã tài sản: <span class="required">*</span></label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <input class="form-control" type="text" asp-for="@Model.AssetsId" value="@Model.AssetsId" name="AssetsId" readonly />
+                    </div>
+
+                </div>
+               
+                <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12">Nơi sửa: <span class="required">*</span></label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <input class="form-control" type="text" asp-for="@Model.LocationRepaired" value="@Model.LocationRepaired" required name="LocationRepaired" />
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày sửa chữa: </label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <div class="input-group date" id="assetMoveDateUsed">
+                            <input type="text" class="form-control col-md-10" asp-for="@Model.DateRepaired" value="@Model.DateRepaired" name="DateRepaired" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                </div>
+                
+
+            </div>
+
+            <button type="submit" class="btn btn-success">Lưu</button>
+        </form>
+
+
+    </div>
+
+</div>
+

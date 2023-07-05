@@ -19,11 +19,12 @@ namespace WebLearning.AppUser.Controllers
         private readonly IAssetDepartmentService _assetDepartmentService;
         private readonly IAssetStatusService _assetStatusService;
         private readonly IAssetMovedService _assetMoveService;
+        private readonly IAssetSupplierService _assetSupplierService;
         public INotyfService _notyfService { get; }
 
 
         public AssetController(IAssetService assetService, INotyfService notyfService
-                               , IAssetCategoryService assetCategoryService, IAssetDepartmentService assetDepartmentService, IAssetStatusService assetStatusService, IAssetMovedService assetMoveService)
+                               , IAssetCategoryService assetCategoryService, IAssetDepartmentService assetDepartmentService, IAssetStatusService assetStatusService, IAssetMovedService assetMoveService, IAssetSupplierService assetSupplierService)
         {
             _assetService = assetService;
             _notyfService = notyfService;
@@ -31,7 +32,7 @@ namespace WebLearning.AppUser.Controllers
             _assetDepartmentService = assetDepartmentService;
             _assetStatusService = assetStatusService;
             _assetMoveService = assetMoveService;
-
+            _assetSupplierService = assetSupplierService;
         }
 
         [Route("/tai-san.html")]
@@ -92,10 +93,12 @@ namespace WebLearning.AppUser.Controllers
             var allCat = await _assetCategoryService.GetAllAssetsCategory();
             var allDep = await _assetDepartmentService.GetAllAssetsDepartment();
             var allStatus = await _assetStatusService.GetAllAssetsStatus();
+            var allSup = await _assetSupplierService.GetAllAssetsSupplier();
 
             ViewData["Cat"] = new SelectList(allCat, "Id", "Name");
             ViewData["Dep"] = new SelectList(allDep, "Id", "Name");
             ViewData["Status"] = new SelectList(allStatus, "Id", "Name");
+            ViewData["Supplier"] = new SelectList(allSup, "Id", "CompanyName");
 
             return View(asset);
         }
@@ -112,10 +115,12 @@ namespace WebLearning.AppUser.Controllers
             var allCat = await _assetCategoryService.GetAllAssetsCategory();
             var allDep = await _assetDepartmentService.GetAllAssetsDepartment();
             var allStatus = await _assetStatusService.GetAllAssetsStatus();
-
+            var allSup = await _assetSupplierService.GetAllAssetsSupplier();
             ViewData["Cat"] = new SelectList(allCat, "Id", "Name");
             ViewData["Dep"] = new SelectList(allDep, "Id", "Name");
             ViewData["Status"] = new SelectList(allStatus, "Id", "Name");
+            ViewData["Supplier"] = new SelectList(allSup, "Id", "CompanyName");
+
             return View();
         }
         [HttpPost]
@@ -183,7 +188,7 @@ namespace WebLearning.AppUser.Controllers
                     sheet.Cells[rowInd, 4].Value = lo.OrderNumber;
                     sheet.Cells[rowInd, 5].Value = lo.SeriNumber;
                     sheet.Cells[rowInd, 6].Value = lo.Price;
-                    sheet.Cells[rowInd, 7].Value = lo.Supplier;
+                    //sheet.Cells[rowInd, 7].Value = lo.Supplier;
                     sheet.Cells[rowInd, 8].Value = lo.AssetsCategoryDto.Name;
                     sheet.Cells[rowInd, 9].Value = lo.AssetSubCategory;
                     sheet.Cells[rowInd, 10].Value = lo.Quantity;

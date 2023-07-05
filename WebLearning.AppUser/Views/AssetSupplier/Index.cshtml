@@ -1,0 +1,140 @@
+﻿@using WebLearning.Application.Ultities
+@using WebLearning.Contract.Dtos.Assets.Supplier;
+@model PagedViewModel<AssetsSupplierDto>
+<style>
+    .dataTables_length, .dataTables_filter {
+        display: none;
+    }
+
+    .required {
+        color: red;
+        font-weight: bold;
+        font-size: 14px;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><a href="/quan-li-tai-san.html"><i class="fa fa-home"></i> Trang chủ </a>| Loại<small>tài sản</small></h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li>
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <p class="text-muted font-13 m-b-30">
+                    <form asp-action="Index" method="get" class="form-horizontal">
+                        <div class="title_right">
+                            <div class="col-md-3 col-sm-3 col-xs-12 form-group pull-right top_search">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Từ khóa..." name="keyword">
+
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="submit">Tìm kiếm!</button>
+                                        <button type="submit" class="btn btn-default" onclick="window.location.href='/nha-cung-cap.html'">Reset</button>
+
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <form asp-action="Create" asp-controller="AssetSupplier" method="post" class="form-horizontal">
+                        <div class="x_panel">
+                            <h4>Thêm mới nhà cung cấp</h4>
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-2 col-xs-12">Mã số thuế:</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    <input class="form-control" name="CompanyTaxCode" id="CompanyTaxCode" type="text" />
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-2 col-xs-12">Tên công ty:</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    <input class="form-control" name="CompanyName" id="CompanyName" type="text" />
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-2 col-xs-12">Địa chỉ:</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    <input class="form-control" name="Address" id="Address" type="text" />
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-2 col-xs-12">Số điện thoại:</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    <input class="form-control" name="Phone" id="Phone" type="text" />
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-2 col-xs-12">Fax:</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    <input class="form-control" name="Fax" id="Fax" type="text" />
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+
+                                    <button type="submit" class="btn btn-success"><i class="fa fa-edit"></i> Lưu</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </p>
+                <table id="datatable" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Mã số thuế</th>
+                            <th>Tên công ty</th>
+                            <th>Địa chỉ</th>
+                            <th>Số điện thoại</th>
+                            <th>Fax</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.CompanyTaxCode</td>
+                                <td>@item.CompanyName</td>
+                                <td>@item.Address</td>
+                                <td>@item.Phone</td>
+                                <td>@item.Fax</td>
+                                <td>
+                                    @{
+                                        string urlDetail = $"/chi-tiet-nha-cung-cap/{item.Id}";
+
+                                        string urlEdit = $"/cap-nhat-nha-cung-cap/{item.Id}";
+                                        string urlDelete = $"/xoa-nha-cung-cap/{item.Id}";
+
+                                    }
+
+                                    <a href="@urlEdit" class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i> Cập nhật </a>
+                                    <a href="@urlDelete" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Xóa </a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+                @await Component.InvokeAsync("Pager" , Model)
+
+            </div>
+        </div>
+    </div>
+
+</div>
+

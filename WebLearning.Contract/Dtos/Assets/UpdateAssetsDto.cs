@@ -13,6 +13,7 @@
 
         public string OrderNumber { get; set; }
         public Guid AssetsCategoryId { get; set; }
+        public string AssetsSupplierId { get; set; }
 
         public string AssetSubCategory { get; set; }
 

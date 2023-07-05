@@ -13,7 +13,9 @@ namespace WebLearning.Application.Mapping.AssetMapping
             CreateMap<Assests, AssetsDto>().ForPath(dest => dest.AssetsStatusDto, opt => opt.MapFrom(src => src.AssetsStatus))
                                         .ForPath(dest => dest.AssetsDepartmentDto, opt => opt.MapFrom(src => src.AssetsDepartment))
                                         .ForPath(dest => dest.AssetsCategoryDto, opt => opt.MapFrom(src => src.AssetsCategory))
-                                        .ForPath(dest => dest.AssetsMovedsDto, opt => opt.MapFrom(src => src.AssetsMoveds));
+                                        .ForPath(dest => dest.AssetsMovedsDto, opt => opt.MapFrom(src => src.AssetsMoveds))
+                                        .ForPath(dest => dest.AssetsSupplierDto, opt => opt.MapFrom(src => src.AssetsSupplier))
+                                        .ForPath(dest => dest.AssetsRepairedDtos, opt => opt.MapFrom(src => src.AssetsRepaireds));
             CreateMap<UpdateAssetsDto, Assests>();
 
         }

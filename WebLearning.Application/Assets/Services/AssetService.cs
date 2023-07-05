@@ -54,7 +54,7 @@ namespace WebLearning.Application.Assets.Services
 
         }
 
-        public async Task<IEnumerable<AssetsDto>> Export([FromQuery] GetListPagingRequest getListPagingRequest)
+        public Task<IEnumerable<AssetsDto>> Export([FromQuery] GetListPagingRequest getListPagingRequest)
         {
 
             var query = _context.Assests.Include(x => x.AssetsStatus).Include(x => x.AssetsCategory).Include(x => x.AssetsDepartment).OrderBy(x => x.Id).AsNoTracking().AsQueryable();
@@ -83,7 +83,7 @@ namespace WebLearning.Application.Assets.Services
             }
             var data = _mapper.Map<IEnumerable<AssetsDto>>(query);
 
-            return data;
+            return Task.FromResult(data);
         }
 
         public async Task<IEnumerable<AssetsDto>> GetAsset()
@@ -95,7 +95,7 @@ namespace WebLearning.Application.Assets.Services
 
         public async Task<AssetsDto> GetAssetById(string id)
         {
-            var asset = await _context.Assests.Include(x => x.AssetsStatus).Include(x => x.AssetsCategory).Include(x => x.AssetsDepartment).Include(x => x.AssetsMoveds).ThenInclude(x => x.AssetsMovedStatus).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var asset = await _context.Assests.Include(x => x.AssetsStatus).Include(x => x.AssetsCategory).Include(x => x.AssetsDepartment).Include(x => x.AssetsSupplier).Include(x => x.AssetsRepaireds).Include(x => x.AssetsMoveds).ThenInclude(x => x.AssetsDepartment).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
             return _mapper.Map<AssetsDto>(asset);
         }

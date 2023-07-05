@@ -26,7 +26,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet]
 
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<IEnumerable<AssetsDepartmentDto>> GetAssetsDepartments()
         {
@@ -39,7 +39,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("paging")]
 
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<PagedViewModel<AssetsDepartmentDto>> GetUsers([FromQuery] GetListPagingRequest getListPagingRequest)
         {
@@ -54,7 +54,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("{id}")]
 
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
         public async Task<IActionResult> GetAssetDepartmentById(Guid id)
         {
             if (await _departmentService.GetAssetsDepartmentById(id) == null)
@@ -69,7 +69,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("catcode/{code}")]
 
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
         public async Task<IActionResult> GetCatByCode(string code)
         {
             if (await _departmentService.GetCode(code) == null)
@@ -85,7 +85,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpPost]
 
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<IActionResult> Post([FromBody] CreateAssetsDepartmentDto createAssetsDepartmentDto)
         {
@@ -112,7 +112,7 @@ namespace WebLearning.Api.Controllers
         /// Cập nhật đơn vị sử dụng
         /// </summary>
         [HttpPut("{id}")]
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<IActionResult> UpdateAssetDepartment(Guid id, [FromBody] UpdateAssetsDepartmentDto updateAssetsDepartmentDto)
         {
@@ -143,7 +143,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         // DELETE api/<AssetDepartmentController>/5
         [HttpDelete("{id}")]
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<IActionResult> DeleteAssetDepartment(Guid id)
         {

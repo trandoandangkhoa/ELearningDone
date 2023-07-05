@@ -127,7 +127,6 @@ namespace WebLearning.App.Controllers
             var updateResult = new UpdateAccountDto()
             {
                 Email = result.Email,
-                Password = result.Password,
                 PasswordHased = result.PasswordHased,
                 Active = result.Active,
                 RoleId = result.RoleId,
@@ -177,7 +176,6 @@ namespace WebLearning.App.Controllers
             ViewData["DanhMuc"] = new SelectList(allRole, "Id", "RoleName");
             dto.Id = role.Id;
             dto.Email = role.Email;
-            dto.Password = role.Password;
             dto.PasswordHased = role.PasswordHased;
             dto.DateCreated = role.DateCreated;
             dto.LastLogin = role.LastLogin;

@@ -19,6 +19,7 @@
         public Guid AssetsCategoryId { get; set; }
 
         public string AssetSubCategory { get; set; }
+        public string AssetsSupplierId { get; set; }
 
         public int Quantity { get; set; }
 

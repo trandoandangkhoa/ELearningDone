@@ -11,8 +11,6 @@ namespace WebLearning.Contract.Dtos.Account
 
         public string Email { get; set; }
 
-        public string Password { get; set; }
-
         public string PasswordHased { get; set; }
 
         public int Active { get; set; }

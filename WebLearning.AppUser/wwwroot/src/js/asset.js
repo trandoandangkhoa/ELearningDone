@@ -166,7 +166,6 @@ function loadDataMoveAll() {
 
         }
     }
-    console.log(record);
     $('[name=table_records]').val(record);
     $.ajax({
         url: '/Asset/GetItem',
@@ -190,7 +189,6 @@ function deleteAllData() {
 
         }
     }
-    console.log(record);
     $('[name=table_records]').val(record);
     $.ajax({
         url: '/Asset/GetItem',
@@ -200,6 +198,29 @@ function deleteAllData() {
         success: function (results) {
             $("#sid").html("");
             $("#sid").html(results);
+        },
+
+    })
+}
+function updateRepairItem() {
+    var record = [];
+    for (var i in cbstate) {
+
+        if (i.includes("IT")) {
+
+            record.push(i);
+
+        }
+    }
+    $('[name=table_records]').val(record);
+    $.ajax({
+        url: '/Asset/GetItem',
+        datatype: "json",
+        type: "POST",
+        data: { id: record },
+        success: function (results) {
+            $("#siur").html("");
+            $("#siur").html(results);
         },
 
     })

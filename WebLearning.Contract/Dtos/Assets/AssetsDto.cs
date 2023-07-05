@@ -1,6 +1,8 @@
 ﻿using WebLearning.Contract.Dtos.Assets.Category;
 using WebLearning.Contract.Dtos.Assets.Department;
+using WebLearning.Contract.Dtos.Assets.Repair;
 using WebLearning.Contract.Dtos.Assets.Status;
+using WebLearning.Contract.Dtos.Assets.Supplier;
 
 namespace WebLearning.Contract.Dtos.Assets
 {
@@ -16,7 +18,7 @@ namespace WebLearning.Contract.Dtos.Assets
 
         public string Price { get; set; }
 
-        public string Supplier { get; set; }
+        public string AssetsSupplierId { get; set; }
 
         public string OrderNumber { get; set; }
         public Guid AssetsCategoryId { get; set; }
@@ -63,6 +65,8 @@ namespace WebLearning.Contract.Dtos.Assets
         public AssetsStatusDto AssetsStatusDto { get; set; }
 
         public ICollection<AssetsMovedDto> AssetsMovedsDto { get; set; }
+        public AssetsSupplierDto AssetsSupplierDto { get; set; }
 
+        public ICollection<AssetsRepairedDto> AssetsRepairedDtos { get; set; }
     }
 }

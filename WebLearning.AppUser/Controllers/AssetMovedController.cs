@@ -1,5 +1,6 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WebLearning.ApiIntegration.Services;
 using WebLearning.Application.Extension;
 using WebLearning.Contract.Dtos.Assets;
@@ -107,16 +108,39 @@ namespace WebLearning.AppUser.Controllers
             assetMovedPrintView.Receiver = createAssetsMovedDto.Receiver;
             assetMovedPrintView.AssetMovedTickets = assetMovedTickets;
             assetMovedPrintView.ReasonMove = createAssetsMovedDtos[0].Description;
+
             HttpContext.Session.Set<AssetMovedPrintView>("AssetMovedPrintView", assetMovedPrintView);
 
             _notyfService.Success("Điều chuyển thành công!");
             return Redirect("/tai-san.html");
         }
-
+        [Route("/cap-nhat-dieu-chuyen/{id}")]
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var asset = await _assetMovedService.GetAssetMovedById(id);
+            UpdateAssetsMovedDto updateAssetsMovedDto = new()
+            {
+                AssetId = asset.AssetsId,
+                AssetsDepartmentId = asset.AssetsDepartmentId,
+                DateMoved = asset.DateMoved,
+                DateUsed = asset.DateUsed,
+                Description = asset.Description,
+                SenderPhoneNumber = asset.SenderPhoneNumber,
+                MovedStatus = asset.MovedStatus,
+                Receiver = asset.Receiver,
+                ReceiverPhoneNumber = asset.ReceiverPhoneNumber,
+                NumBravo = asset.NumBravo,
+                IdTemp = id,
+            };
+            var allDep = await _assetDepartmentService.GetAllAssetsDepartment();
+            ViewData["Dep"] = new SelectList(allDep, "Id", "Name");
+            return View(updateAssetsMovedDto);
+        }
+        [Route("/cap-nhat-dieu-chuyen/{id}")]
         [HttpPost]
         public async Task<IActionResult> Edit(UpdateAssetsMovedDto updateAssetsMovedDto, Guid id)
         {
-            id = updateAssetsMovedDto.IdTemp;
             var token = HttpContext.Session.GetString("Token");
 
             if (token == null)

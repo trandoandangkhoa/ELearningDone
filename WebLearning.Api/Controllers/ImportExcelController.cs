@@ -141,19 +141,22 @@ namespace WebLearning.Api.Controllers
 
                         ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
                         var rowCount = worksheet.Dimension.Rows;
-                        var count = 0;
-                        for (int row = 2; row <= rowCount; row++)
-                        {
+                        //var count = 0;
+                        //for (int row = 2; row <= rowCount; row++)
+                        //{
 
-                            var name = await _accountService.GetNameUser(worksheet.Cells[row, 4].Value.ToString().Trim());
-                            if (name != null)
-                            {
-                                count++;
-                            }
-                        }
-                        if (count > 0) return importResponse.Msg = $"Bạn có {count} tài khoản bị trùng email. Vui lòng kiểm tra lại! ";
+                        //    var name = await _accountService.GetNameUser(worksheet.Cells[row, 4].Value.ToString().Trim());
+                        //    if (name != null)
+                        //    {
+                        //        count++;
+                        //    }
+                        //}
+                        string address = "";
                         for (int row = 2; row <= rowCount; row++)
                         {
+                            if (worksheet.Cells[row, 3].Value != null) address = worksheet.Cells[row, 3].Value.ToString().Trim();
+
+
                             createAccountDtos.Add(new CreateAccountDto
                             {
 
@@ -161,7 +164,7 @@ namespace WebLearning.Api.Controllers
                                 Id = Guid.NewGuid(),
                                 FullName = worksheet.Cells[row, 1].Value.ToString().Trim(),
                                 Phone = worksheet.Cells[row, 2].Value.ToString().Trim(),
-                                Address = worksheet.Cells[row, 3].Value.ToString().Trim(),
+                                Address = address,
                                 Email = worksheet.Cells[row, 4].Value.ToString().Trim(),
                                 Password = worksheet.Cells[row, 5].Value.ToString().Trim(),
                                 //Active = Convert.ToBoolean(Convert.ToInt32(worksheet.Cells[row, 5].Value.ToString().Trim())),

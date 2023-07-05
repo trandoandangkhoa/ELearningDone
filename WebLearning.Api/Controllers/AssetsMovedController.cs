@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebLearning.Application.Assets.Services;
 using WebLearning.Application.Helper;
+using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos;
 using WebLearning.Contract.Dtos.Assets;
 
@@ -25,7 +26,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet]
 
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<IEnumerable<AssetsMovedDto>> GetAssetsMoved()
         {
@@ -34,6 +35,13 @@ namespace WebLearning.Api.Controllers
 
         }
 
+        [HttpGet("paging")]
+        public async Task<PagedViewModel<AssetsMovedDto>> GetUsers([FromQuery] GetListPagingRequest getListPagingRequest)
+        {
+
+            return await _moveService.GetPaging(getListPagingRequest);
+
+        }
 
         // GET api/<RoleController>/5
         /// <summary>
@@ -41,7 +49,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpGet("{id}")]
 
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
         public async Task<IActionResult> GetRoleById(Guid id)
         {
             if (await _moveService.GetAssetsMovedById(id) == null)
@@ -57,7 +65,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         [HttpPost]
 
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<IActionResult> Post([FromBody] CreateAssetsMovedDto createAssetsMovedDto)
         {
@@ -84,7 +92,7 @@ namespace WebLearning.Api.Controllers
         /// Cập nhật điều chuyển
         /// </summary>
         [HttpPut("{id}")]
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<IActionResult> UpdateAccount(Guid id, [FromBody] UpdateAssetsMovedDto updateAssetsMovedDto)
         {
@@ -115,7 +123,7 @@ namespace WebLearning.Api.Controllers
         /// </summary>
         // DELETE api/<RoleController>/5
         [HttpDelete("{id}")]
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.ITRole)]
+        [SecurityRole(AuthorizeRole.AdminRole)]
 
         public async Task<IActionResult> DeleteRole(Guid id)
         {

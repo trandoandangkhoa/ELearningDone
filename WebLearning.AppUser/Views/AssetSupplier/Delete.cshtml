@@ -1,0 +1,65 @@
+﻿@using WebLearning.Contract.Dtos.Assets.Supplier;
+@model AssetsSupplierDto
+
+<div class="row">
+    <h4>@Model.CompanyName / <a href="/bo-phan.html">Quay lại</a></h4>
+
+    <div class="x_panel">
+        <div class="x_title">
+            <h2><i class="fa fa-pencil"></i> Xóa <small>nhà cung cấp</small></h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <form asp-action="Delete" class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-md-2 col-sm-2 col-xs-12">Mã số thuế:</label>
+                    <div class="col-md-10 col-sm-10 col-xs-12">
+                        <input class="form-control" name="CompanyTaxCode" id="CompanyTaxCode" type="text" onfocus="this.placeholder = ''" asp-for="@Model.CompanyTaxCode">
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2 col-sm-2 col-xs-12">Tên công ty:</label>
+                    <div class="col-md-10 col-sm-10 col-xs-12">
+                        <input class="form-control" name="CompanyName" id="CompanyName" type="text" onfocus="this.placeholder = ''" asp-for="@Model.CompanyName">
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2 col-sm-2 col-xs-12">Địa chỉ:</label>
+                    <div class="col-md-10 col-sm-10 col-xs-12">
+                        <input class="form-control" name="Address" id="Name" type="Address" onfocus="this.placeholder = ''" asp-for="@Model.Address">
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2 col-sm-2 col-xs-12">Số điện thoại:</label>
+                    <div class="col-md-10 col-sm-10 col-xs-12">
+                        <input class="form-control" name="Phone" id="Phone" type="text" onfocus="this.placeholder = ''" asp-for="@Model.Phone">
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2 col-sm-2 col-xs-12">Fax:</label>
+                    <div class="col-md-10 col-sm-10 col-xs-12">
+                        <input class="form-control" name="Fax" id="Fax" type="text" onfocus="this.placeholder = ''" asp-for="@Model.Fax">
+
+                    </div>
+                </div>
+                <div class="ln_solid"></div>
+                <div class="form-group">
+                    <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash-o"></i> Xóa</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</div>

@@ -129,7 +129,7 @@
                                                 </ul>
                                             </div>
                                             <div class="btn-group">
-                                                <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-building"></i> Bộ phận</button>
+                                                <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-building"></i> Vị trí</button>
                                                 <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                                     <span class="caret"></span>
                                                     <span class="sr-only">Toggle Dropdown</span>
@@ -197,6 +197,10 @@
                                         </div>
                                         <div class="btn-group" onclick='deleteAllData()'>
                                             <button data-toggle="modal" data-target=".deleteallbs-example-modal-lg" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Xóa tất cả</button>
+
+                                        </div>
+                                        <div class="btn-group" onclick='updateRepairItem()'>
+                                            <button data-toggle="modal" data-target=".updateRepairbs-example-modal-lg" class="btn btn-xs btn-warning"><i class="fa fa-trash"></i> Sửa chữa</button>
 
                                         </div>
                                         <div class="modal fade moveallbs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
@@ -408,6 +412,90 @@
                                             </form>
                                         </div>
 
+                                        <div class="modal fade updateRepairbs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                                            <form asp-action="Create" asp-controller="AssetRepaired" method="post" enctype="multipart/form-data" id="formUpdateRepair">
+
+                                                <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
+
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">
+                                                                <span aria-hidden="true">×</span>
+                                                            </button>
+                                                            <h4 class="modal-title" id="myModalLabel">Xác nhận cập nhật</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>
+                                                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Mã IT: <span class="required">*</span></label>
+                                                                <div class="input-group">
+                                                                    <input class="form-control col-md-10" type="text" required name="table_records"
+                                                                           placeholder="Vui lòng chọn tài sản bằng cách click vào ô checkbox đầu bảng" readonly />
+                                                                    <span class="input-group-addon">
+                                                                        <span class="glyphicon glyphicon-list-alt"></span>
+                                                                    </span>
+                                                                </div>
+
+                                                            </p>
+                                                            <p>
+                                                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Nơi sửa: <span class="required">*</span></label>
+                                                                <div class="input-group">
+                                                                    @if (TempData["LocationRepaired"] != null)
+                                                                    {
+                                                                        <input class="form-control col-md-10" type="text" name="LocationRepaired" value="@TempData["LocationRepaired"]" required />
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input class="form-control col-md-10" required type="text" name="LocationRepaired" placeholder="Nơi sửa chữa..." />
+
+                                                                    }
+                                                                    <span class="input-group-addon">
+                                                                        <span class="glyphicon glyphicon-map-marker"></span>
+                                                                    </span>
+                                                                </div>
+
+
+                                                            </p>
+                                                            <p>
+                                                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày sửa chữa:</label>
+                                                                @if (TempData["DateRepaired"] != null)
+                                                                {
+                                                                    <div class="input-group date" id="dateUsed">
+                                                                        <input type="text" class="form-control col-md-10" name="DateRepaired" value="@TempData["DateRepaired"] " />
+                                                                        <span class="input-group-addon">
+                                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                                        </span>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="input-group date" id="dateRepaired">
+                                                                        <input type="text" class="form-control col-md-10" name="DateRepaired" placeholder="Nhập ngày sửa chữa..." />
+                                                                        <span class="input-group-addon">
+                                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                                        </span>
+                                                                    </div>
+                                                                }
+
+
+                                                            </p>
+                                                            <p>Chi tiết tài sản </p>
+                                                            <div class="table-responsive" id="siur" style="height:350px;overflow-y:auto">
+                                                            </div>
+
+
+
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                                                            <button type="submit" id="updateRepairAsset" class="btn btn-warning"><i class="fa fa-trash"></i> Cập nhật</button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+
                                         <div class="clearfix"></div>
 
                                         <div class="btn-group">
@@ -546,7 +634,31 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
-    
+    <script>
+        function updateRepairItem() {
+            var record = [];
+            for (var i in cbstate) {
+
+                if (i.includes("IT")) {
+
+                    record.push(i);
+
+                }
+            }
+            $('[name=table_records]').val(record);
+            $.ajax({
+                url: '/Asset/GetItem',
+                datatype: "json",
+                type: "POST",
+                data: { id: record },
+                success: function (results) {
+                    $("#siur").html("");
+                    $("#siur").html(results);
+                },
+
+            })
+        }
+    </script>
 }
 
 
