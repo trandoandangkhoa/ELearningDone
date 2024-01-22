@@ -6,6 +6,8 @@
         public int TotalItems { get; set; }
         public int PageSize { get; set; }
         public int TotalRecord { get; set; }
+
+        public int TotalQuantity { get; set; }
         public int PageCount
         {
             get

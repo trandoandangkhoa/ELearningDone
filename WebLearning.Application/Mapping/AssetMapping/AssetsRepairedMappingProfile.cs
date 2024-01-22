@@ -8,9 +8,9 @@ namespace WebLearning.Application.Mapping.AssetMapping
     {
         public AssetsRepairedMappingProfile()
         {
-            CreateMap<CreateAssetsRepairedDto, AssetsRepaired>();
-            CreateMap<AssetsRepaired, AssetsRepairedDto>().ForPath(dest => dest.AssetsDto, opt => opt.MapFrom(src => src.Assests));
-            CreateMap<UpdateAssetsRepairedDto, AssetsRepaired>();
+            CreateMap<CreateAssetsRepairedDto, AssetRepaired>();
+            CreateMap<AssetRepaired, AssetsRepairedDto>().ForPath(dest => dest.AssetsDto, opt => opt.MapFrom(src => src.Assests));
+            CreateMap<UpdateAssetsRepairedDto, AssetRepaired>();
 
         }
     }

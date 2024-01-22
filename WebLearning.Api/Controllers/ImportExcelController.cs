@@ -37,11 +37,11 @@ namespace WebLearning.Api.Controllers
         private readonly IAssetService _assetService;
         private readonly ICategoryService _categoryService;
         private readonly IDepartmentService _departmentService;
-        private readonly IStatusService _statusService;
-        private readonly IAssetMovedService _assetMovedService;
+
+        private readonly ISupplierService _supplierService;
         public ImportExcelController(IQuestionLessionService questionLessionService, IRoleService roleService, IAccountService accountService, ICourseRoleService courseRoleService
 , ICourseService courseService, ILessionService lessionService, IQuizLessionService quizLessionService, IQuizCourseService quizCourseService, IQuizMonthlyService quizMonthlyService, IQuestionCourseService questionCourseService, IQuestionMonthlyService questionMonthlyService
-            , IAssetService assetService, IDepartmentService departmentService, IStatusService statusService, ICategoryService categoryService, IAssetMovedService assetMovedService)
+            , IAssetService assetService, IDepartmentService departmentService, IStatusService statusService, ICategoryService categoryService, IAssetMovedService assetMovedService, ISupplierService supplierService)
 
         {
             _roleService = roleService;
@@ -57,9 +57,8 @@ namespace WebLearning.Api.Controllers
             _questionMonthlyService = questionMonthlyService;
             _assetService = assetService;
             _departmentService = departmentService;
-            _statusService = statusService;
             _categoryService = categoryService;
-            _assetMovedService = assetMovedService;
+            _supplierService = supplierService;
         }
 
 
@@ -772,19 +771,29 @@ namespace WebLearning.Api.Controllers
                             string seri = "";
                             string price = "";
                             string supplier = "";
+                            string region = "";
+                            string businessModel = "";
+                            string sub = "";
                             int expireDay = 0;
                             if (worksheet.Cells[row, 3].Value != null) orNum = worksheet.Cells[row, 3].Value.ToString().Trim();
                             if (worksheet.Cells[row, 4].Value != null) seri = worksheet.Cells[row, 4].Value.ToString().Trim();
                             if (worksheet.Cells[row, 5].Value != null) price = worksheet.Cells[row, 5].Value.ToString().Trim();
-                            if (worksheet.Cells[row, 6].Value != null) supplier = worksheet.Cells[row, 6].Value.ToString().Trim();
 
                             if (worksheet.Cells[row, 11].Value != null) customer = worksheet.Cells[row, 11].Value.ToString().Trim();
                             if (worksheet.Cells[row, 14].Value != null) spec = worksheet.Cells[row, 14].Value.ToString().Trim();
                             if (worksheet.Cells[row, 15].Value != null) note = worksheet.Cells[row, 15].Value.ToString().Trim();
                             if (worksheet.Cells[row, 19].Value != null) expireDay = int.Parse(worksheet.Cells[row, 19].Value.ToString().Trim());
+                            if (worksheet.Cells[row, 20].Value != null) region = worksheet.Cells[row, 20].Value.ToString().Trim();
+                            if (worksheet.Cells[row, 21].Value != null) businessModel = worksheet.Cells[row, 21].Value.ToString().Trim();
+                            if (worksheet.Cells[row, 8].Value != null) sub = worksheet.Cells[row, 8].Value.ToString().Trim();
+                            if (worksheet.Cells[row, 6].Value != null)
+                            {
+                                var supId = await _supplierService.GetAssetsSupplierById(worksheet.Cells[row, 6].Value.ToString().Trim());
+                                supplier = supId.Id;
+                            }
+
                             var catId = await _categoryService.GetCode(worksheet.Cells[row, 7].Value.ToString().Trim());
                             var depId = await _departmentService.GetCode(worksheet.Cells[row, 10].Value.ToString().Trim());
-
                             if (catId == null) return importResponse.Msg = $"Dòng {row} trong sheet {worksheet.Name} có mã loại không tồn tại";
 
                             if (worksheet.Cells[row, 16].Value == null || worksheet.Cells[row, 18].Value == null)
@@ -800,9 +809,9 @@ namespace WebLearning.Api.Controllers
                                         OrderNumber = orNum,
                                         SeriNumber = seri,
                                         Price = price,
-                                        Supplier = supplier,
+                                        AssetsSupplierId = supplier,
                                         AssetsCategoryId = catId.Id,
-                                        AssetSubCategory = worksheet.Cells[row, 8].Value.ToString().Trim(),
+                                        AssetSubCategory = sub,
                                         Quantity = int.Parse(worksheet.Cells[row, 9].Value.ToString().Trim()),
                                         AssetsDepartmentId = depId.Id,
                                         Customer = customer,
@@ -815,6 +824,8 @@ namespace WebLearning.Api.Controllers
                                         DateChecked = DateTime.ParseExact(worksheet.Cells[row, 17].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
                                         DateBuyed = DateTime.ParseExact(worksheet.Cells[row, 18].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
                                         ExpireDay = expireDay,
+                                        Region = region,
+                                        BusinessModel = businessModel,
                                     });
                                 }
                                 else if (worksheet.Cells[row, 16].Value != null && worksheet.Cells[row, 18].Value == null)
@@ -828,9 +839,9 @@ namespace WebLearning.Api.Controllers
                                         OrderNumber = orNum,
                                         SeriNumber = seri,
                                         Price = price,
-                                        Supplier = supplier,
+                                        AssetsSupplierId = supplier,
                                         AssetsCategoryId = catId.Id,
-                                        AssetSubCategory = worksheet.Cells[row, 8].Value.ToString().Trim(),
+                                        AssetSubCategory = sub,
                                         Quantity = int.Parse(worksheet.Cells[row, 9].Value.ToString().Trim()),
                                         AssetsDepartmentId = depId.Id,
                                         Customer = customer,
@@ -843,22 +854,22 @@ namespace WebLearning.Api.Controllers
                                         DateUsed = DateTime.ParseExact(worksheet.Cells[row, 16].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
                                         DateChecked = DateTime.ParseExact(worksheet.Cells[row, 17].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
                                         ExpireDay = expireDay,
+                                        Region = region,
+                                        BusinessModel = businessModel,
                                     });
                                 }
                                 else if (worksheet.Cells[row, 16].Value == null && worksheet.Cells[row, 18].Value == null)
                                 {
                                     createAssetsDtos.Add(new CreateAssetsDto
                                     {
-
-                                        //Id = Guid.Parse(worksheet.Cells[row, 1].Value.ToString().Trim()),
                                         AssetId = worksheet.Cells[row, 1].Value.ToString().Trim(),
                                         AssetName = worksheet.Cells[row, 2].Value.ToString().Trim(),
                                         OrderNumber = orNum,
                                         SeriNumber = seri,
                                         Price = price,
-                                        Supplier = supplier,
+                                        AssetsSupplierId = supplier,
                                         AssetsCategoryId = catId.Id,
-                                        AssetSubCategory = worksheet.Cells[row, 8].Value.ToString().Trim(),
+                                        AssetSubCategory = sub,
                                         Quantity = int.Parse(worksheet.Cells[row, 9].Value.ToString().Trim()),
                                         AssetsDepartmentId = depId.Id,
                                         Customer = customer,
@@ -870,7 +881,10 @@ namespace WebLearning.Api.Controllers
                                         DateCreated = DateTime.Now,
                                         DateChecked = DateTime.ParseExact(worksheet.Cells[row, 17].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
                                         ExpireDay = expireDay,
+                                        Region = region,
+                                        BusinessModel = businessModel,
                                     });
+
                                 }
                             }
                             else
@@ -884,9 +898,9 @@ namespace WebLearning.Api.Controllers
                                     OrderNumber = orNum,
                                     SeriNumber = seri,
                                     Price = price,
-                                    Supplier = supplier,
+                                    AssetsSupplierId = supplier,
                                     AssetsCategoryId = catId.Id,
-                                    AssetSubCategory = worksheet.Cells[row, 8].Value.ToString().Trim(),
+                                    AssetSubCategory = sub,
                                     Quantity = int.Parse(worksheet.Cells[row, 9].Value.ToString().Trim()),
                                     AssetsDepartmentId = depId.Id,
                                     Customer = customer,
@@ -900,6 +914,8 @@ namespace WebLearning.Api.Controllers
                                     DateChecked = DateTime.ParseExact(worksheet.Cells[row, 17].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
                                     DateBuyed = DateTime.ParseExact(worksheet.Cells[row, 18].Value.ToString().Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture),
                                     ExpireDay = expireDay,
+                                    Region = region,
+                                    BusinessModel = businessModel,
                                 });
 
                             }

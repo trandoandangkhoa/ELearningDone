@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using WebLearning.ApiIntegration.Services;
@@ -97,7 +96,7 @@ namespace WebLearning.AppUser.Controllers
             HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principle, props).Wait();
 
             HttpContext.Session.SetString("Token", token);
-            HttpContext.Session.SetString("AccountId",account.Id.ToString());
+            HttpContext.Session.SetString("AccountId", account.Id.ToString());
             _notyf.Success("Đăng nhập thành công!");
 
             return RedirectToLocal(returnUrl);
@@ -162,7 +161,7 @@ namespace WebLearning.AppUser.Controllers
             var id = HttpContext.Session.GetString("AccountId");
             var res = await _accountService.ChangePassword(Guid.Parse(id), changePassword);
 
-            if(res != "Cập nhật thành công!")
+            if (res != "Cập nhật thành công!")
             {
                 _notyf.Error(res);
                 return Redirect("/thay-doi-mat-khau.html");

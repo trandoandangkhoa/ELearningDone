@@ -1,5 +1,6 @@
 ﻿using WebLearning.Contract.Dtos.Assets.Category;
 using WebLearning.Contract.Dtos.Assets.Department;
+using WebLearning.Contract.Dtos.Assets.Moved;
 using WebLearning.Contract.Dtos.Assets.Repair;
 using WebLearning.Contract.Dtos.Assets.Status;
 using WebLearning.Contract.Dtos.Assets.Supplier;
@@ -28,13 +29,15 @@ namespace WebLearning.Contract.Dtos.Assets
         public int Quantity { get; set; }
 
         public Guid AssetsDepartmentId { get; set; }
-
+        public string LocationDepartment { get; set; }
         public string Customer { get; set; }
         public string Manager { get; set; }
 
         public int AssetsStatusId { get; set; }
         public DateTime DateCreated { get; set; }
+        public string Region { get; set; }
 
+        public string BusinessModel { get; set; }
         public int ExpireDay { get; set; }
         public DateTime? DateBuyed { get; set; }
 
@@ -58,6 +61,7 @@ namespace WebLearning.Contract.Dtos.Assets
         public bool Active { get; set; }
         public string RepairLocation { get; set; }
 
+        public int AssetsMovedCount { get; set; }
         public AssetsCategoryDto AssetsCategoryDto { get; set; }
 
         public AssetsDepartmentDto AssetsDepartmentDto { get; set; }

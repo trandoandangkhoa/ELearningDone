@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WebLearning.Contract.Dtos.Account
+﻿namespace WebLearning.Contract.Dtos.Account
 {
     public class ChangePassword
     {

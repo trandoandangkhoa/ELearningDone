@@ -264,7 +264,7 @@ namespace WebLearning.Api.Controllers
         }
 
         [HttpPut("changepassword/{accountId}")]
-        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.StudentRole, AuthorizeRole.Guest,AuthorizeRole.ManagerRole, AuthorizeRole.StaffRole,AuthorizeRole.TeacherRole)]
+        [SecurityRole(AuthorizeRole.AdminRole, AuthorizeRole.StudentRole, AuthorizeRole.Guest, AuthorizeRole.ManagerRole, AuthorizeRole.StaffRole, AuthorizeRole.TeacherRole)]
 
         public async Task<IActionResult> ChangePassword(Guid accountId, ChangePassword changePassword)
         {
@@ -274,8 +274,8 @@ namespace WebLearning.Api.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                var a =  await _accountService.ChangePassword(accountId, changePassword);
-                return StatusCode(StatusCodes.Status200OK,a);
+                var a = await _accountService.ChangePassword(accountId, changePassword);
+                return StatusCode(StatusCodes.Status200OK, a);
             }
             catch (Exception e)
             {

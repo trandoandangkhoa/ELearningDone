@@ -15,6 +15,9 @@ namespace WebLearning.ApiIntegration.Services
         public Task<IEnumerable<AssetsDepartmentDto>> GetAllAssetsDepartment();
 
         public Task<AssetsDepartmentDto> GetAssetDepartmentById(Guid id);
+
+        public Task<IEnumerable<AssetsDepartmentDto>> GetAssetDepartmentByParentCode(GetListPagingRequest getListPagingRequest);
+
         public Task<bool> InsertAssetDepartment(CreateAssetsDepartmentDto createAssetsDepartmentDto);
         public Task<bool> DeleteAssetDepartment(Guid id);
         public Task<bool> UpdateAssetDepartment(UpdateAssetsDepartmentDto updateAssetsDepartmentDto, Guid Id);
@@ -146,6 +149,31 @@ namespace WebLearning.ApiIntegration.Services
 
             var users = JsonConvert.DeserializeObject<IEnumerable<AssetsDepartmentDto>>(body);
             return users;
+        }
+
+        public async Task<IEnumerable<AssetsDepartmentDto>> GetAssetDepartmentByParentCode(GetListPagingRequest getListPagingRequest)
+        {
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+
+            var client = _httpClientFactory.CreateClient();
+
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+            var json = JsonConvert.SerializeObject(getListPagingRequest);
+
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync($"/api/AssetsDepartments/parentCode/departments", httpContent);
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            var users = JsonConvert.DeserializeObject<List<AssetsDepartmentDto>>(body);
+
+            return users;
+
+
         }
     }
 }

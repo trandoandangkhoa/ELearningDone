@@ -36,7 +36,6 @@ namespace WebLearning.Application.ELearning.Services
 
             if (account != null && account.Active == 1)
             {
-                var role = await _context.Roles.SingleOrDefaultAsync(x => x.Id == account.RoleId);
 
                 var jwtTokenHandler = new JwtSecurityTokenHandler();
 
@@ -64,7 +63,7 @@ namespace WebLearning.Application.ELearning.Services
 
                 var token = jwtTokenHandler.CreateToken(tokenDescription);
 
-                var accessToken = jwtTokenHandler.WriteToken(token);
+                //var accessToken = jwtTokenHandler.WriteToken(token);
 
                 //var refreshToken =  GenerateRefreshToken();
 

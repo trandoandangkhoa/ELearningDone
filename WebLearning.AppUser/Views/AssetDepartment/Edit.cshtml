@@ -23,6 +23,22 @@
 
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2 col-sm-2 col-xs-12">Vị trí:</label>
+                    <div class="col-md-10 col-sm-10 col-xs-12">
+                        <select class="selectpicker" data-live-search="true" data-show-subtext="true" name="ParentCode" id="ParentCode" asp-for="@Model.ParentCode" data-live-search-style="begins" asp-items="ViewBag.ParentCode">
+                        </select>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2 col-sm-2 col-xs-12">Cấp bậc:</label>
+                    <div class="col-md-10 col-sm-10 col-xs-12">
+                        <input class="form-control" name="Level" id="Level" type="text" value="@Model.Level" asp-for="@Model.Level" required readonly="readonly">
+
+                    </div>
+                </div>
+
                 <div class="ln_solid"></div>
                 <div class="form-group">
                     <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
@@ -35,3 +51,8 @@
     </div>
 
 </div>
+@section Scripts{
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
+}

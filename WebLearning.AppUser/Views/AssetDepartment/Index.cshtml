@@ -42,16 +42,24 @@
                         </div>
                     </form>
                     <form asp-action="Create" asp-controller="AssetDepartment" method="post" class="form-horizontal">
-                        <div class="x_panel">
-                            <h4>Thêm mới bộ phận</h4>
+                        <div class="x_panel" style="min-height:265px">
+                            <h4>Thêm mới</h4>
+                            <input type="checkbox" value="true" name="Location" id="Location" checked="checked" /> Vị trí
+
                             <div class="form-group">
-                                <label class="control-label col-md-2 col-sm-2 col-xs-12">Bộ phận:</label>
+                                <label class="control-label col-md-2 col-sm-2 col-xs-12" id="labelName">Bộ phận:</label>
                                 <div class="col-md-10 col-sm-10 col-xs-12">
                                     <input class="form-control" name="Name" id="Name" type="text" />
 
                                 </div>
                             </div>
-
+                            <div class="form-group" id="selectLocation">
+                                <label class="control-label col-md-2 col-sm-2 col-xs-12">Vị trí:</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    <select class="selectpicker" data-live-search="true" data-show-subtext="true" name="ParentCode" data-live-search-style="begins" asp-items="ViewBag.ParentCode">
+                                    </select>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
 
@@ -67,6 +75,7 @@
                         <tr>
                             <th>Code</th>
                             <th>Bộ phận</th>
+                            <th>Vị trí</th>
                             <th>#</th>
                         </tr>
                     </thead>
@@ -78,6 +87,7 @@
                             <tr>
                                 <td>@item.Code</td>
                                 <td>@item.Name</td>
+                                <td>@item.ParentCode</td>
                                 <td>
                                     @{
                                         string urlEdit = $"/cap-nhat-bo-phan/{item.Id}";
@@ -100,4 +110,34 @@
     </div>
 
 </div>
+@section Scripts{
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
+    <script>
+        $("#Location").on("change", function () {
+            var $input = $(this);
+            if ($input.prop("checked") == true){
+                $("#labelName").text("Vị trí");
+                $("#selectLocation").css("display","none");
+                console.log("true");
+            }else{
+                $("#labelName").text("Bộ phận");
+                $("#selectLocation").css("display", "block");
+
+                console.log("false");
+            }
+        })
+        if ($("#Location").prop("checked") == true) {
+            $("#labelName").text("Vị trí");
+            $("#selectLocation").css("display", "none");
+            console.log("true");
+        } else {
+            $("#labelName").text("Bộ phận");
+            $("#selectLocation").css("display", "block");
+
+            console.log("false");
+        }
+
+    </script>
+}

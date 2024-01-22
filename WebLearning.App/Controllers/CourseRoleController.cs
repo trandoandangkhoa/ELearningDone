@@ -77,7 +77,8 @@ namespace WebLearning.App.Controllers
             var allRole = await _roleService.GetAllRoles();
             var allCourse = await _courseService.GetAllCourse();
             ViewData["Course"] = new SelectList(allCourse, "Id", "Name");
-            ViewData["Role"] = new SelectList(allRole, "Id", "RoleName");
+            //ViewData["Role"] = new SelectList(allRole, "Id", "RoleName");
+            ViewBag.Role = allRole;
             return View();
         }
         [HttpPost]
@@ -87,12 +88,7 @@ namespace WebLearning.App.Controllers
 
             if (createCourseRoleDto != null)
             {
-                var roleId = await _roleService.GetRoleById(createCourseRoleDto.RoleId);
-
-                createCourseRoleDto.Id = Guid.NewGuid();
-
-                createCourseRoleDto.RoleName = roleId.RoleName;
-
+                
                 var token = HttpContext.Session.GetString("Token");
 
                 if (token == null)

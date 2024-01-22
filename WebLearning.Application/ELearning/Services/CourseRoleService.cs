@@ -209,24 +209,33 @@ namespace WebLearning.Application.ELearning.Services
 
         public async Task InsertCourseRole(CreateCourseRoleDto createCourseRoleDto)
         {
-            var roleId = await _roleService.GetRoleById(createCourseRoleDto.RoleId);
+           
 
-            createCourseRoleDto.Id = Guid.NewGuid();
-
-            var code = _configuration.GetValue<string>("Code:CourseRole");
-
-            var key = code + Utilities.GenerateStringDateTime();
-            createCourseRoleDto.Code = key;
-
-            createCourseRoleDto.RoleName = roleId.RoleName;
-
-            CourseRole courseRole = _mapper.Map<CourseRole>(createCourseRoleDto);
-
-            if (_context.CourseRoles.Any(x => x.CourseId.Equals(createCourseRoleDto.CourseId) && x.RoleId.Equals(createCourseRoleDto.RoleId)) == false)
+            foreach(var item in createCourseRoleDto.RoleIds)
             {
-                _context.Add(courseRole);
-                await _context.SaveChangesAsync();
+
+                var roleId = await _roleService.GetRoleById(item);
+
+                createCourseRoleDto.Id = Guid.NewGuid();
+
+                var code = _configuration.GetValue<string>("Code:CourseRole");
+
+                var key = code + Utilities.GenerateStringDateTime();
+                createCourseRoleDto.Code = key;
+
+                createCourseRoleDto.RoleName = roleId.RoleName;
+
+                createCourseRoleDto.RoleId = item;
+                
+                CourseRole courseRole = _mapper.Map<CourseRole>(createCourseRoleDto);
+
+                if (_context.CourseRoles.Any(x => x.CourseId.Equals(createCourseRoleDto.CourseId) && x.RoleId.Equals(item)) == false)
+                {
+                    _context.Add(courseRole);
+                    await _context.SaveChangesAsync();
+                }
             }
+           
 
 
         }

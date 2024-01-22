@@ -326,7 +326,6 @@ namespace WebLearning.Application.ELearning.Services
         {
             if (accountName != null)
             {
-                var account = await _accountService.GetNameUser(accountName);
 
                 CreateNotificationResponseDto createNotificationResponseAccountDto = new CreateNotificationResponseDto();
 
@@ -337,7 +336,7 @@ namespace WebLearning.Application.ELearning.Services
                     await InsertNotificationResponse(createNotificationResponseAccountDto, accountName);
                 }
 
-                var db = await _context.NotificationResponses.Where(x => x.RoleId.Equals(account.RoleId)).OrderByDescending(x => x.DateCreated).AsNoTracking().ToListAsync();
+                var db = await _context.NotificationResponses.Where(x => x.AccountName.Equals(accountName)).OrderByDescending(x => x.DateCreated).AsNoTracking().ToListAsync();
 
                 var notificationResponseDto = _mapper.Map<List<NotificationResponseDto>>(db);
 

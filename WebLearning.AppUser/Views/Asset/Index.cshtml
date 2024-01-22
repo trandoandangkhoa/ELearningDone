@@ -58,6 +58,7 @@
     int i = 0;
 
 }
+
 <div class="row" id="assetContainer">
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
@@ -75,7 +76,8 @@
                 @{
                     var row = Model.Items.Count() + 1;
                 }
-                    <strong style="color:red">Có @Model.Items.Count()/@Model.TotalItems kết quả</strong>
+                    <strong style="color:red">Có @Model.Items.Count()/@Model.TotalItems kết quả</strong><br/>
+                    <strong style="color:red">Tổng Số lượng: @Model.TotalQuantity</strong>
 
                     <div class="table-responsive" style="height:550px;overflow-y:auto">
                         <table class="table table-striped table-bordered bulk_action" id="tabel">
@@ -97,7 +99,7 @@
                                                 </select>
                                             </div>
                                         </th>
-                                        <th colspan="6">
+                                        <th colspan="6" id="">
                                             <div class="input-group top-search">
                                                 <input type="text" class="form-control" placeholder="Từ khóa..." name="keyword" value="@TempData["Keyword"]">
 
@@ -114,38 +116,73 @@
                                                     <span class="caret"></span>
                                                     <span class="sr-only">Toggle Dropdown</span>
                                                 </button>
-                                                <ul class="col-md-12 col-sm-12 col-xs-12 dropdown-menu" role="menu" style="min-width:430px">
+                                                <ul class="col-md-12 col-sm-12 col-xs-12 dropdown-menu" id="checkboxcatfilter" role="menu" style="min-width:430px" >
+                                                <input type="checkbox" name="assetsCategoryCheckAll" id="assetsCategoryCheckAll" data-mahh="CCA" data-tencb="CCA">
+                                                <span style="font-weight:bold">Chọn/Bỏ chọn</span>
+
                                                         @foreach (var cat in Model.CheckBox.AssetsCategoryDtos)
                                                         {
                                                             i = i + 1;
-                                                        <li style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14px">
+                                                            <li style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:13px">
 
 
-                                                            <input type="checkbox" name="assetsCategoryId" class="checkBoxFilter" value="@cat.Id" data-mahh="@i" id="catCheckBox_@cat.Id">
-                                                            <div style="margin-left:5px">@((uint)i). @cat.Name</div>
+                                                                <input type="checkbox" name="assetsCategoryId" class="checkBoxFilter" value="@cat.Id" data-tencb="@cat.Name" data-mahh="@i" id="catCheckBox_@cat.Id">
+                                                                <div style="margin-left:5px">@i. @cat.Name</div>
 
-                                                        </li>
+                                                            </li>
                                                         }
                                                 </ul>
                                             </div>
                                             <div class="btn-group">
-                                                <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-building"></i> Vị trí</button>
+                                                <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-map-marker"></i> Vị trí</button>
                                                 <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                                     <span class="caret"></span>
                                                     <span class="sr-only">Toggle Dropdown</span>
                                                 </button>
-                                                <ul class="dropdown-menu col-md-12 col-sm-12 col-xs-12" role="menu" style="min-width:430px">
-                                                        @foreach (var dep in Model.CheckBox.AssetsDepartmentDtos)
+                                            <ul class="dropdown-menu col-md-12 col-sm-12 col-xs-12" role="menu" style="min-width:430px" id="checkboxdeplocationfilter">
+                                                <input type="checkbox" name="assetsDepLocationCheckAll" id="assetsDepLocationCheckAll" data-mahh="DLCA" data-tencb="DLCA">
+                                                <span style="font-weight:bold">Chọn/Bỏ chọn</span>
+
+
+                                                        @foreach (var dep in Model.CheckBox.AssetsDepartmentLocationDtos)
                                                         {
                                                             i = i + 1;
-                                                        <li style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14px">
+                                                        <li style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14.5px">
 
 
-                                                            <input type="checkbox" name="assetsDepartmentId" class="checkBoxFilter" value="@dep.Id" data-mahh="@i" id="depCheckBox_@dep.Id">
+                                                        <input type="checkbox" name="assetsDepartmentLocationId" class="checkBoxFilter" value="@dep.ParentCode" data-tencb="@dep.Name" data-mahh="@dep.ParentCode" id="depCheckBox_@dep.Id">
                                                             <div style="margin-left:5px">@i. @dep.Name</div>
 
                                                         </li>
                                                         }
+
+                                                </ul>
+                                            </div>
+
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-building"></i> Đơn vị </button>
+                                                <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                            <ul class="dropdown-menu col-md-12 col-sm-12 col-xs-12" role="menu" style="min-width:430px" id="checkboxdepfilter">
+                                                <input type="checkbox" name="assetsDepCheckAll" id="assetsDepCheckAll" data-mahh="DCA" data-tencb="DCA" autocomplete="off">
+
+                                                <span style="font-weight:bold">Chọn/Bỏ chọn</span>
+                                                        @foreach (var dep in Model.CheckBox.AssetsDepartmentDtos.Where(x => x.Level == "2"))
+                                                        {
+                                                            i = i + 1;
+                                                    <li style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14.5px">
+
+
+                                                        <input type="checkbox" name="assetsDepartmentId" class="checkBoxFilter" value="@dep.Id" data-tencb="@dep.Name" data-mahh="@i" id="depCheckBox_@dep.Id">
+                                                        <div style="margin-left:5px">@i. @dep.Name</div>
+
+                                                    </li>
+                                                        }
+                                                       
+
+                                                        
 
                                                 </ul>
                                             </div>
@@ -155,14 +192,18 @@
                                                     <span class="caret"></span>
                                                     <span class="sr-only">Toggle Dropdown</span>
                                                 </button>
-                                                <ul class="dropdown-menu col-md-12 col-sm-12 col-xs-12" role="menu" style="min-width:430px">
+                                            <ul class="dropdown-menu col-md-12 col-sm-12 col-xs-12" role="menu" style="min-width:430px" id="checkboxstatusfilter">
+                                                <input type="checkbox" name="assetsStatusCheckAll" id="assetsStatusCheckAll" data-mahh="STTCA" data-tencb="STTCA">
+                                                <span style="font-weight:bold">Chọn/Bỏ chọn</span>
+
+
                                                         @foreach (var stt in Model.CheckBox.AssetsStatusDtos)
                                                         {
                                                             i = i + 1;
-                                                        <li style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14px">
+                                                        <li style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14.5px">
 
-                                                            <input type="checkbox" name="assetsStatusId" class="checkBoxFilter" value="@stt.Id" data-mahh="@i" id="sttCheckBox_@stt.Id">
-                                                            <div style="margin-left:5px">@i. @stt.Name</div>
+                                                        <input type="checkbox" name="assetsStatusId" class="checkBoxFilter" value="@stt.Id" data-tencb="@stt.Name" data-mahh="ST_@i" id="sttCheckBox_@stt.Id">
+                                                            <div style="margin-left:5px;">@i. @stt.Name</div>
 
                                                         </li>
                                                         }
@@ -176,8 +217,8 @@
                                                 <span class="sr-only">Toggle Dropdown</span>
                                             </button>
                                             <ul class="dropdown-menu" role="menu">
-                                                <li style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14px">
-                                                    <input type="checkbox" class="checkBoxFilter" data-mahh="checkBoxFilter" value="true" name="active" onclick="this.form.submit()" />
+                                                <li style="float:left;max-width:50%;inline-size: 50%;overflow-wrap: break-word;margin:auto;display:flex;font-size:14.5px">
+                                                    <input type="checkbox" class="checkBoxFilter" data-mahh="Không" data-tencb="Không" value="true" name="active" />
                                                     <div style="margin-left:5px">Không</div>
                                                 </li>
                                             </ul>
@@ -219,12 +260,13 @@
                                                             <p>
                                                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Mã IT: <span class="required">*</span></label>
                                                                 <div class="input-group">
-                                                                    <input class="form-control col-md-10" type="text" required name="table_records" 
-                                                                    placeholder="Vui lòng chọn tài sản bằng cách click vào ô checkbox đầu bảng" readonly />
+                                                                    <input class="form-control col-md-10" type="text" required name="table_records" id="moveId"
+                                                                           placeholder="Vui lòng chọn tài sản bằng cách click vào ô checkbox đầu bảng" />
                                                                     <span class="input-group-addon">
                                                                         <span class="glyphicon glyphicon-list-alt"></span>
                                                                     </span>
                                                                 </div>
+           
 
                                                             </p>
                                                             <p>
@@ -233,12 +275,12 @@
                                                                 <div class="input-group">
                                                                     @if (TempData["Receiver"] != null)
                                                                     {
-                                                                        <input class="form-control col-md-10" type="text" required name="Receiver" value="@TempData["Receiver"]" />
+                                                                        <input class="form-control col-md-10" type="text"  name="Receiver" value="@TempData["Receiver"]" />
 
                                                                     }
                                                                     else
                                                                     {
-                                                                        <input class="form-control col-md-10" type="text" required name="Receiver" placeholder="Nhập thông tin người nhận..." />
+                                                                        <input class="form-control col-md-10" type="text"  name="Receiver" placeholder="Nhập thông tin người nhận..." />
 
                                                                     }
                                                                     <span class="input-group-addon">
@@ -282,6 +324,25 @@
                                                                     }
                                                                     <span class="input-group-addon">
                                                                         <span class="glyphicon glyphicon-phone"></span>
+                                                                    </span>
+                                                                </div>
+
+                                                            </p>
+                                                            <p>
+                                                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Số lượng: <span class="required">*</span></label>
+                                                                <div class="input-group">
+                                                                    @if (TempData["Quantity"] != null)
+                                                                    {
+                                                                        <input class="form-control col-md-10" type="text" required name="Quantity" value="@TempData["Quantity"]" />
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input class="form-control col-md-10" type="text" required name="Quantity" placeholder="Số lượng..." />
+
+                                                                    }
+                                                                    <span class="input-group-addon">
+                                                                        <span class="glyphicon glyphicon-comment"></span>
                                                                     </span>
                                                                 </div>
 
@@ -335,10 +396,10 @@
                                                                 </label>
                                                                 <div class="input-group">
                                                                     <div class="row-fluid">
-                                                                        <select required id="AssetsDepartmentId" name="AssetsDepartmentId" class="selectpicker form-control" data-live-search="true" data-show-subtext="true" data-live-search-style="begins">
+                                                                        <select required id="NewDepartmentId" name="NewDepartmentId" class="selectpicker form-control" data-live-search="true" data-show-subtext="true" data-live-search-style="begins">
                                                                             <option data-subtext="" value="0">---Vui lòng chọn---</option>
 
-                                                                            @foreach (var dep in Model.CheckBox.AssetsDepartmentDtos)
+                                                                            @foreach (var dep in Model.CheckBox.AssetsDepartmentDtosMoving)
                                                                             {
                                                                                 <option data-subtext="@dep.Code" value="@dep.Id">@dep.Name</option>
 
@@ -353,8 +414,11 @@
                                                                 <div class="clearfix"></div>
 
                                                             </p>
+                                                            <a onclick="checkMove()" style="text-decoration:underline;cursor:pointer">Tải lại</a><br/>
                                                             <p>Chi tiết tài sản điều chuyển: </p>
-                                                            <div class="table-responsive" id="si" style="height:350px;overflow-y:auto">
+                                                            <div id="moveItemTable">
+                                                                <div class="table-responsive" id="si" style="height:350px;overflow-y:auto">
+                                                                </div>
                                                             </div>
 
                                                              
@@ -386,15 +450,16 @@
                                                             <p>
                                                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Mã IT: <span class="required">*</span></label>
                                                                 <div class="input-group">
-                                                                    <input class="form-control col-md-10" type="text" required name="table_records"
-                                                                           placeholder="Vui lòng chọn tài sản bằng cách click vào ô checkbox đầu bảng" readonly />
+                                                                    <input class="form-control col-md-10" type="text" required name="table_records" id="deleteId"
+                                                                           placeholder="Vui lòng chọn tài sản bằng cách click vào ô checkbox đầu bảng"  />
                                                                     <span class="input-group-addon">
                                                                         <span class="glyphicon glyphicon-list-alt"></span>
                                                                     </span>
                                                                 </div>
 
                                                             </p>
-                                                            
+                                                            <a onclick="checkDelete()" style="text-decoration:underline;cursor:pointer">Tải lại</a><br />
+
                                                             <p>Chi tiết tài sản </p>
                                                             <div class="table-responsive" id="sid" style="height:350px;overflow-y:auto">
                                                             </div>
@@ -540,48 +605,100 @@
                                                 <button type="submit" class="btn btn-xs btn-primary" onclick="exportAll()"><i class="fa fa-download"></i> Xuất dữ liệu </button>
                                             </form>
                                        </div>
-                                        <div class="btn-group">
-                                            <button class="btn btn-xs btn-default" onclick="window.open('/in-tai-san-dieu-chuyen.html')"><i class="fa fa-print"></i> In phiếu</button>
+
+                                        <div class="btn-group" onclick='historyMoved()'>
+                                            <button class="btn btn-xs btn-default" data-toggle="modal" data-target=".historymovedbs-example-modal-lg"><i class="fa fa-print"></i> In phiếu</button>
                                         </div>
+
+                                        <div class="modal fade historymovedbs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                        <h4 class="modal-title" id="myModalLabel">Lịch sử điều chuyển</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        
+                                                        <p>Chi tiết tài sản điều chuyển: </p>
+                                                        <div class="table-responsive" id="resulthm" style="height:350px;overflow-y:auto">
+                                                        </div>
+
+
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            
+                                        </div>
+
                                     </th>
 
                                 </tr>
                             </thead>
-                           
                             <thead>
+                                <tr>
+                                    <th></th>
+                                    <th colspan="13">
+                                        <div class="input-group">
+                                            <label style="font-size:14px"><i class="fa fa-history"></i> Lịch sử tìm kiếm: </label>
+                                            <div class="historyCheckBoxContainer">
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <thead>
+
                                 <tr>
                                     <th></th>
                                     <th>Id</th>
                                     <th>Tên</th>
                                     <th>Loại</th>
                                     <th>Model</th>
+                                    <th>Số lượng</th>
                                     <th>Hoạt động</th>
                                     <th>Người dùng</th>
-                                    <th>Đơn vị sử dụng</th>
+                                    <th style="width:6%">Đơn vị sử dụng</th>
+                                    <th style="width:6%">Vị trí</th>
                                     <th>Trạng thái</th>
+                                    <th>Khu vực</th>
+                                    <th>Mô hình hoạt động</th>
                                     <th class="buttonheader">#</th>
                                 </tr>
                             </thead>
                             <tbody class="bodyContainer">
-
+                                @{
+                                    var a = 0;
+                                }
                                 @if (Model.Items != null && Model.Items.Count() > 0)
                                 {
+                                        
                                         @foreach (var item in Model.Items)
                                         {
+                                        a += item.Quantity; 
                                         string urlDetail = $"/chi-tiet-tai-san/{item.Id}";
 
                                             string urlEdit = $"/cap-nhat-tai-san/{item.Id}";
                                             string urlDelete = $"/xoa-tai-san/{item.Id}";
                                         <tr class="rowContainer" id="rowContainer-@item.Id">
                                             <td class="a-center">
-                                                <input type="checkbox" class="checkBoxTable" name="table_records" value="@item.Id" data-mahh="@item.Id">
+                                                <input type="checkbox" class="checkBoxTable" name="table_records" value="@item.Id" data-mahh="@item.Id" data-tencb="@item.Id">
                                             </td>
                                             <td >@item.Id</td>
-                                            <td><a class="nameasset" href="@urlDetail">@item.AssetName</a></td>
+                                            <td style="cursor:pointer"><a class="nameasset" href="@urlDetail">@item.AssetName</a></td>
                                             <td>@item.AssetsCategoryDto.Name</td>
                                             <td>
                                                     @item.AssetSubCategory
                                             </td>
+                                            <td>@item.Quantity</td>
                                             <td>
                                                 @if (item.Active == true)
                                                 {
@@ -595,8 +712,10 @@
                                             </td>
                                             <td>@item.Customer</td>
                                             <td>@item.AssetsDepartmentDto.Name</td>
+                                            <td>@item.LocationDepartment</td>
                                             <td>@item.AssetsStatusDto.Name</td>
-
+                                            <td>@item.Region</td>
+                                            <td>@item.BusinessModel</td>
                                             <td class="columnButtonCon">
                                                 <div class="buttonTable" id="buttonTable-@item.Id">
                                                     <a href="@urlDetail" class="btn btn-primary btn-xs"><i class="fa fa-folder"></i> Chi tiết </a>
@@ -615,7 +734,6 @@
 
                             </tbody>
 
-
                         </table>
 
                     </div>
@@ -629,36 +747,13 @@
 
 </div>
 @section Scripts{
-
     <script src="~/src/js/asset.js"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js" defer></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
-    <script>
-        function updateRepairItem() {
-            var record = [];
-            for (var i in cbstate) {
 
-                if (i.includes("IT")) {
-
-                    record.push(i);
-
-                }
-            }
-            $('[name=table_records]').val(record);
-            $.ajax({
-                url: '/Asset/GetItem',
-                datatype: "json",
-                type: "POST",
-                data: { id: record },
-                success: function (results) {
-                    $("#siur").html("");
-                    $("#siur").html(results);
-                },
-
-            })
-        }
-    </script>
 }
 
 

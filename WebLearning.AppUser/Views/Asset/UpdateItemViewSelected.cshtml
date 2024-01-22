@@ -1,0 +1,63 @@
+﻿@using WebLearning.Contract.Dtos.Assets;
+@model IEnumerable<AssetsDto>
+@{
+    Layout = null;
+}
+<table class="table table-striped table-bordered bulk_action" id="tabel">
+    <p>Tổng cộng: @Model.Count()</p>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Tên</th>
+            <th>Loại</th>
+            <th>Model</th>
+            <th>Số lượng</th>
+            <th>Người dùng</th>
+            <th>ĐV sử dụng</th>
+            <th>Hoạt động</th>
+            <th>Trạng thái</th>
+        </tr>
+    </thead>
+    <tbody class="bodyContainer">
+
+        @if (Model != null && Model.Count() > 0)
+        {
+            @foreach (var item in Model)
+            {
+                <tr class="rowContainerMoving" id="rowContainerMoving-@item.Id">
+                    <td>@item.Id</td>
+                    <td>@item.AssetName</td>
+                    <td>@item.AssetsCategoryDto.Name</td>
+                    <td>
+                        @item.AssetSubCategory
+                    </td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Customer</td>
+                    <td>@item.AssetsDepartmentDto.Name</td>
+                    <td>
+                        @if (item.Active == true)
+                        {
+                            <span class="label label-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="label label-danger">Disable</span>
+
+                        }
+                    </td>
+                    <td>@item.AssetsStatusDto.Name</td>
+
+
+                </tr>
+            }
+
+        }
+        else
+        {
+            <tr><td valign="top" colspan="15" class="dataTables_empty">Không có dữ liệu</td></tr>
+
+        }
+
+
+    </tbody>
+</table>

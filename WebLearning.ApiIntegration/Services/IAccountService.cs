@@ -8,7 +8,6 @@ using WebLearning.Application.Helper;
 using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos.Account;
 using WebLearning.Contract.Dtos.Avatar;
-using WebLearning.Contract.Dtos.Role;
 
 namespace WebLearning.ApiIntegration.Services
 {

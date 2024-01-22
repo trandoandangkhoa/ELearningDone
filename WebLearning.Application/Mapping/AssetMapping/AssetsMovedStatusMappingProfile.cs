@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using WebLearning.Contract.Dtos.Assets;
+using WebLearning.Contract.Dtos.Assets.Moved;
 using WebLearning.Domain.Entites;
 
 namespace WebLearning.Application.Mapping.AssetMapping
@@ -8,7 +8,7 @@ namespace WebLearning.Application.Mapping.AssetMapping
     {
         public AssetsMovedStatusMappingProfile()
         {
-            CreateMap<AssetsMovedStatus, AssetsMovedStatusDto>().ForPath(dest => dest.AssetsMovedDtos, opt => opt.MapFrom(src => src.AssetsMoved));
+            CreateMap<AssetMovedStatus, AssetsMovedStatusDto>().ForPath(dest => dest.AssetsMovedDtos, opt => opt.MapFrom(src => src.AssetsMoved));
         }
     }
 }

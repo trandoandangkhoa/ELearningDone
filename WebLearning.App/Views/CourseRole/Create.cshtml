@@ -18,9 +18,8 @@
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-body">
-
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table table-bordered"  id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>Tên Khóa học</th>
@@ -37,9 +36,22 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="custom-select" asp-for="RoleId" style="min-width: 200px;" asp-items="ViewBag.Role">
+                                    <input type="checkbox" id="checkAll" value="false" clicked="false" />
+                                    <label for="checkAll">Chọn tất cả</label>
+
+                                    <div id="allRole">
+                                        @foreach (var item in ViewBag.Role)
+                                        {
+                                            <input type="checkbox" id="@item.RoleName" value="@item.Id" name="RoleIds" />
+                                            <label for="@item.RoleName">@item.RoleName</label>
+
+                                            <br />
+                                        }
+                                    </div>
+                                   
+                                   @*  <select class="custom-select" asp-for="RoleId" style="min-width: 200px;" asp-items="ViewBag.Role">
                                         <option value="" disabled selected>Chọn danh mục</option>
-                                    </select>
+                                    </select> *@
                                 </td>
                                 <td>
                                     <input type="submit" value="Tạo mới" class="btn btn-success" />
@@ -55,3 +67,8 @@
     </div>
 </form>
 
+<script>
+    $("#checkAll").on("click", function () {
+        $("#allRole input[type=checkbox]").not(this).prop('checked', this.checked);
+    });
+</script>

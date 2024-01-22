@@ -34,7 +34,18 @@ namespace WebLearning.Api.Controllers
             return await _assetService.GetAsset();
 
         }
+        // GET: api/<AssetController>
+        /// <summary>
+        /// Danh sách tất cả các tài sản thiết bị được chọn
+        /// </summary>
+        [HttpGet("assetsselected")]
 
+        public async Task<IEnumerable<AssetsDto>> GetAssetsSelected([FromQuery] string[] id)
+        {
+
+            return await _assetService.GetAssetSelected(id);
+
+        }
         /// <summary>
         /// Phân trang
         /// </summary>
@@ -44,7 +55,6 @@ namespace WebLearning.Api.Controllers
 
         public async Task<PagedViewModel<AssetsDto>> GetUsers([FromQuery] GetListPagingRequest getListPagingRequest)
         {
-
             return await _assetService.GetPaging(getListPagingRequest);
 
         }
@@ -80,6 +90,25 @@ namespace WebLearning.Api.Controllers
             return Ok(await _assetService.GetAssetById(id));
 
         }
+
+        // GET api/<AssetController>/5
+        /// <summary>
+        /// Lấy chi tiết tài sản theo Id để điều chuyểb
+        /// </summary>
+        [HttpGet("moving/{id}")]
+
+        //[SecurityRole(AuthorizeRole.AdminRole)]
+        public async Task<IActionResult> GetAssetByIdForMoving(string id)
+        {
+            if (await _assetService.GetAssetByIdForMoving(id) == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound);
+            }
+            return Ok(await _assetService.GetAssetById(id));
+
+        }
+
+
         /// <summary>
         /// Lấy chi tiết tài sản theo mã code
         /// </summary>
@@ -155,30 +184,7 @@ namespace WebLearning.Api.Controllers
             }
         }
 
-        /// <summary>
-        /// Cập nhật tài sản
-        /// </summary>
-        [HttpPut("multiassets")]
-        [SecurityRole(AuthorizeRole.AdminRole)]
 
-        public async Task<IActionResult> UpdateMultiAsset([FromBody] UpdateMultiAssetsDto updateMultiAssetsDto)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    await _assetService.UpdateMultiAsset(updateMultiAssetsDto);
-
-                }
-
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    e.Message);
-            }
-        }
         /// <summary>
         /// Xóa tài sản
         /// </summary>

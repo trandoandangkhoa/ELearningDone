@@ -23,7 +23,9 @@
 
         public string Customer { get; set; }
         public string Manager { get; set; }
+        public string Region { get; set; }
 
+        public string BusinessModel { get; set; }
         public int AssetsStatusId { get; set; }
         public DateTime DateCreated { get; set; }
 

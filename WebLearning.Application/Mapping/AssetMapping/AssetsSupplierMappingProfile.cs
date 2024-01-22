@@ -8,9 +8,9 @@ namespace WebLearning.Application.Mapping.AssetMapping
     {
         public AssetsSupplierMappingProfile()
         {
-            CreateMap<CreateAssetsSupplierDto, AssetsSupplier>();
-            CreateMap<AssetsSupplier, AssetsSupplierDto>().ForPath(dest => dest.AssetsDtos, opt => opt.MapFrom(src => src.Assests));
-            CreateMap<UpdateAssetsSupplierDto, AssetsSupplier>();
+            CreateMap<CreateAssetsSupplierDto, AssetSupplier>();
+            CreateMap<AssetSupplier, AssetsSupplierDto>().ForPath(dest => dest.AssetsDtos, opt => opt.MapFrom(src => src.Assests));
+            CreateMap<UpdateAssetsSupplierDto, AssetSupplier>();
 
         }
     }

@@ -15,7 +15,11 @@
     <div class="col-md-12 col-sm-12 col-xs-12 detailContainer">
         <div class="x_panel">   
             <div class="x_title">
-                <h2><a href="/tai-san.html"><i class="fa fa-home"></i> Trang chủ</a> | Thông tin chi tiết</h2>
+                @{
+                    string url = "/tai-san.html" + TempData["ReturnUrl"];
+                }
+                <h2><a href="@url"><i class="fa fa-home"></i> Trang chủ</a> | Thông tin chi tiết</h2>
+
                 <ul class="nav navbar-right panel_toolbox">
                     <li>
                         <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
@@ -53,7 +57,7 @@
                     {
                         days = Math.Abs((DateTime.Now - Model.DateExpired.Value).Days);
                     }
-                     
+
                 }
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead >
@@ -63,6 +67,8 @@
                             <th>Mã IT</th>
                             <th>Loại</th>
                             <th>Model</th>
+                            <th>Khu vực</th>
+                            <th>Mô hình hoạt động</th>
                             <th>Thông số</th>
                             <th>Số seri</th>
                             <th>Số lượng</th>
@@ -90,7 +96,9 @@
                     </thead>
 
                     <tbody>
-                        
+                        @{
+                            var a = Model.Quantity - Model.AssetsMovedsDto.Count();
+                        }
                         <tr>
                             <td>@Model.AssetId</td>
                             <td>@Model.AssetName</td>
@@ -98,9 +106,14 @@
 
                             <td>@Model.AssetsCategoryDto.Name</td>
                             <td>@Model.AssetSubCategory</td>
+                            <td>@Model.Region</td>
+                            <td>@Model.BusinessModel</td>
                             <td>@Model.Spec</td>
                             <td>@Model.SeriNumber</td>
-                            <td>@Model.Quantity</td>
+                            <td><code>Tổng: @Model.Quantity<br/></code>
+                                @*<code>ĐC: @Model.AssetsMovedsDto.Count()<br /></code>
+                                <code>CL: @a</code>*@
+                            </td>
                             <td>
                                 @if(Model.Active == true)
                                 {
@@ -243,6 +256,7 @@
                                 </div>
 
                             </div>
+
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12"></label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
@@ -254,7 +268,44 @@
                                 </div>
 
                             </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Khu vực: <span class="required">*</span></label>
+                                <div class="col-md-8 col-sm-8 col-xs-12">
+                                    <input class="form-control" type="text" required asp-for="@Model.Region" value="@Model.Region" />
 
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-4 col-sm-4 col-xs-12"></label>
+                                <div class="col-md-8 col-sm-8 col-xs-12">
+                                    @if (TempData["ErrorRegion"] != null)
+                                    {
+                                        <span class="text-danger">@TempData["ErrorRegion"]</span>
+
+                                    }
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Mô hình hoạt động:</label>
+                                <div class="col-md-8 col-sm-8 col-xs-12">
+                                    <input class="form-control" type="text"  asp-for="@Model.BusinessModel" value="@Model.BusinessModel" />
+
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-4 col-sm-4 col-xs-12"></label>
+                                <div class="col-md-8 col-sm-8 col-xs-12">
+                                    @if (TempData["ErrorBusinessModel"] != null)
+                                    {
+                                        <span class="text-danger">@TempData["ErrorBusinessModel"]</span>
+
+                                    }
+                                </div>
+
+                            </div>
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Thông số:</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
@@ -511,14 +562,10 @@
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12" for="name">Tên Tài sản:  <span class="required">*</span></label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="text" value="@Model.AssetName" required="required" asp-for="@Model.AssetName" />
+                                    <input class="form-control" type="text" value="@Model.AssetName" required="required" asp-for="@Model.AssetName" readonly />
 
                                 </div>
-                                @if (TempData["AssetName"] != null)
-                                {
-                                    <span class="text-danger">@TempData["ErrorAssetName"]</span>
-
-                                }
+                                
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Hoạt động:</label>
@@ -529,11 +576,11 @@
                                         @if (Model.Active == true)
                                         {
 
-                                            <input type="checkbox" id="active" class="js-switch" checked asp-for="@Model.Active" />
+                                            <input type="checkbox" id="active" class="js-switch" checked asp-for="@Model.Active" readonly />
                                         }
                                         else
                                         {
-                                            <input type="checkbox" id="active" class="js-switch" asp-for="@Model.Active" />
+                                            <input type="checkbox" id="active" class="js-switch" asp-for="@Model.Active" readonly />
 
 
                                         }
@@ -543,77 +590,68 @@
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Loại Tài sản: <span class="required">*</span></label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" id="AssetsCategoryId" asp-for="@Model.AssetsCategoryId" asp-items="ViewBag.Cat">
+                                    <select class="selectpicker" data-live-search="true" data-show-subtext="true" readonly data-live-search-style="begins" id="AssetsCategoryId" asp-for="@Model.AssetsCategoryId" asp-items="ViewBag.Cat">
                                     </select>
                                 </div>
 
 
                             </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-4 col-sm-4 col-xs-12"></label>
-                                <div class="col-md-8 col-sm-8 col-xs-12">
-                                    @if (TempData["ErrorCat"] != null)
-                                    {
-                                        <span class="text-danger">@TempData["ErrorCat"]</span>
-
-                                    }
-                                </div>
-
-                            </div>
+                            
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Model Tài sản: <span class="required">*</span></label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="text" value="@Model.AssetSubCategory" required asp-for="@Model.AssetSubCategory" />
+                                    <input class="form-control" type="text" value="@Model.AssetSubCategory" required asp-for="@Model.AssetSubCategory" readonly />
 
                                 </div>
 
                             </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-4 col-sm-4 col-xs-12"></label>
+                           
+                             <div class="form-group">
+                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Khu vực: <span class="required">*</span></label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    @if (TempData["ErrorSubCat"] != null)
-                                    {
-                                        <span class="text-danger">@TempData["ErrorSubCat"]</span>
+                                    <input class="form-control" type="text" required asp-for="@Model.Region" readonly/>
 
-                                    }
                                 </div>
 
                             </div>
+                            
+                            <div class="form-group">
+                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Mô hình hoạt động:  </label>
+                                <div class="col-md-8 col-sm-8 col-xs-12">
+                                    <input class="form-control" type="text" asp-for="@Model.BusinessModel" readonly />
 
+                                </div>
+
+                            </div>
+                            
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Thông số:</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="text" value="@Model.Spec" asp-for="@Model.Spec" />
+                                    <input class="form-control" type="text" value="@Model.Spec" asp-for="@Model.Spec" readonly />
 
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Số seri:</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="text" value="@Model.SeriNumber" asp-for="@Model.SeriNumber" />
+                                    <input class="form-control" type="text" value="@Model.SeriNumber" asp-for="@Model.SeriNumber" readonly />
 
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Số lượng: <span class="required">*</span></label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="number" min="1" required="required" value="@Model.Quantity" asp-for="@Model.Quantity" />
+                                    <input class="form-control" type="number" min="1" required="required" value="@Model.Quantity" asp-for="@Model.Quantity" readonly />
 
                                 </div>
 
                             </div>
-@*                            <div class="form-group">
-                                <label class="control-label col-md-4 col-sm-4 col-xs-12">Nhà cung cấp:</label>
-                                <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="text" value="@Model.Supplier" asp-for="@Model.Supplier" />
 
-                                </div>
-                            </div>*@
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày mua:</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
                                     <div class="input-group date" id="dateBuyed">
-                                        <input type="text" class="form-control col-md-10" value="@Model.DateBuyed" asp-for="@Model.DateBuyed" />
+                                        <input type="text" class="form-control col-md-10" value="@Model.DateBuyed" asp-for="@Model.DateBuyed" readonly/>
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -623,14 +661,14 @@
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Mã hóa đơn</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="text" value="@Model.OrderNumber" asp-for="@Model.OrderNumber" />
+                                    <input class="form-control" type="text" value="@Model.OrderNumber" asp-for="@Model.OrderNumber" readonly />
 
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Giá tiền</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="text" value="@Model.Price" asp-for="@Model.Price" />
+                                    <input class="form-control" type="text" value="@Model.Price" asp-for="@Model.Price" readonly />
 
                                 </div>
                             </div>
@@ -641,7 +679,7 @@
                                     Đơn vị sử dụng: <span class="required">*</span>
                                 </label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" asp-for="@Model.AssetsDepartmentId" asp-items="ViewBag.Dep">
+                                    <select class="selectpicker" data-live-search="true" readonly data-show-subtext="true" data-live-search-style="begins" asp-for="@Model.AssetsDepartmentId" asp-items="ViewBag.Dep">
                                     </select>
                                 </div>
                             </div>
@@ -660,7 +698,7 @@
 
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Người sử dụng:</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="text" value="@Model.Customer" asp-for="@Model.Customer" />
+                                    <input class="form-control" type="text" value="@Model.Customer" asp-for="@Model.Customer" readonly />
 
                                 </div>
                             </div>
@@ -670,7 +708,7 @@
                                     Đơn vị quản lí: <span class="required">*</span>
                                 </label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="text" required="required" value="@Model.Manager" asp-for="@Model.Manager" />
+                                    <input class="form-control" type="text" required="required" value="@Model.Manager" asp-for="@Model.Manager" readonly />
 
                                 </div>
 
@@ -681,25 +719,15 @@
                                     Tình trạng: <span class="required">*</span>
                                 </label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <select class="selectpicker" data-live-search="true" data-show-subtext="true" data-live-search-style="begins" value="@Model.AssetsStatusId" asp-for="@Model.AssetsStatusId" asp-items="ViewBag.Status">
+                                    <select class="selectpicker" readonly data-live-search="true" data-show-subtext="true" data-live-search-style="begins" value="@Model.AssetsStatusId" asp-for="@Model.AssetsStatusId" asp-items="ViewBag.Status">
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-4 col-sm-4 col-xs-12"></label>
-                                <div class="col-md-8 col-sm-8 col-xs-12">
-                                    @if (TempData["ErrorStatus"] != null)
-                                    {
-                                        <span class="text-danger">@TempData["ErrorStatus"]</span>
-
-                                    }
-                                </div>
-
-                            </div>
+                            
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Thời hạn bảo hành:</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="text" value="@Model.ExpireDay" asp-for="@Model.ExpireDay" />
+                                    <input class="form-control" type="text" value="@Model.ExpireDay" asp-for="@Model.ExpireDay" readonly />
                                 </div>
 
                             </div>
@@ -713,7 +741,7 @@
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày đưa vào sử dụng:</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
                                     <div class="input-group date" id="dateUsed">
-                                        <input type="text" class="form-control col-md-10" value="@Model.DateUsed" asp-for="@Model.DateUsed" />
+                                        <input type="text" class="form-control col-md-10" value="@Model.DateUsed" asp-for="@Model.DateUsed" readonly />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -727,7 +755,7 @@
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày điều chuyển:</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
                                     <div class="input-group date" id="dateMoved">
-                                        <input type="text" class="form-control col-md-10" value="@Model.DateMoved" asp-for="@Model.DateMoved" />
+                                        <input type="text" class="form-control col-md-10" value="@Model.DateMoved" asp-for="@Model.DateMoved" readonly />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -741,7 +769,7 @@
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày kiểm kê: <span class="required">*</span></label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
                                     <div class="input-group date" id="dateChecked">
-                                        <input type="text" class="form-control col-md-10" required value="@Model.DateChecked" asp-for="@Model.DateChecked" />
+                                        <input type="text" class="form-control col-md-10" required value="@Model.DateChecked" asp-for="@Model.DateChecked" readonly />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -755,7 +783,7 @@
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Ngày sửa chữa:</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
                                     <div class="input-group date" id="dateRepaired">
-                                        <input type="text" class="form-control col-md-10" value="@Model.DateRepaired" asp-for="@Model.DateRepaired" />
+                                        <input type="text" class="form-control col-md-10" value="@Model.DateRepaired" asp-for="@Model.DateRepaired" readonly />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -767,7 +795,7 @@
 
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Nơi sửa chữa:</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="text" value="@Model.RepairLocation" asp-for="@Model.RepairLocation" />
+                                    <input class="form-control" type="text" value="@Model.RepairLocation" asp-for="@Model.RepairLocation" readonly />
                                 </div>
                             </div>
 
@@ -781,7 +809,7 @@
                             <div class="form-group">
                                 <label class="control-label col-md-4 col-sm-4 col-xs-12">Ghi chú</label>
                                 <div class="col-md-8 col-sm-8 col-xs-12">
-                                    <input class="form-control" type="text" value="@Model.Note" asp-for="@Model.Note" />
+                                    <input class="form-control" type="text" value="@Model.Note" asp-for="@Model.Note" readonly />
 
                                 </div>
                             </div>
@@ -824,8 +852,8 @@
                                     <th>Tên người nhận</th>
                                     <th>SĐT người nhận</th>
                                     <th>SĐT người chuyển</th>
-                                    <th>Đơn vị sử dụng</th>
-                                    <th>Nội dung</th>
+@*                                    <th>Đơn vị sử dụng</th>
+*@                                    <th>Nội dung</th>
                                     <th>Ngày dùng</th>
                                     <th>Ngày chuyển</th>
                                     <th>Trạng thái</th>
@@ -845,9 +873,9 @@
                                         <td>
                                             @item.SenderPhoneNumber
                                         </td>
-                                        <td>
+@*                                        <td>
                                             @item.AssetsDepartmentDto.Name
-                                        </td>
+                                        </td>*@
                                         <td>
                                             @item.Description
                                         </td>
@@ -858,7 +886,7 @@
                                             @item.DateMoved
                                         </td>
                                         <td>
-                                            @if (item.MovedStatus == 1)
+                                            @if (item.AssetsMovedStatusId == 1)
                                             {
                                                 <label class="label label-success" style="font-size:12px">Thành công</label>
                                             }

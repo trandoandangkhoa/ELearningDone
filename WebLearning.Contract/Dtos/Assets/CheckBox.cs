@@ -7,7 +7,12 @@ namespace WebLearning.Contract.Dtos.Assets
     public class CheckBox
     {
         public List<AssetsCategoryDto> AssetsCategoryDtos { get; set; }
+        public List<AssetsDepartmentDto> AssetsDepartmentLocationDtos { get; set; }
+
         public List<AssetsDepartmentDto> AssetsDepartmentDtos { get; set; }
+
+        public List<AssetsDepartmentDto> AssetsDepartmentDtosMoving { get; set; }
+
         public List<AssetsStatusDto> AssetsStatusDtos { get; set; }
     }
 

@@ -178,9 +178,9 @@ namespace WebLearning.Application.ELearning.Services
                 QuizlessionDtos = _mapper.Map<List<QuizlessionDto>>(_context.QuizLessions.Include(x => x.Lession).Include(x => x.QuestionLessions).AsNoTracking().AsQueryable()),
                 QuizMonthlyDtos = _mapper.Map<List<QuizMonthlyDto>>(_context.QuizMonthlies.Include(x => x.QuestionMonthlies).Where(x => x.RoleId.Equals(account.RoleId) && x.Active == true).AsNoTracking().AsQueryable()),
 
-                ReportScoreCourseDtos = _mapper.Map<List<ReportScoreCourseDto>>(_context.ReportUserScoreFinals.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreCourseDto() { QuizCourseId = x.QuizCourseId, Passed = x.Passed, TotalScore = x.TotalScore, CourseId = x.CourseId }).AsNoTracking().AsQueryable()),
-                ReportScoreLessionDtos = _mapper.Map<List<ReportScoreLessionDto>>(_context.ReportUsersScore.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreLessionDto() { QuizLessionId = x.QuizLessionId, Passed = x.Passed, LessionId = x.LessionId, TotalScore = x.TotalScore }).AsNoTracking().AsQueryable()),
-                ReportScoreMonthlyDtos = _mapper.Map<List<ReportScoreMonthlyDto>>(_context.ReportUserScoreMonthlies.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreMonthlyDto() { QuizMonthlyId = x.QuizMonthlyId, Passed = x.Passed, RoleId = x.RoleId, TotalScore = x.TotalScore }).AsNoTracking().AsQueryable()),
+                ReportScoreCourseDtos = _mapper.Map<List<ReportScoreCourseDto>>(_context.ReportUserScoreFinals.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreCourseDto() { QuizCourseId = x.QuizCourseId, Passed = x.Passed, TotalScore = x.TotalScore, CourseId = x.CourseId,CompletedDate = x.CompletedDate }).AsNoTracking().AsQueryable()),
+                ReportScoreLessionDtos = _mapper.Map<List<ReportScoreLessionDto>>(_context.ReportUsersScore.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreLessionDto() { QuizLessionId = x.QuizLessionId, Passed = x.Passed, LessionId = x.LessionId, TotalScore = x.TotalScore, CompletedDate = x.CompletedDate }).AsNoTracking().AsQueryable()),
+                ReportScoreMonthlyDtos = _mapper.Map<List<ReportScoreMonthlyDto>>(_context.ReportUserScoreMonthlies.OrderByDescending(x => x.CompletedDate).Where(x => x.UserName.Equals(account.Email)).Select(x => new ReportScoreMonthlyDto() { QuizMonthlyId = x.QuizMonthlyId, Passed = x.Passed, RoleId = x.RoleId, TotalScore = x.TotalScore, CompletedDate = x.CompletedDate }).AsNoTracking().AsQueryable()),
                 HistoryAddSlotDtos = _mapper.Map<List<HistoryAddSlotDto>>(_context.HistoryAddSlots.Include(x => x.Room).Where(x => x.Email.Equals(account.Email)).AsNoTracking().AsQueryable()),
             };
 
@@ -430,17 +430,19 @@ namespace WebLearning.Application.ELearning.Services
         {
             string rs = "";
             var account = await _context.Accounts.FirstOrDefaultAsync(x => x.Id.Equals(accountId));
-            if (account == null) {
+            if (account == null)
+            {
 
                 rs = "Không tìm thấy tài khoản!";
                 return rs;
-             };
+            };
             var checkOldPass = Password.HashedPassword(changePassword.OldPassword);
-            if (checkOldPass != account.PasswordHased) {
+            if (checkOldPass != account.PasswordHased)
+            {
                 rs = "Mật khẩu cũ không đúng";
                 return rs;
-            } 
-            if(changePassword.NewPassword != changePassword.ConfirmPassword)
+            }
+            if (changePassword.NewPassword != changePassword.ConfirmPassword)
             {
                 rs = "Mật khẩu nhập lại không đúng!";
                 return rs;

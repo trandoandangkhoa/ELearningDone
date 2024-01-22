@@ -3,7 +3,7 @@ using WebLearning.Application.Assets.Services;
 using WebLearning.Application.Helper;
 using WebLearning.Application.Ultities;
 using WebLearning.Contract.Dtos;
-using WebLearning.Contract.Dtos.Assets;
+using WebLearning.Contract.Dtos.Assets.Moved;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -42,7 +42,20 @@ namespace WebLearning.Api.Controllers
             return await _moveService.GetPaging(getListPagingRequest);
 
         }
+        [HttpGet("printcode")]
+        public async Task<string> GetCode()
+        {
 
+            return await _moveService.GetPrintCode();
+
+        }
+        [HttpGet("history")]
+        public async Task<IEnumerable<AssetMovedHistoryDto>> GetHistoryMoved()
+        {
+
+            return await _moveService.GetAssetsMovedHistory();
+
+        }
         // GET api/<RoleController>/5
         /// <summary>
         /// Lấy chi tiết điều chuyển theo Id
@@ -59,6 +72,18 @@ namespace WebLearning.Api.Controllers
             return Ok(await _moveService.GetAssetsMovedById(id));
 
         }
+        [HttpGet("history/{code}")]
+
+        public async Task<ActionResult<AssetMovedPrintView>> GetHistoryById(string code, string accountName)
+        {
+            if (await _moveService.GetAssetsMovedByCode(code,accountName) == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound);
+            }
+            return Ok(await _moveService.GetAssetsMovedByCode(code, accountName));
+
+        }
+
         // POST api/<RoleController>
         /// <summary>
         /// Tạo điều chuyển mới
@@ -76,9 +101,9 @@ namespace WebLearning.Api.Controllers
                     return BadRequest();
 
                 }
-                await _moveService.InsertAssetsMoved(createAssetsMovedDto);
+                var a = await _moveService.InsertAssetsMoved(createAssetsMovedDto);
 
-                return StatusCode(StatusCodes.Status200OK);
+                return StatusCode(StatusCodes.Status200OK, a);
 
             }
             catch (Exception)

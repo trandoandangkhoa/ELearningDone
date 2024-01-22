@@ -24,7 +24,9 @@
         public int Quantity { get; set; }
 
         public Guid AssetsDepartmentId { get; set; }
+        public string Region { get; set; }
 
+        public string BusinessModel { get; set; }
         public string Customer { get; set; }
         public string Manager { get; set; }
 

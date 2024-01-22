@@ -47,6 +47,23 @@ namespace WebLearning.Api.Controllers
             return await _departmentService.GetPaging(getListPagingRequest);
 
         }
+        // GET api/<AssetDepartmentController>/5
+        /// <summary>
+        /// Lấy danh sách các đơn vị thuôc từng vị trí
+        /// </summary>
+        [HttpPost("parentCode/departments")]
+
+        //[SecurityRole(AuthorizeRole.AdminRole)]
+        public async Task<ActionResult<IEnumerable<AssetsDepartmentDto>>> GetAssetDepartmentByParentCode([FromBody] GetListPagingRequest getListPagingRequest)
+        {
+
+            if (await _departmentService.GetAssetDepartmentByParentCode(getListPagingRequest) == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound);
+            }
+            return Ok(await _departmentService.GetAssetDepartmentByParentCode(getListPagingRequest));
+
+        }
 
         // GET api/<AssetDepartmentController>/5
         /// <summary>

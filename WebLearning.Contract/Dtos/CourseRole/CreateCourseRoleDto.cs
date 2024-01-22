@@ -10,6 +10,8 @@
 
         public Guid RoleId { get; set; }
 
+        public List<Guid> RoleIds { get; set; }
+
         public string RoleName { get; set; }
         public string Code { get; set; }
 

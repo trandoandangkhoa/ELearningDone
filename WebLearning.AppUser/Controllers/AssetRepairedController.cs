@@ -1,8 +1,6 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using WebLearning.ApiIntegration.Services;
-using WebLearning.Contract.Dtos.Assets;
 using WebLearning.Contract.Dtos.Assets.Repair;
 
 namespace WebLearning.AppUser.Controllers
@@ -83,7 +81,7 @@ namespace WebLearning.AppUser.Controllers
                 AssetsId = asset.AssestsId,
                 DateRepaired = asset.DateRepaired,
                 LocationRepaired = asset.LocationRepaired,
-                
+
             };
             return View(updateAssetsRepairedDto);
         }

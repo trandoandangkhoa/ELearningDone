@@ -29,24 +29,24 @@
     <ul class="pagination" id="paging">
         @if (Model.PageIndex != 1)
         {
-            <li class="page-item">
-                <a class="page-link" title="1" href="@urlTemplate.Replace("{0}", "1")">Đầu</a>
+            <li class="">
+                <a class="" title="1" href="@urlTemplate.Replace("{0}", "1")">Đầu</a>
             </li>
-            <li class="page-item">
-                <a class="page-link" href="@urlTemplate.Replace("{0}", (Model.PageIndex-1).ToString())">Trước</a>
+            <li class="">
+                <a class="" href="@urlTemplate.Replace("{0}", (Model.PageIndex-1).ToString())">Trước</a>
             </li>
         }
         @for (var i = 1; i <= Model.PageCount; i++)
         {
             if (i == Model.PageIndex)
             {
-                <li class="page-item active">
-                    <a class="page-link" href="#">@i <span class="sr-only">(current)</span></a>
+                <li class=" active">
+                    <a class="" href="#">@i <span class="sr-only">(current)</span></a>
                 </li>
             }
             else
             {
-                <li class="page-item"><a class="page-link" title="Trang @i.ToString()" href="@urlTemplate.Replace("{0}", i.ToString())">@i</a></li>
+                <li class=""><a class="" title="Trang @i.ToString()" href="@urlTemplate.Replace("{0}", i.ToString())">@i</a></li>
             }
         }
 @*        @for (int i = 1; i <= Model.PageCount; i++)
@@ -61,22 +61,22 @@
             }
             if (i == Model.PageIndex)
             {
-                <li class="page-item active">
-                    <a class="page-link" href="#">@i <span class="sr-only">(current)</span></a>
+                <li class=" active">
+                    <a class="" href="#">@i <span class="sr-only">(current)</span></a>
                 </li>
             }
             else
             {
-                <li class="page-item"><a class="page-link" title="Trang @i.ToString()" href="@urlTemplate.Replace("{0}", i.ToString())">@i</a></li>
+                <li class=""><a class="" title="Trang @i.ToString()" href="@urlTemplate.Replace("{0}", i.ToString())">@i</a></li>
             }
         }*@
         @if (Model.PageIndex != Model.PageCount)
         {
-            <li class="page-item">
-                <a class="page-link" title="@Model.PageCount.ToString()" href="@urlTemplate.Replace("{0}", (Model.PageIndex+1).ToString())">Sau</a>
+            <li class="">
+                <a class="" title="@Model.PageCount.ToString()" href="@urlTemplate.Replace("{0}", (Model.PageIndex+1).ToString())">Sau</a>
             </li>
-            <li class="page-item">
-                <a class="page-link" href="@urlTemplate.Replace("{0}", Model.PageCount.ToString())">Cuối</a>
+            <li class="">
+                <a class="" href="@urlTemplate.Replace("{0}", Model.PageCount.ToString())">Cuối</a>
             </li>
         }
     </ul>

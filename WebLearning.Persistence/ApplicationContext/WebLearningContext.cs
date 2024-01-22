@@ -35,14 +35,16 @@ namespace WebLearning.Persistence.ApplicationContext
 
         public DbSet<Avatar> Avatars { get; set; }
 
-        public DbSet<Assests> Assests { get; set; }
-        public DbSet<AssetsCategory> AssetsCategories { get; set; }
-        public DbSet<AssetsDepartment> AssetsDepartments { get; set; }
-        public DbSet<AssetsStatus> AssetsStatuses { get; set; }
-        public DbSet<AssetsMoved> AssetsMoveds { get; set; }
-        public DbSet<AssetsMovedStatus> AssetsMovedStatuses { get; set; }
-        public DbSet<AssetsSupplier> AssetsSuppliers { get; set; }
-        public DbSet<AssetsRepaired> AssetsRepaireds { get; set; }
+        public DbSet<Asset> Assests { get; set; }
+        public DbSet<AssetCategory> AssetsCategories { get; set; }
+        public DbSet<AssetDepartment> AssetsDepartments { get; set; }
+        public DbSet<AssetStatus> AssetsStatuses { get; set; }
+        public DbSet<AssetMoved> AssetsMoveds { get; set; }
+        public DbSet<AssetMovedHistory> AssetMovedHistories { get; set; }
+
+        public DbSet<AssetMovedStatus> AssetsMovedStatuses { get; set; }
+        public DbSet<AssetSupplier> AssetsSuppliers { get; set; }
+        public DbSet<AssetRepaired> AssetsRepaireds { get; set; }
 
 
         public DbSet<Role> Roles { get; set; }
@@ -128,15 +130,30 @@ namespace WebLearning.Persistence.ApplicationContext
 
             modelBuilder.Entity<Avatar>().ToTable("Avatar");
 
-            modelBuilder.Entity<Assests>().ToTable("Assets");
-            modelBuilder.Entity<AssetsCategory>().ToTable("AssetsCategory");
-            modelBuilder.Entity<AssetsDepartment>().ToTable("AssetsDepartment");
-            modelBuilder.Entity<AssetsStatus>().ToTable("AssetsStatus").Property(f => f.Id)
+            modelBuilder.Entity<Asset>().ToTable("Asset").HasMany<AssetMoved>(x => x.AssetsMoveds).WithOne(x => x.Assests).HasForeignKey(x => x.OldAssestsId)
+
+                                                        .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<AssetMovedHistory>().ToTable("AssetMovedHistory").HasMany<AssetMoved>(x => x.AssetMoveds).WithOne(x => x.AssetMovedHistory).HasForeignKey(x => x.Code)
+
+                                            .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Asset>().ToTable("Asset").HasMany<AssetMoved>(x => x.AssetsMoveds).WithOne(x => x.Assests).HasForeignKey(x => x.AssestsId)
+
+                                            .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<AssetCategory>().ToTable("AssetCategory");
+            modelBuilder.Entity<AssetDepartment>().ToTable("AssetDepartment");
+
+                                                        
+            modelBuilder.Entity<AssetStatus>().ToTable("AssetStatus").Property(f => f.Id)
             .ValueGeneratedOnAdd();
-            modelBuilder.Entity<AssetsMoved>().ToTable("AssetsMoved");
-            modelBuilder.Entity<AssetsMovedStatus>().ToTable("AssetsMovedStatus");
-            modelBuilder.Entity<AssetsSupplier>().ToTable("AssetsSupplier");
-            modelBuilder.Entity<AssetsRepaired>().ToTable("AssetsRepaired");
+            modelBuilder.Entity<AssetMoved>().ToTable("AssetMoved");
+
+            modelBuilder.Entity<AssetMovedStatus>().ToTable("AssetMovedStatus").HasMany<AssetMoved>(x => x.AssetsMoved).WithOne(x => x.AssetsMovedStatus).HasForeignKey(x => x.AssetsMovedStatusId)
+
+                                                        .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<AssetSupplier>().ToTable("AssetSupplier");
+            modelBuilder.Entity<AssetRepaired>().ToTable("AssetRepaired");
 
             modelBuilder.Entity<Role>().ToTable("Role");
 

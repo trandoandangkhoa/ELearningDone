@@ -564,12 +564,12 @@ namespace WebLearning.Application.BookingCalender
                             "<p style=\"font-weight:bold;font-size:14px\">Trạng thái: <span style = 'background-color:#5cb85c;display: inline;padding: .5em .9em .6em;font-size: 85%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;' > " +
                                     "Đồng ý" +
                                     "</span>" + "<br><br/>\r\n" +
-                            "<a style=\"font-size:14px;line-height:24px;padding:8px 20px;font-weight:bold;text-decoration:none;margin-bottom:0;display:inline-block;background: #5cb85c;color:#fff;margin-bottom:17px\"" +
-                            "href=" + baseAddress + fromId + "/" + toId + "/trang-thai=1/accepted>" +
-                            "Duyệt</a>" +
-                            "<a style=\"font-size:14px;line-height:24px;padding:8px 20px;font-weight:bold;text-decoration:none;margin-bottom:0;display:inline-block;background: #d9534f;color:#fff;margin-bottom:17px;margin-left:10px\"" +
-                            "href=" + baseAddress + fromId + "/" + toId + "/trang-thai=1/rejected>" +
-                            "Từ chối</a>" +
+                            //"<a style=\"font-size:14px;line-height:24px;padding:8px 20px;font-weight:bold;text-decoration:none;margin-bottom:0;display:inline-block;background: #5cb85c;color:#fff;margin-bottom:17px\"" +
+                            //"href=" + baseAddress + fromId + "/" + toId + "/trang-thai=1/accepted>" +
+                            //"Duyệt</a>" +
+                            //"<a style=\"font-size:14px;line-height:24px;padding:8px 20px;font-weight:bold;text-decoration:none;margin-bottom:0;display:inline-block;background: #d9534f;color:#fff;margin-bottom:17px;margin-left:10px\"" +
+                            //"href=" + baseAddress + fromId + "/" + toId + "/trang-thai=1/rejected>" +
+                            //"Từ chối</a>" +
                             "<tr>\r\n<td style=\"font-family:sans-serif;font-size:12px;vertical-align:top;background:#fafbfb;padding:3% 5%\">\r\n" +
                             "<p style=\"font-weight:600;font-size:13px;line-height:18px;margin-top:0;margin-bottom:4px\">GIỚI THIỆU VỀ VXH.Booking</p>\r\n<p style=\"color:#71787e;font-weight:normal;font-size:12px;line-height:18px;margin-top:0;margin-bottom:10px\">VXH.Booking giúp bạn đăng kí phòng họp trong vài phút. Cho dù bạn đang ở văn phòng, ở nhà, đang đi trên đường, VXH.Booking sẽ cung cấp giải pháp và dịch vụ đến với bạn.</p>\r\n" +
                             "<p style=\"font-weight:600;font-size:13px;line-height:18px;margin-top:0;margin-bottom:4px\">CÂU HỎI VỀ TÀI LIỆU</p>\r\n<p style=\"color:#71787e;font-weight:normal;font-size:12px;line-height:18px;margin-top:0;margin-bottom:0\">Nếu bạn cần sửa đổi hoặc có câu hỏi về nội dung trong tài liệu cũng như đặt lịch, vui lòng liên hệ với người gửi bằng cách gửi email trực tiếp cho họ.</p>\r\n</td>\r\n</tr>\r\n\r\n\r\n</tbody></table>\r\n\r\n\r\n</div>\r\n</td>\r\n<td style=\"font-family:sans-serif;font-size:12px;vertical-align:top\">&nbsp;</td>\r\n</tr>\r\n</tbody></table>" +

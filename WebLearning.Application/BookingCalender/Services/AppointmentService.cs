@@ -839,7 +839,9 @@ namespace WebLearning.Application.BookingCalender.Services
 
             updateHistoryAddSlotDto.SendMail = false;
 
-            updateHistoryAddSlotDto.DescStatus = history.Status;
+            updateHistoryAddSlotDto.DescStatus = "confirmed";
+
+            history.Status = updateHistoryAddSlotDto.DescStatus;
 
             _context.HistoryAddSlots.Update(_mapper.Map(updateHistoryAddSlotDto, history));
 

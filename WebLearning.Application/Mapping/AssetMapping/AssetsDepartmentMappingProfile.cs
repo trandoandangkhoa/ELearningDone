@@ -8,9 +8,9 @@ namespace WebLearning.Application.Mapping.AssetMapping
     {
         public AssetsDepartmentMappingProfile()
         {
-            CreateMap<CreateAssetsDepartmentDto, AssetsDepartment>();
-            CreateMap<AssetsDepartment, AssetsDepartmentDto>().ForPath(dest => dest.AssetsDto, opt => opt.MapFrom(src => src.Assests));
-            CreateMap<UpdateAssetsDepartmentDto, AssetsDepartment>();
+            CreateMap<CreateAssetsDepartmentDto, AssetDepartment>();
+            CreateMap<AssetDepartment, AssetsDepartmentDto>().ForPath(dest => dest.AssetsDto, opt => opt.MapFrom(src => src.Assests));
+            CreateMap<UpdateAssetsDepartmentDto, AssetDepartment>();
 
         }
     }

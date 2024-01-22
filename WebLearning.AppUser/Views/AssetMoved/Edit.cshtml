@@ -1,11 +1,12 @@
 ﻿@using WebLearning.Contract.Dtos.Assets;
+@using WebLearning.Contract.Dtos.Assets.Moved;
 @model UpdateAssetsMovedDto
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="row">
     <div class="x_panel">
-        <a href="/chi-tiet-tai-san/@Model.AssetId"><i class="fa fa-reply"></i> Quay lại</a>
+        <a href="/chi-tiet-tai-san/@Model.OldAssestsId"><i class="fa fa-reply"></i> Quay lại</a>
         <form asp-action="Edit" method="post">
             <div class="x_title">
                 <h2>Cập nhật thông tin</h2>
@@ -13,9 +14,16 @@
             </div>
             <div class="x_content">
                 <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12">Mã tài sản cũ: <span class="required">*</span></label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <input class="form-control" type="text" asp-for="@Model.OldAssestsId" value="@Model.OldAssestsId" name="OldAssestsId" readonly />
+                    </div>
+
+                </div>
+                <div class="form-group">
                     <label class="control-label col-md-4 col-sm-4 col-xs-12">Mã tài sản: <span class="required">*</span></label>
                     <div class="col-md-8 col-sm-8 col-xs-12">
-                        <input class="form-control" type="text" asp-for="@Model.AssetId" value="@Model.AssetId" name="AssetId" readonly />
+                        <input class="form-control" type="text" asp-for="@Model.AssestsId" value="@Model.AssestsId" name="AssestsId" readonly />
                     </div>
 
                 </div>
@@ -26,6 +34,7 @@
                     </div>
 
                 </div>
+
                 <div class="form-group">
                     <label class="control-label col-md-4 col-sm-4 col-xs-12">SĐT người nhận: <span class="required">*</span></label>
                     <div class="col-md-8 col-sm-8 col-xs-12">
@@ -43,8 +52,15 @@
                 <div class="form-group">
                     <label class="control-label col-md-4 col-sm-4 col-xs-12">Đơn vị sử dụng: <span class="required">*</span></label>
                     <div class="col-md-8 col-sm-8 col-xs-12">
-                        <select required id="AssetsDepartmentId" name="AssetsDepartmentId" asp-for="@Model.AssetsDepartmentId" asp-items="ViewBag.Dep" class="selectpicker form-control" data-live-search="true" data-show-subtext="true" data-live-search-style="begins">
+                        <select required id="NewDepartmentId" name="NewDepartmentId" asp-for="@Model.NewDepartmentId" asp-items="ViewBag.Dep" class="selectpicker form-control"  data-live-search="true" data-show-subtext="true" data-live-search-style="begins">
                         </select>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12">Số lượng: <span class="required">*</span></label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <input class="form-control" type="text" asp-for="@Model.Quantity" value="@Model.Quantity" name="Quantity" required />
                     </div>
 
                 </div>

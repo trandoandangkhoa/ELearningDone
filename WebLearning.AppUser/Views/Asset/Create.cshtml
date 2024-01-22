@@ -92,7 +92,44 @@
                             </div>
 
                         </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Khu vực: <span class="required">*</span></label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" required asp-for="@Model.Region" />
 
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12"></label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                @if (TempData["ErrorRegion"] != null)
+                                {
+                                    <span class="text-danger">@TempData["ErrorRegion"]</span>
+
+                                }
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12">Mô hình hoạt động: </label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                <input class="form-control" type="text" asp-for="@Model.BusinessModel" />
+
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 col-xs-12"></label>
+                            <div class="col-md-8 col-sm-8 col-xs-12">
+                                @if (TempData["ErrorBusinessModel"] != null)
+                                {
+                                    <span class="text-danger">@TempData["ErrorBusinessModel"]</span>
+
+                                }
+                            </div>
+
+                        </div>
                         <div class="form-group">
                             <label class="control-label col-md-4 col-sm-4 col-xs-12">Thông số:</label>
                             <div class="col-md-8 col-sm-8 col-xs-12">

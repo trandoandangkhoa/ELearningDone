@@ -39,6 +39,13 @@ namespace WebLearning.AppUser.Controllers
                 _notyfService.Warning("Phiên đăng nhập đã hết hạn!");
                 return Redirect("/dang-nhap.html");
             }
+
+            var listLocation = await _assetDepartmentService.GetAllAssetsDepartment();
+
+            var check = listLocation.Where(x => x.Level == "1");
+
+            ViewData["ParentCode"] = new SelectList(check, "ParentCode", "Name");
+
             //ViewBag.Keyword = keyword;
 
             return View(Roke);
@@ -52,39 +59,40 @@ namespace WebLearning.AppUser.Controllers
             {
                 return Redirect("/dang-nhap.html");
             }
-            var allCourse = await _assetDepartmentService.GetAllAssetsDepartment();
+            //var allCourse = await _assetDepartmentService.GetAllAssetsDepartment();
 
-            List<SelectListItem> list = new();
+            //List<SelectListItem> list = new();
 
-            foreach (var item in allCourse)
-            {
-                list.Add(new SelectListItem
-                {
-                    Text = item.Name,
-                    Value = item.Id.ToString(),
-                });
-            }
+            //foreach (var item in allCourse)
+            //{
+            //    list.Add(new SelectListItem
+            //    {
+            //        Text = item.Name,
+            //        Value = item.Id.ToString(),
+            //    });
+            //}
 
-            ViewBag.Department = list;
+            //ViewBag.Department = list;
             var AssetDepartment = await _assetDepartmentService.GetAssetDepartmentById(id);
             return View(AssetDepartment);
         }
-        [HttpGet]
-        [Route("/tao-moi-bo-phan.html")]
-        public IActionResult Create()
-        {
-            var token = HttpContext.Session.GetString("Token");
+        //[HttpGet]
+        //[Route("/tao-moi-bo-phan.html")]
+        //public IActionResult Create()
+        //{
+        //    var token = HttpContext.Session.GetString("Token");
 
-            if (token == null)
-            {
-                return Redirect("/dang-nhap.html");
-            }
-            return View();
-        }
+        //    if (token == null)
+        //    {
+        //        return Redirect("/dang-nhap.html");
+        //    }
+        //    return View();
+        //}
         [HttpPost]
         [Route("/tao-moi-bo-phan.html")]
         public async Task<IActionResult> Create(CreateAssetsDepartmentDto createAssetDepartmentDto)
         {
+
             var token = HttpContext.Session.GetString("Token");
 
             if (token == null)
@@ -115,13 +123,21 @@ namespace WebLearning.AppUser.Controllers
             var updateResult = new UpdateAssetsDepartmentDto()
             {
                 Name = result.Name,
+                Level = result.Level,
+                ParentCode = result.ParentCode,
             };
+            var listLocation = await _assetDepartmentService.GetAllAssetsDepartment();
+
+            var check = listLocation.Where(x => x.Level == "1");
+
+            ViewData["ParentCode"] = new SelectList(check, "ParentCode", "Name");
             return View(updateResult);
         }
         [HttpPost]
         [Route("/cap-nhat-bo-phan/{id}")]
-        public async Task<IActionResult> Edit(UpdateAssetsDepartmentDto updateAssetsDepartmentDto, Guid id)
+        public async Task<IActionResult> Edit(UpdateAssetsDepartmentDto updateAssetsDepartmentDto, Guid id, string ParentCode)
         {
+
             var token = HttpContext.Session.GetString("Token");
 
             if (token == null)

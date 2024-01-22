@@ -167,7 +167,8 @@ namespace WebLearning.Application.ELearning.Services
                     LessionDtos = new List<LessionDto>(lessionDto),
 
                     CourseImageVideoDto = new List<CourseImageDto>(courseImageDto),
-                    CourseRoleDtos = new List<CourseRoleDto>(courseRoleDto)
+                    CourseRoleDtos = new List<CourseRoleDto>(courseRoleDto),
+                    
                 };
 
 

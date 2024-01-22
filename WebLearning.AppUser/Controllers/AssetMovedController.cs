@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WebLearning.ApiIntegration.Services;
 using WebLearning.Application.Extension;
-using WebLearning.Contract.Dtos.Assets;
+using WebLearning.Contract.Dtos.Assets.Moved;
 
 namespace WebLearning.AppUser.Controllers
 {
@@ -49,69 +49,93 @@ namespace WebLearning.AppUser.Controllers
             {
                 return Redirect("/dang-nhap.html");
             }
-            var assetId = table_records.Split(",");
+            string[] checkedDupplicate = table_records.Split(",").ToArray().Distinct().ToArray();
+
+            string result = "";
             TempData["Receiver"] = createAssetsMovedDto.Receiver;
             TempData["ReceiverPhoneNumber"] = createAssetsMovedDto.ReceiverPhoneNumber;
             TempData["SenderPhoneNumber"] = createAssetsMovedDto.SenderPhoneNumber;
             TempData["Description"] = createAssetsMovedDto.Description;
             TempData["DateUsed"] = createAssetsMovedDto.DateUsed;
 
-            if (createAssetsMovedDto.AssetsDepartmentId == Guid.Empty)
+            if (createAssetsMovedDto.NewDepartmentId == Guid.Empty)
             {
                 _notyfService.Error("Mã bộ phân bạn còn trống");
                 return Redirect("/tai-san.html");
 
             }
-            List<CreateAssetsMovedDto> createAssetsMovedDtos = new();
-            List<AssetMovedTicket> assetMovedTickets = new();
+            var a = (await _assetService.GetAllAssetsSelected(checkedDupplicate)).Where(x => x.Active == false || x.Quantity < createAssetsMovedDto.Quantity);
 
-            for (var i = 0; i < assetId.Length; i++)
+            if (a != null && a.Any())
             {
-                createAssetsMovedDtos.Add(new CreateAssetsMovedDto
+                foreach (var er in a)
                 {
-                    AssestsId = assetId[i],
+                    result += er.Id.ToString() + ", ";
+                }
+                _notyfService.Error("Mã: " + result + "không hợp lệ", 7);
+
+                return Redirect("/tai-san.html");
+            }
+
+
+            AssetMovedView assetMovedView = new();
+
+            for (var i = 0; i < checkedDupplicate.Length; i++)
+            {
+                assetMovedView.createAssetsMovedDtos.Add(new CreateAssetsMovedDto
+                {
+                    OldAssestsId = checkedDupplicate[i],
                     Receiver = createAssetsMovedDto.Receiver,
                     ReceiverPhoneNumber = createAssetsMovedDto.ReceiverPhoneNumber,
                     SenderPhoneNumber = createAssetsMovedDto.SenderPhoneNumber,
                     Description = createAssetsMovedDto.Description,
+                    Quantity = createAssetsMovedDto.Quantity,
                     DateUsed = createAssetsMovedDto.DateUsed,
-                    AssetsDepartmentId = createAssetsMovedDto.AssetsDepartmentId,
+                    NewDepartmentId = createAssetsMovedDto.NewDepartmentId,
+                    Unit = "Cái",
                 });
 
             }
             var nameSender = await _accountService.GetFullName(User.Identity.Name);
-            var newDep = await _assetDepartmentService.GetAssetDepartmentById(createAssetsMovedDto.AssetsDepartmentId);
-            AssetMovedPrintView assetMovedPrintView = new AssetMovedPrintView();
-            foreach (var item in createAssetsMovedDtos)
+            //var newDep = await _assetDepartmentService.GetAssetDepartmentById(createAssetsMovedDto.AssetsDepartmentId);                
+            var code = await _assetMovedService.GetPrintCode();
+            foreach (var item in assetMovedView.createAssetsMovedDtos)
             {
-                var assetName = await _assetService.GetAssetById(item.AssestsId);
-                assetMovedTickets.Add(new AssetMovedTicket()
-                {
-                    Id = assetName.AssetId,
-                    Name = assetName.AssetName,
-                    Unit = "Cái",
-                    Quantity = assetName.Quantity,
-                    Status = assetName.AssetsStatusDto.Name,
-                    Note = assetName.Note,
-                });
-                var oldDep = assetName.AssetsDepartmentDto.Name + ", ";
-                assetMovedPrintView.OldDep.Add(oldDep);
+
+                item.Code = code;
+                //var assetName = await _assetService.GetAssetByIdForMoving(item.OldAssestsId);
+                //assetMovedView.assetMovedTickets.Add(new AssetMovedTicket()
+                //{
+                //    Id = assetName.AssetId,
+                //    Name = assetName.AssetName,
+                //    Unit = "Cái",
+                //    Quantity = assetName.Quantity,
+                //    Status = assetName.AssetsStatusDto.Name,
+                //    Note = assetName.Note,
+                //});
+                //var oldDep = assetName.AssetsDepartmentDto.Name + ", ";
+                //assetMovedPrintView.OldDep.Add(oldDep);
 
                 var res = await _assetMovedService.InsertAssetMoved(item);
-
+                if (res != "Cập nhật thành công!")
+                {
+                    _notyfService.Error(res);
+                    return Redirect("/tai-san.html");
+                }
 
             }
-            assetMovedPrintView.Sender = nameSender.accountDetailDto.FullName;
-            assetMovedPrintView.RoleSenderName = nameSender.roleDto.RoleName;
-            assetMovedPrintView.NewDep = newDep.Name;
 
-            assetMovedPrintView.Receiver = createAssetsMovedDto.Receiver;
-            assetMovedPrintView.AssetMovedTickets = assetMovedTickets;
-            assetMovedPrintView.ReasonMove = createAssetsMovedDtos[0].Description;
+            //assetMovedPrintView.Sender = nameSender.accountDetailDto.FullName;
+            //assetMovedPrintView.RoleSenderName = nameSender.roleDto.RoleName;
+            //assetMovedPrintView.NewDep = newDep.Name;
 
-            HttpContext.Session.Set<AssetMovedPrintView>("AssetMovedPrintView", assetMovedPrintView);
+            //assetMovedPrintView.Receiver = createAssetsMovedDto.Receiver;
+            //assetMovedPrintView.AssetMovedTickets = assetMovedView.assetMovedTickets;
+            //assetMovedPrintView.ReasonMove = assetMovedView.createAssetsMovedDtos[0].Description;
 
-            _notyfService.Success("Điều chuyển thành công!");
+            //HttpContext.Session.Set<AssetMovedPrintView>("AssetMovedPrintView", assetMovedPrintView);
+
+            _notyfService.Success("Cập nhật thành công!");
             return Redirect("/tai-san.html");
         }
         [Route("/cap-nhat-dieu-chuyen/{id}")]
@@ -121,16 +145,18 @@ namespace WebLearning.AppUser.Controllers
             var asset = await _assetMovedService.GetAssetMovedById(id);
             UpdateAssetsMovedDto updateAssetsMovedDto = new()
             {
-                AssetId = asset.AssetsId,
-                AssetsDepartmentId = asset.AssetsDepartmentId,
+                OldAssestsId = asset.OldAssestsId,
+                AssestsId = asset.AssestsId,
+                NewDepartmentId = asset.NewDepartmentId,
                 DateMoved = asset.DateMoved,
                 DateUsed = asset.DateUsed,
                 Description = asset.Description,
                 SenderPhoneNumber = asset.SenderPhoneNumber,
-                MovedStatus = asset.MovedStatus,
+                AssetsMovedStatusId = asset.AssetsMovedStatusId,
                 Receiver = asset.Receiver,
                 ReceiverPhoneNumber = asset.ReceiverPhoneNumber,
-                NumBravo = asset.NumBravo,
+                Quantity = asset.Quantity,
+                //NumBravo = asset.NumBravo,
                 IdTemp = id,
             };
             var allDep = await _assetDepartmentService.GetAllAssetsDepartment();
@@ -152,9 +178,9 @@ namespace WebLearning.AppUser.Controllers
                 await _assetMovedService.UpdateAssetMoved(updateAssetsMovedDto, id);
                 _notyfService.Success("Cập nhật thành công");
 
-                return Redirect($"/chi-tiet-tai-san/{updateAssetsMovedDto.AssetId}");
+                return Redirect($"/chi-tiet-tai-san/{updateAssetsMovedDto.OldAssestsId}");
             }
-            return Redirect($"/chi-tiet-tai-san/{updateAssetsMovedDto.AssetId}");
+            return Redirect($"/chi-tiet-tai-san/{updateAssetsMovedDto.OldAssestsId}");
         }
         [Route("/chi-tiet-tai-san/{assetId}/xoa-dieu-chuyen/{id}")]
         public async Task<IActionResult> Delete(Guid id, string assetId)
@@ -169,12 +195,26 @@ namespace WebLearning.AppUser.Controllers
             _notyfService.Success("Xóa thành công");
             return Redirect($"/chi-tiet-tai-san/{assetId}");
         }
-        [Route("/in-tai-san-dieu-chuyen.html")]
-        public Task<IActionResult> PrintAssetMoved(Guid id, string assetId)
+        [Route("/lich-su-dieu-chuyen.html")]
+        public async Task<IActionResult> HistoryMoved()
         {
-            var asset = HttpContext.Session.Get<AssetMovedPrintView>("AssetMovedPrintView");
+            var token = HttpContext.Session.GetString("Token");
 
-            return Task.FromResult<IActionResult>(View(asset));
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
+
+            var a = await _assetMovedService.GetAllAssetMovedsHistory();
+
+            return View(a);
+        }
+        [Route("/in-tai-san-dieu-chuyen/{id}")]
+        public async  Task<IActionResult> PrintAssetMoved(string id)
+        {
+            var asset = await _assetMovedService.GetAssetMovedPrintView(id, User.Identity.Name);
+
+            return View(asset);
 
         }
     }

@@ -1,4 +1,5 @@
 ﻿@using WebLearning.Contract.Dtos.Assets;
+@using WebLearning.Contract.Dtos.Assets.Moved;
 @{
     Layout = null;
 }
@@ -376,7 +377,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
                                     <p class=MsoNormal align=center style='margin:.5pt;text-align:center;
     mso-element:frame;mso-element-frame-hspace:9.0pt;mso-element-wrap:around;
     mso-element-anchor-vertical:paragraph;mso-element-anchor-horizontal:column;
-    mso-element-top:.05pt;mso-height-rule:exactly'><span style='color:black'>S&#7889;:CK @DateTime.Now.ToString("MM")/@DateTime.Now.ToString("yyyy")-0008</span></p>
+    mso-element-top:.05pt;mso-height-rule:exactly'><span style='color:black'>S&#7889;:@Model.Id.Substring(0,2)@DateTime.Now.ToString("MM")/@DateTime.Now.ToString("yyyy")-@Model.Id.Substring(2,8)</span></p>
                                 </td>
                                 <td width=214 nowrap valign=top style='width:160.5pt;border:none;
     background:white;padding:.5pt .5pt .5pt .5pt;height:15.5pt;mso-height-rule:

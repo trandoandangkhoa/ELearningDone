@@ -1,9 +1,6 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.CodeAnalysis;
-using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using System.Data;
 using WebLearning.ApiIntegration.Services;
@@ -36,15 +33,14 @@ namespace WebLearning.AppUser.Controllers
         }
 
         [Route("/tai-san.html")]
-        public async Task<IActionResult> Index(string keyword, Guid[] assetsCategoryId, Guid[] assetsDepartmentId, int[] assetsStatusId, string url, bool active, int pageSize, int pageIndex = 1)
+        public async Task<IActionResult> Index(string keyword, Guid[] assetsCategoryId, string[] assetsDepartmentLocationId, Guid[] assetsDepartmentId, int[] assetsStatusId, bool active, int pageSize, int pageIndex = 1)
         {
 
             var token = HttpContext.Session.GetString("Token");
-
-            //if (token == null)
-            //{
-            //    return Redirect("/dang-nhap.html");
-            //}
+            if (token == null)
+            {
+                return Redirect("/dang-nhap.html");
+            }
 
             var request = new GetListPagingRequest()
             {
@@ -52,6 +48,11 @@ namespace WebLearning.AppUser.Controllers
                 PageIndex = pageIndex,
                 PageSize = pageSize,
                 Active = true,
+                AssetsCategoryId = assetsCategoryId,
+                AssetsDepartmentId = assetsDepartmentId,
+                AssetsStatusId = assetsStatusId,
+                AssetsDepartmentLocationId = assetsDepartmentLocationId,
+
             };
             if (active == true) request.Active = false;
 
@@ -64,20 +65,19 @@ namespace WebLearning.AppUser.Controllers
                 TempData["PageSize"] = pageSize.ToString();
 
             }
-            //var allDep = await _assetDepartmentService.GetAllAssetsDepartment();
-
-            //ViewData["Dep"] = new SelectList(allDep, "Id", "Name");
-            var Roke = await _assetService.GetPaging(request, assetsCategoryId, assetsDepartmentId, assetsStatusId);
+            var Roke = await _assetService.GetPaging(request);
 
             if (Roke == null)
             {
                 _notyfService.Warning("Phiên đăng nhập đã hết hạn!");
+
                 return Redirect("/dang-nhap.html");
             }
 
             return View(Roke);
 
         }
+
         [Route("/chi-tiet-tai-san/{id}")]
         public async Task<IActionResult> Detail(string id)
         {
@@ -99,6 +99,7 @@ namespace WebLearning.AppUser.Controllers
             ViewData["Dep"] = new SelectList(allDep, "Id", "Name");
             ViewData["Status"] = new SelectList(allStatus, "Id", "Name");
             ViewData["Supplier"] = new SelectList(allSup, "Id", "CompanyName");
+
 
             return View(asset);
         }
@@ -255,6 +256,7 @@ namespace WebLearning.AppUser.Controllers
             {
                 TempData["ErrorStatus"] = "Vui lòng chọn tình trạng tài sản !";
             }
+
             var a = await _assetService.UpdateAsset(updateAssetsDto, id);
             if (a == true)
             {
@@ -279,11 +281,24 @@ namespace WebLearning.AppUser.Controllers
             return Redirect($"/tai-san.html");
         }
         [HttpPost]
-        public async Task<IActionResult> GetItem(string[] id)
+        public async Task<IActionResult> GetItemViewSelected(string[] id)
         {
 
-            var rs = await _assetService.GetAllAssets();
-            rs = rs.Where(x => id.Contains(x.Id));
+            var rs = await _assetService.GetAllAssetsSelected(id);
+
+            return View(rs);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateItemViewSelected(string id)
+        {
+            List<AssetsDto> assetsDtos = new();
+            if (id == null) return View(assetsDtos);
+
+            var eachId = id.Split(",");
+            string[] assestId = eachId.ToArray();
+
+            var rs = await _assetService.GetAllAssetsSelected(assestId);
+
             return View(rs);
         }
     }
